@@ -1,7 +1,6 @@
 tmp
 lib-cov
 node_modules
-modules/community
 modules/private
 modules/site
 themes/downloaded

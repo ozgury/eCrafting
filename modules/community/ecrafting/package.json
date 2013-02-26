@@ -1,0 +1,12 @@
+{
+    "name":"ecrafting",
+    "label":"eCrafting",
+    "description":"eCrafting main module.",
+    "version":"0.1.0",
+    "homepage":"http://ecrafting.com",
+    "repository":{
+        "type":"git",
+        "url":"git://github.com/ozgury/ecrafting.git"
+    },
+    "author":"Ozgur Yogurtcu <oyogurtcu@gmail.com>"
+}

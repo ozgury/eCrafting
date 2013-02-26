@@ -1,0 +1,26 @@
+<div class="template-module">
+    <h2><%- t('Circles') %></h2>
+    <table>
+        <tr>
+            <th><%- t('Name') %></th>
+            <th><%- t('Description') %></th>
+        </tr>
+
+        <%
+        items.forEach(function(item) {
+        %>
+        <tr>
+            <td><a href='/circle/show/<%- item._id %>'><%- item.name %></a></td>
+            <td> <%- item.description %></td>
+        </tr>
+        <%
+        });
+
+        if(!items) {
+        %>
+        <td colspan='4'><%- t('No circles defined.') %></td>
+        <%
+        }
+        %>
+    </table>
+</div>
