@@ -18,7 +18,8 @@
         "tests":"./tests"
     },
     "engines":{
-        "node":">=0.6||>=0.8"
+        "node":">=0.6||>=0.8",
+		"npm": "1.1.x"		
     },
     "devDependencies":{
         "mocha":"~1.4.2",
