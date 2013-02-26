@@ -5,7 +5,6 @@ modules/private
 modules/site
 themes/downloaded
 themes/custom
-themes/community
 themes/private
 themes/site
 media/*
