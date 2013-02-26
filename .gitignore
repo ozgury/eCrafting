@@ -9,7 +9,6 @@ themes/community
 themes/private
 themes/site
 media/*
-conf/*.json
 *.pid
 *.log
 *.swp
