@@ -4,10 +4,6 @@
   "database": {
     "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
   },
-  "authentication": {
-    "password": true,
-    "migrate2pbkdf2": false
-  },
   "server": {
     "name": "Calipso",
     "url": "http://localhost:3000",
@@ -23,7 +19,7 @@
     },
     "loginPath": "",
     "authentication": {
-      "password": false,
+      "password": true,
       "migrate2pbkdf2": false,
       "facebookAppId": "573278046017651",
       "facebookAppSecret": "8062c524ef4396572deeedb0ea646fbb",
