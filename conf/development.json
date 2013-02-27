@@ -6,7 +6,7 @@
   },
   "server": {
     "name": "Calipso",
-    "url": "http://localhost:3000",
+    "url": "http://ecraftingdev.herokuapp.com/",
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
