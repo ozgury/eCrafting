@@ -10,12 +10,12 @@
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
-      "workers": 0,
+      "workers": "",
       "restartWorkers": true,
-      "maximumRestarts": 1
+      "maximumRestarts": "1"
     },
     "events": {
-      "maxListeners": 500
+      "maxListeners": "500"
     },
     "authentication": {
       "password": true,
@@ -26,7 +26,8 @@
       "googleClientSecret": "",
       "twitterConsumerKey": "",
       "twitterConsumerSecret": ""
-    }
+    },
+    "loginPath": ""
   },
   "calipso": {
     "repo": {
@@ -37,17 +38,18 @@
   "performance": {
     "cache": {
       "enabled": false,
-      "ttl": 600
+      "ttl": "600"
     },
     "watchFiles": true
   },
   "session": {
-    "secret": "calipso"
+    "secret": "calipso",
+    "maxAge": ""
   },
   "theme": {
     "default": "cleanslate",
-    "front": "cleanslate",
-    "admin": "cleanslate"
+    "front": "bootstrap",
+    "admin": "bootstrap"
   },
   "i18n": {
     "language": "en",
