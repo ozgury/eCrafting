@@ -1,6 +1,6 @@
 {
   "version": "0.3.0",
-  "installed": true,
+  "installed": false,
   "database": {
     "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
   },
@@ -10,13 +10,14 @@
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
-      "workers": 0,
+      "workers": "",
       "restartWorkers": true,
-      "maximumRestarts": 1
+      "maximumRestarts": "1"
     },
     "events": {
-      "maxListeners": 500
+      "maxListeners": "500"
     },
+    "loginPath": "",
     "authentication": {
       "password": true,
       "migrate2pbkdf2": false,
@@ -37,12 +38,13 @@
   "performance": {
     "cache": {
       "enabled": false,
-      "ttl": 600
+      "ttl": "600"
     },
     "watchFiles": true
   },
   "session": {
-    "secret": "calipso"
+    "secret": "calipso",
+    "maxAge": ""
   },
   "theme": {
     "default": "cleanslate",
@@ -56,7 +58,7 @@
   "logging": {
     "console": {
       "enabled": true,
-      "level": "info",
+      "level": "debug",
       "timestamp": true,
       "colorize": true
     },
@@ -81,27 +83,7 @@
     "admin": {
       "enabled": true
     },
-    "devtools": {
-      "enabled": true
-    },
     "ecrafting": {
-      "enabled": true
-    },
-    "google-analytics": {
-      "enabled": true,
-      "config": {
-        "key": "",
-        "anonymize-ip": true,
-        "track-pagespeed": true
-      }
-    },
-    "pusher": {
-      "enabled": true
-    },
-    "richforms": {
-      "enabled": true
-    },
-    "tweetstream": {
       "enabled": true
     },
     "aloha": {
@@ -117,19 +99,19 @@
       "enabled": true
     },
     "contentVersions": {
-      "enabled": true
+      "enabled": false
     },
     "mail": {
       "enabled": true,
       "config": {
-        "host": "",
-        "port": "",
+        "host": "192.168.2.6",
+        "port": "25",
         "domain": "",
-        "authentication": false,
+        "authentication": true,
         "ssl": false,
-        "from": "",
-        "username": "",
-        "password": "",
+        "from": "eCrafting",
+        "username": "serviceaccount@brooklynindustries.com",
+        "password": "P@ssw0rd",
         "base64": false
       }
     },
