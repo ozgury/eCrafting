@@ -1,157 +1,79 @@
 {
-  "version": "0.3.0",
-  "installed": true,
-  "database": {
-    "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
-  },
-  "server": {
-    "name": "Calipso",
-    "url": "http://ecraftingdev.herokuapp.com/",
-    "modulePath": "./modules",
-    "themePath": "./themes",
-    "cluster": {
-      "workers": "",
-      "restartWorkers": true,
-      "maximumRestarts": "1"
+    "version":"0.3.0",
+    "installed":false,
+    "database":{
+        "uri":"mongodb://localhost/calipso"
     },
-    "events": {
-      "maxListeners": "500"
+    "authentication":{
+        "password":true,
+        "migrate2pbkdf2":false
     },
-    "authentication": {
-      "password": true,
-      "migrate2pbkdf2": false,
-      "facebookAppId": "573278046017651",
-      "facebookAppSecret": "8062c524ef4396572deeedb0ea646fbb",
-      "googleClientId": "",
-      "googleClientSecret": "",
-      "twitterConsumerKey": "",
-      "twitterConsumerSecret": ""
+    "server":{
+        "name":"Calipso",
+        "url":"http://localhost:3000",
+        "modulePath":"./modules",
+        "themePath":"./themes",
+        "cluster":{
+            "workers":0,
+            "restartWorkers":true,
+            "maximumRestarts":1
+        },
+        "events":{
+            "maxListeners":500
+        }
     },
-    "loginPath": ""
-  },
-  "calipso": {
-    "repo": {
-      "url": "http://calip.so/repo/api",
-      "defaultVersion": "master"
+    "calipso":{
+        "repo":{
+            "url":"http://calip.so/repo/api",
+            "defaultVersion":"master"
+        }
+    },
+    "performance":{
+        "cache":{
+            "enabled":false,
+            "ttl":600
+        },
+        "watchFiles":true
+    },
+    "session":{
+        "secret":"calipso"
+    },
+    "theme":{
+        "default":"cleanslate",
+        "front":"cleanslate",
+        "admin":"cleanslate"
+    },
+    "i18n":{
+        "language":"en",
+        "additive":true
+    },
+    "logging":{
+        "console":{
+            "enabled":true,
+            "level":"info",
+            "timestamp":true,
+            "colorize":true
+        },
+        "file":{
+            "enabled":false,
+            "level":"info",
+            "filepath":"logs/calipso.log",
+            "timestamp":true
+        }
+    },
+    "libraries":{
+        "stylus":{
+            "enable":false,
+            "warn":true,
+            "compress":false
+        },
+        "formidable":{
+            "keepExtensions":true
+        }
+    },
+    "modules":{
+        "admin":{
+            "enabled":true
+        }
     }
-  },
-  "performance": {
-    "cache": {
-      "enabled": false,
-      "ttl": "600"
-    },
-    "watchFiles": true
-  },
-  "session": {
-    "secret": "calipso",
-    "maxAge": ""
-  },
-  "theme": {
-    "default": "cleanslate",
-    "front": "bootstrap",
-    "admin": "bootstrap"
-  },
-  "i18n": {
-    "language": "en",
-    "additive": true
-  },
-  "logging": {
-    "console": {
-      "enabled": true,
-      "level": "info",
-      "timestamp": true,
-      "colorize": true
-    },
-    "file": {
-      "enabled": false,
-      "level": "info",
-      "filepath": "logs/calipso.log",
-      "timestamp": true
-    }
-  },
-  "libraries": {
-    "stylus": {
-      "enable": false,
-      "warn": true,
-      "compress": false
-    },
-    "formidable": {
-      "keepExtensions": true
-    }
-  },
-  "modules": {
-    "admin": {
-      "enabled": true
-    },
-    "devtools": {
-      "enabled": true
-    },
-    "ecrafting": {
-      "enabled": true
-    },
-    "google-analytics": {
-      "enabled": true,
-      "config": {
-        "key": "",
-        "anonymize-ip": true,
-        "track-pagespeed": true
-      }
-    },
-    "pusher": {
-      "enabled": true
-    },
-    "richforms": {
-      "enabled": true
-    },
-    "tweetstream": {
-      "enabled": true
-    },
-    "aloha": {
-      "enabled": true
-    },
-    "assets": {
-      "enabled": false
-    },
-    "content": {
-      "enabled": true
-    },
-    "contentTypes": {
-      "enabled": true
-    },
-    "contentVersions": {
-      "enabled": true
-    },
-    "mail": {
-      "enabled": true,
-      "config": {
-        "host": "",
-        "port": "",
-        "domain": "",
-        "authentication": false,
-        "ssl": false,
-        "from": "",
-        "username": "",
-        "password": "",
-        "base64": false
-      }
-    },
-    "permissions": {
-      "enabled": true
-    },
-    "scheduler": {
-      "enabled": true
-    },
-    "static": {
-      "enabled": true
-    },
-    "tagcloud": {
-      "enabled": true
-    },
-    "taxonomy": {
-      "enabled": true
-    },
-    "user": {
-      "enabled": true
-    }
-  }
 }
