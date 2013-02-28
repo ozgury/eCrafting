@@ -8,7 +8,7 @@ themes/custom
 themes/private
 themes/site
 media/*
-*.json
+development.json
 *.pid
 *.log
 *.swp
