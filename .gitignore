@@ -8,6 +8,7 @@ themes/custom
 themes/private
 themes/site
 media/*
+conf/*
 development.json
 *.pid
 *.log
