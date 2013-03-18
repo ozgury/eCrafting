@@ -1,4 +1,4 @@
-<div class='role'>
+<div class='circle'>
     <h1><%- item.name %></h1>
     <table>
         <tr>
@@ -8,6 +8,14 @@
         <tr>
             <th><%- t('Description') %></th>
             <td><%- item.description %></td>
+        </tr>
+        <tr>
+            <th><%- t('Tags') %></th>
+            <td><%- item.tags %></td>
+        </tr>
+        <tr>
+            <th><%- t('Location') %></th>
+            <td><%- item.location %></td>
         </tr>
     </table>
 </div>

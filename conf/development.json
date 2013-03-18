@@ -2,32 +2,25 @@
   "version": "0.3.0",
   "installed": true,
   "database": {
-    "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"  
+    "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
+  },
+  "authentication": {
+    "password": true,
+    "migrate2pbkdf2": false
   },
   "server": {
     "name": "Calipso",
-    "url": "http://localhost:3000/",
+    "url": "http://localhost:3000",
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
-      "workers": "",
+      "workers": 0,
       "restartWorkers": true,
-      "maximumRestarts": "1"
+      "maximumRestarts": 1
     },
     "events": {
-      "maxListeners": "500"
-    },
-    "authentication": {
-      "password": true,
-      "migrate2pbkdf2": false,
-      "facebookAppId": "573278046017651",
-      "facebookAppSecret": "8062c524ef4396572deeedb0ea646fbb",
-      "googleClientId": "",
-      "googleClientSecret": "",
-      "twitterConsumerKey": "",
-      "twitterConsumerSecret": ""
-    },
-    "loginPath": ""
+      "maxListeners": 500
+    }
   },
   "calipso": {
     "repo": {
@@ -38,18 +31,17 @@
   "performance": {
     "cache": {
       "enabled": false,
-      "ttl": "600"
+      "ttl": 600
     },
     "watchFiles": true
   },
   "session": {
-    "secret": "calipso",
-    "maxAge": ""
+    "secret": "calipso"
   },
   "theme": {
     "default": "cleanslate",
-    "front": "bootstrap",
-    "admin": "bootstrap"
+    "front": "cleanslate",
+    "admin": "cleanslate"
   },
   "i18n": {
     "language": "en",
@@ -98,13 +90,13 @@
       }
     },
     "pusher": {
-      "enabled": true
+      "enabled": false
     },
     "richforms": {
-      "enabled": true
+      "enabled": false
     },
     "tweetstream": {
-      "enabled": true
+      "enabled": false
     },
     "aloha": {
       "enabled": true
