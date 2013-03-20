@@ -96,13 +96,13 @@ var routes = [{
     */
    function init(module, app, next) {
       function initEntities(module, app, next) {
-		mongooseTypes.loadTypes(calipso.lib.mongoose);
+      mongooseTypes.loadTypes(calipso.lib.mongoose);
    
-		var Circle = new calipso.lib.mongoose.Schema({
+      var Circle = new calipso.lib.mongoose.Schema({
             owner: {
                type: calipso.lib.mongoose.SchemaTypes.Email
             },
-			// Image
+         // Image
             name: {
                type: String,
                required: true
@@ -114,57 +114,57 @@ var routes = [{
             tags: [String],
             members: [calipso.lib.mongoose.SchemaTypes.Email],
             links: [calipso.lib.mongoose.SchemaTypes.Url],
-			location: {
-				type:String
-			},
-			calls: {
-				// Image
-				name: {
-					type: String,
-				},
-				description: {
-				   type: String,
-				},
-				date: {
-				   type: Date,
-				},
-				location: {
-					type:String
-				},
-				projects: {
-					owner: {
-					   type: calipso.lib.mongoose.SchemaTypes.Email
-					},
-					name: {
-						type: String,
-					},
-					description: {
-					   type: String,
-					},
-					approved: {
-						type:Boolean
-					},
-					// Media
-					updated: {
-					   type: Date,
-					},
-					created: {
-					   type: Date,
-					}
-				},
-				updated: {
-				   type: Date,
-				},
-				created: {
-				   type: Date,
-				}
-			},
-			updated: {
-			   type: Date,
-			},
-			created: {
-			   type: Date,
-			}
+         location: {
+            type:String
+         },
+         calls: {
+            // Image
+            name: {
+               type: String,
+            },
+            description: {
+               type: String,
+            },
+            date: {
+               type: Date,
+            },
+            location: {
+               type:String
+            },
+            projects: {
+               owner: {
+                  type: calipso.lib.mongoose.SchemaTypes.Email
+               },
+               name: {
+                  type: String,
+               },
+               description: {
+                  type: String,
+               },
+               approved: {
+                  type:Boolean
+               },
+               // Media
+               updated: {
+                  type: Date,
+               },
+               created: {
+                  type: Date,
+               }
+            },
+            updated: {
+               type: Date,
+            },
+            created: {
+               type: Date,
+            }
+         },
+         updated: {
+            type: Date,
+         },
+         created: {
+            type: Date,
+         }
          });
          Circle.path('name').validate(function (v) {
             return v.length > 4 && v.length < 20;
@@ -216,12 +216,12 @@ var circleForm = {
          type: 'text',
          description: 'Enter the circle location.'
       }, {
-		label:'Tags', 
-		name:'circle[tags]', 
-		type:'text', 
-		description:'Enter comma delimited tags for this circle.'
-		}
-	  ]
+      label:'Tags', 
+      name:'circle[tags]', 
+      type:'text', 
+      description:'Enter comma delimited tags for this circle.'
+      }
+     ]
    }],
    buttons: [{
       name: 'submit',
@@ -261,12 +261,12 @@ var circleCallForm = {
          type: 'text',
          description: 'Enter the circle location.'
       }, {
-		label:'Tags', 
-		name:'circle[tags]', 
-		type:'text', 
-		description:'Enter comma delimited tags for this circle.'
-		}
-	  ]
+      label:'Tags', 
+      name:'circle[tags]', 
+      type:'text', 
+      description:'Enter comma delimited tags for this circle.'
+      }
+     ]
    }],
    buttons: [{
       name: 'submit',
@@ -291,10 +291,10 @@ function createCircle(req, res, template, block, next) {
         var Circle = calipso.db.model('Circle');
         var c = new Circle(form.circle);
         var saved;
-			
-		c.created = new Date();
-		c.owner = req.session.user.username;
-		c.tags = form.circle.tags ? form.circle.tags.split(",") : [];
+         
+      c.created = new Date();
+      c.owner = req.session.user.username;
+      c.tags = form.circle.tags ? form.circle.tags.split(",") : [];
 
         calipso.e.pre_emit('CIRCLE_CREATE', c, function (c) {
             c.save(function (err) {
@@ -408,7 +408,6 @@ function updateCircle(req, res, template, block, next) {
    calipso.form.process(req, function (form) {
 
       if (form) {
-
          var Circle = calipso.db.model('Circle');
          var id = req.moduleParams.id;
 
