@@ -18,8 +18,8 @@ var routes = [
     {path:'GET /api', fn:apiDefault },
     {path:'GET /api/circles', fn:listCircles },
     {path:'GET /api/circles/:id', fn:listCircles },
-    {path: 'POST /api/circles', fn: createOrUpdateCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:create") },
-    {path: 'POST /api/circles/:id', fn: createOrUpdateCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:update") },
+    {path: 'POST /api/circles', fn: createCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:create") },
+    {path: 'POST /api/circles/:id', fn: updateCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:update") },
     {path: 'DELETE /api/circles/:id', fn: deleteCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:delete") }
   /*
   
@@ -66,54 +66,48 @@ function listCircles(req, res, template, block, next) {
   }
 }
 
-function createOrUpdateCircle(req, res, template, block, next) {
+function createCircle(req, res, template, block, next) {
+  var Circle = calipso.db.model('Circle');
 
-  function saveCircle(c) {
-  }
+  var newCircle = new Circle(req.body);
 
+  calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
+  newCircle.save(function (err) {
+    if (!err) {
+      calipso.e.post_emit('CIRCLE_CREATE', newCircle);
+      return res.send(200, newCircle);
+    } else {
+      res.status(400)
+      calipso.error("Error creating/updating circle", err, newCircle);
+      return res.send(400, error);
+    }
+  });
+  return next();
+}
+
+function updateCircle(req, res, template, block, next) {
   var Circle = calipso.db.model('Circle');
   var id = req.moduleParams.id;
 
-  calipso.log("id ", id);
-  if (id) {
-    calipso.log("Updating: ");
-    return Circle.findById(id, function (err, oldCircle) {
-      if (!oldCircle) {
-        return res.send(400, error);
-      } else {
-        calipso.form.mapFields(req.body, oldCircle);
-        calipso.e.pre_emit('CIRCLE_UPDATE', oldCircle);
-        calipso.log("Updating: ");
-        oldCircle.save(function (err) {
-          if (!err) {
-            calipso.log("Updated. ", oldCircle.name);
-            calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
-            return res.send(200, oldCircle);
-          } else {
-            res.status(400)
-            error = err;
-            calipso.error("Error creating/updating circle", err, c);
-            return res.send(400, error);
-          }
-        });
-      }
-    });
-  } else {
-    var newCircle = new Circle(req.body);
-  
-    calipso.log("Creating: ");
-    calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
-    newCircle.save(function (err) {
-      if (!err) {
-        calipso.e.post_emit('CIRCLE_CREATE', newCircle);
-        return res.send(200, newCircle);
-      } else {
-        res.status(400)
-        calipso.error("Error creating/updating circle", err, newCircle);
-        return res.send(400, error);
-      }
-    });
-  }
+  return Circle.findById(id, function (err, oldCircle) {
+    if (!oldCircle) {
+      return res.send(400, error);
+    } else {
+      calipso.form.mapFields(req.body, oldCircle);
+      calipso.e.pre_emit('CIRCLE_UPDATE', oldCircle);
+      oldCircle.save(function (err) {
+        if (!err) {
+          calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
+          return res.send(200, oldCircle);
+        } else {
+          res.status(400)
+          error = err;
+          calipso.error("Error creating/updating circle", err, c);
+          return res.send(400, error);
+        }
+      });
+    }
+  });
   return next();
 }
 
