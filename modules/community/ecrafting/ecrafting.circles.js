@@ -5,7 +5,8 @@ var rootpath = process.cwd() + '/',
    path = require('path'),
    Query = require("mongoose").Query,
    calipso = require(path.join(rootpath, 'lib/calipso')),
-   mongooseTypes = require("mongoose-types");
+   mongooseTypes = require("mongoose-types"),
+   extensions = require('./lib/schema.extensions');
 
 module.exports = {
    init: init,
@@ -92,28 +93,28 @@ var routes = [{
    }
 
    /**
-    * Initialisation
+    * Initialization
     */
    function init(module, app, next) {
       function initEntities(module, app, next) {
       mongooseTypes.loadTypes(calipso.lib.mongoose);
    
       var Circle = new calipso.lib.mongoose.Schema({
-            owner: {
-               type: calipso.lib.mongoose.SchemaTypes.Email
-            },
-         // Image
-            name: {
-               type: String,
-               required: true
-            },
-            description: {
-               type: String,
-               "default": ""
-            },
-            tags: [String],
-            members: [calipso.lib.mongoose.SchemaTypes.Email],
-            links: [calipso.lib.mongoose.SchemaTypes.Url],
+         owner: {
+            type: calipso.lib.mongoose.SchemaTypes.Email
+         },
+      // Image
+         name: {
+            type: String,
+            required: true
+         },
+         description: {
+            type: String,
+            "default": ""
+         },
+         tags: [String],
+         members: [calipso.lib.mongoose.SchemaTypes.Email],
+         links: [calipso.lib.mongoose.SchemaTypes.Url],
          location: {
             type:String
          },
@@ -166,12 +167,14 @@ var routes = [{
             type: Date,
          }
          });
+
          Circle.path('name').validate(function (v) {
-            return v.length > 4 && v.length < 20;
+            return v && v.length > 4 && v.length < 20;
          }, 'Circle name should be more than 4 and less than 20 characters');
+         Circle.plugin(extensions, { index: true });
+
          calipso.db.model('Circle', Circle);
       }
-
       calipso.e.addEvent('CIRCLE_CREATE');
       calipso.e.addEvent('CIRCLE_UPDATE');
       calipso.e.addEvent('CIRCLE_DELETE');
@@ -235,50 +238,21 @@ var circleForm = {
    }]
 };
 
-var circleCallForm = {
-   id: 'FORM',
-   title: 'Circle Call',
-   type: 'form',
-   method: 'POST',
-   tabs: false,
-   action: '/circle',
-   sections: [{
-      id: 'type-section',
-      label: 'Circle',
-      fields: [{
-         label: 'Name',
-         name: 'circle[name]',
-         type: 'text',
-         description: 'Enter the name of the circle, it must be unique.'
-      }, {
-         label: 'Description',
-         name: 'circle.call[description]',
-         type: 'textarea',
-         description: 'Enter a description.'
-      }, {
-         label: 'Location',
-         name: 'circle[location]',
-         type: 'text',
-         description: 'Enter the circle location.'
-      }, {
-      label:'Tags', 
-      name:'circle[tags]', 
-      type:'text', 
-      description:'Enter comma delimited tags for this circle.'
-      }
-     ]
-   }],
-   buttons: [{
-      name: 'submit',
-      type: 'submit',
-      value: 'Save Call'
-   }, {
-      name: 'cancel',
-      type: 'button',
-      href: '/circle',
-      value: 'Cancel'
-   }]
-};
+/**
+ * Create new circle
+ */
+function createCircleForm(req, res, template, block, next) {
+
+   circleForm.title = "Create Circle";
+   circleForm.action = "/circle/create";
+
+   calipso.form.render(circleForm, null, req, function (form) {
+      calipso.theme.renderItem(req, res, template, block, {
+         form: form
+      }, next);
+   });
+
+}
 
 /**
  * Create new circle
@@ -288,15 +262,15 @@ function createCircle(req, res, template, block, next) {
    calipso.form.process(req, function (form) {
 
       if (form) {
-        var Circle = calipso.db.model('Circle');
-        var c = new Circle(form.circle);
-        var saved;
+         var Circle = calipso.db.model('Circle');
+         var c = new Circle(form.circle);
+         var saved;
          
-      c.created = new Date();
-      c.owner = req.session.user.username;
-      c.tags = form.circle.tags ? form.circle.tags.split(",") : [];
+         c.created = new Date();
+         c.owner = req.session.user.username;
+         c.tags = form.circle.tags ? form.circle.tags.split(",") : [];
 
-        calipso.e.pre_emit('CIRCLE_CREATE', c, function (c) {
+         calipso.e.pre_emit('CIRCLE_CREATE', c, function (c) {
             c.save(function (err) {
                if (err) {
                   req.flash('error', req.t('Could not save circle because {msg}.', {
@@ -317,22 +291,6 @@ function createCircle(req, res, template, block, next) {
          });
       }
    });
-}
-
-/**
- * Create new circle
- */
-function createCircleForm(req, res, template, block, next) {
-
-   circleForm.title = "Create Circle";
-   circleForm.action = "/circle/create";
-
-   calipso.form.render(circleForm, null, req, function (form) {
-      calipso.theme.renderItem(req, res, template, block, {
-         form: form
-      }, next);
-   });
-
 }
 
 /**
@@ -414,8 +372,6 @@ function updateCircle(req, res, template, block, next) {
          Circle.findById(id, function (err, c) {
             if (!err && c) {
                calipso.form.mapFields(form.circle, c);
-               c.updated = new Date();
-
                calipso.e.pre_emit('CIRCLE_UPDATE', c, function (c) {
 
                   c.save(function (err) {
