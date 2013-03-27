@@ -6,6 +6,7 @@
   calipso = require(path.join(rootpath, 'lib/calipso')),
   Query = require("mongoose").Query,
   everyauth = require("everyauth")
+  domain = require('./ecrafting.domain'),
   circles = require('./ecrafting.circles'),
   api = require('./ecrafting.api'),
   

@@ -60,6 +60,7 @@
 	  <div class="span3 bs-docs-sidebar">
 	    <ul class="nav nav-list bs-docs-sidenav">
 	      <li><a href="#circle"><i class="icon-chevron-right"></i> Circle</a></li>
+	      <li><a href="#call"><i class="icon-chevron-right"></i> Call</a></li>
 	      <li><a href="#project"><i class="icon-chevron-right"></i> Project</a></li>
 	    </ul>
 	  </div>
@@ -70,6 +71,7 @@
 				<span id="status" class="label label-info">-</span>
 		        <strong>Id:</strong>
 				<span id="id" class="label label-info">-</span>
+				<span id="id2" class="label label-info">-</span>
 				<div id="location">
 				</div>
 				<div id="output" style="height: 80px; overflow: auto">
@@ -92,9 +94,26 @@
 					</li>
 				</ul>
 			</section>
+			<section id="call">
+			  <div class="page-header">
+			    <h1>2. Call</h1>
+			  </div>
+				<ul>
+					<li><a href="#" onclick="ecr.page.createCall()">Create</a>
+					</li>
+					<li><a href="#" onclick="ecr.page.listCall()">List</a>
+					</li>
+					<li><a href="#" onclick="ecr.page.readCall()">Read</a>
+					</li>
+					<li><a href="#" onclick="ecr.page.updateCall()">Update</a>
+					</li>
+					<li><a href="#" onclick="ecr.page.deleteCall()">Delete</a>
+					</li>
+				</ul>
+			</section>
 			<section id="project">
 			  <div class="page-header">
-			    <h1>2. Project</h1>
+			    <h1>3. Project</h1>
 			  </div>
 				<ul>
 					<li><a href="#" onclick="ecr.page.create()">Create</a>

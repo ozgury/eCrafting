@@ -16,21 +16,32 @@ module.exports = {
  */
 var routes = [
     {path:'GET /api', fn:apiDefault },
+
+    // Circles
     {path:'GET /api/circles', fn:listCircles },
     {path:'GET /api/circles/:id', fn:listCircles },
     {path: 'POST /api/circles', fn: createCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:create") },
     {path: 'POST /api/circles/:id', fn: updateCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:update") },
-    {path: 'DELETE /api/circles/:id', fn: deleteCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:delete") }
-  /*
-  
-  {path:'GET /user/role/list.:format?', fn:listRole, admin:true, permit:calipso.permission.Helper.hasPermission("admin:user:role:view"), template:'role.list', block:'content.user.role.list'},
-  {path:'POST /user/role/create', fn:createRole, admin:true, permit:calipso.permission.Helper.hasPermission("admin:user:role:create")},
-  {path:'GET /user/role/new', fn:createRoleForm, admin:true, permit:calipso.permission.Helper.hasPermission("admin:user:role:create"), block:'content.user.role.new', template:'role.form'},
-  {path:'GET /user/role/show/:id.:format?', fn:showRole, admin:true, permit:calipso.permission.Helper.hasPermission("admin:user:role:view"), template:'role.show', block:'content.user.role.show'},
-  {path:'GET /user/role/edit/:id', fn:editRoleForm, admin:true, permit:calipso.permission.Helper.hasPermission("admin:user:role:update"), block:'content.user.role.edit'},
-  {path:'GET /user/role/delete/:id', fn:deleteRole, admin:true, permit:calipso.permission.Helper.hasPermission("admin:user:role:delete")},
-  {path:'POST /user/role/update/:id', fn:updateRole, admin:true, permit:calipso.permission.Helper.hasPermission("admin:user:role:update")}
-  */
+    {path: 'DELETE /api/circles/:id', fn: deleteCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:delete") },
+
+    // Circle Calls
+    {path:'GET /api/circles/:id/calls', fn:listCircleCalls },
+    {path:'GET /api/circles/:id/calls/:cid', fn:listCircleCalls },
+    {path: 'POST /api/circles/:id/calls', fn: createCircleCall },
+    {path: 'POST /api/circles/:id/calls/:cid', fn: updateCircleCall },
+    {path: 'DELETE /api/circles/:id/calls/:cid', fn: deleteCircleCall },
+
+/*
+    // Project Calls
+    {path:'GET /api/circles/:id/calls/:cid/projects', fn:listCallProjects },
+    {path:'GET /api/circles/:id/calls/:cid/projects/:pid', fn:listCallProjects },
+    {path: 'POST /api/circles/:id/calls/:cid/projects', fn: createCallProject },
+    {path: 'POST /api/circles/:id/calls/:cid/projects/:pid', fn: updateCallProject },
+    {path: 'DELETE /api/circles/:id/calls/:cid/projects/:pid', fn: deleteCallProject }
+*/
+//    {path: 'POST /api/circles/:id/calls', fn: createCircleCall, permit: calipso.permission.Helper.hasPermission("admin:call:create") },
+//    {path: 'POST /api/circles/:id/calls/:pid', fn: updateCircleCall, permit: calipso.permission.Helper.hasPermission("admin:call:update") },
+//    {path: 'DELETE /api/circles/:id/calls/:pid', fn: deleteCircleCall, permit: calipso.permission.Helper.hasPermission("admin:call:delete") }
 ]
 
 /**
@@ -43,55 +54,56 @@ function apiDefault(req, res, template, block, next) {
   res.send('eCrafting API is running');
 }
 
-function listCircles(req, res, template, block, next) {
-  var Circle = calipso.db.model('Circle');
-  var id = req.moduleParams.id;
-
-  if (id) {
-    return Circle.findById(id, function (err, circle) {
-      if (!err) {
-        return res.send(200, circle);
-      } else {
-        return res.send(400, err);
-      }
-    });
-  } else {
-    return Circle.find(function (err, circles) {
-      if (!err) {
-        return res.send(200, circles);
-      } else {
-        return res.send(400, err);
-      }
-    });
-  }
-}
-
+/**
+ * Calls
+ */
 function createCircle(req, res, template, block, next) {
   var Circle = calipso.db.model('Circle');
-
   var newCircle = new Circle(req.body);
 
+  newCircle.owner = req.session.user.username;
   calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
   newCircle.save(function (err) {
     if (!err) {
       calipso.e.post_emit('CIRCLE_CREATE', newCircle);
       return res.send(200, newCircle);
     } else {
-      res.status(400)
-      calipso.error("Error creating/updating circle", err, newCircle);
-      return res.send(400, error);
+      calipso.error("Error creating circle", err);
+      return res.send(400, err);
     }
   });
-  return next();
+}
+
+function listCircles(req, res, template, block, next) {
+  var Circle = calipso.db.model('Circle');
+  var id = req.moduleParams.id;
+
+  if (id) {
+    Circle.findById(id, function (err, circle) {
+      if (!err) {
+        return res.send(200, circle);
+      } else {
+        return res.send(404, err);
+      }
+    });
+  } else {
+    Circle.find(function (err, circles) {
+      if (!err) {
+        return res.send(200, circles);
+      } else {
+        return res.send(404, err);
+      }
+    });
+  }
 }
 
 function updateCircle(req, res, template, block, next) {
   var Circle = calipso.db.model('Circle');
   var id = req.moduleParams.id;
 
-  return Circle.findById(id, function (err, oldCircle) {
+  Circle.findById(id, function (err, oldCircle) {
     if (!oldCircle) {
-      return res.send(400, error);
+      return res.send(404, err);
     } else {
       calipso.form.mapFields(req.body, oldCircle);
       calipso.e.pre_emit('CIRCLE_UPDATE', oldCircle);
@@ -100,38 +112,146 @@ function updateCircle(req, res, template, block, next) {
           calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
           return res.send(200, oldCircle);
         } else {
-          res.status(400)
-          error = err;
-          calipso.error("Error creating/updating circle", err, c);
-          return res.send(400, error);
+          calipso.error("Error updating circle", err);
+          return res.send(400, err);
         }
       });
     }
   });
-  return next();
 }
 
 function deleteCircle(req, res, template, block, next) {
-   var Circle = calipso.db.model('Circle');
-   var id = req.moduleParams.id;
+  var Circle = calipso.db.model('Circle');
+  var id = req.moduleParams.id;
 
-   Circle.findById(id, function (err, c) {
+  Circle.findById(id, function (err, c) {
+    if (!err) {
       calipso.e.pre_emit('CIRCLE_DELETE', c);
       Circle.remove({
-         _id: id
+        _id: id
       }, function (err) {
         if (!err) {
           calipso.e.post_emit('CIRCLE_DELETE', c);
           return res.send(200, c);
         } else {
-          res.status(400)
-          error = err;
-          calipso.error("Error deleting circle", err, c);
-          return res.send(400, error);
+          calipso.error("Error deleting circle", err);
+          return res.send(400, err);
         }
-        next();
       });
-   });
+    } else {
+      return res.send(404, err);      
+    }
+  });
+}
+
+/**
+ * Circle Calls
+ */
+function createCircleCall(req, res, template, block, next) {
+  var Circle = calipso.db.model('Circle');
+  var id = req.moduleParams.id;
+
+  Circle.findById(id, function (err, circle) {
+    if (!circle) {
+      return res.send(400, err);
+    } else {
+      var newCall = req.body;
+
+      calipso.e.pre_emit('CALL_CREATE', circle);
+      circle.calls.push(newCall);
+      circle.save(function (err) {
+        if (!err) {
+          calipso.e.post_emit('CALL_CREATE', circle.calls[circle.calls.length - 1]);
+          return res.send(200, circle.calls[circle.calls.length - 1]);
+        } else {
+          calipso.error("Error creating call", err);
+          return res.send(400, err);
+        }
+      });
+    }
+  });
+}
+
+function listCircleCalls(req, res, template, block, next) {
+  var Circle = calipso.db.model('Circle');
+  var id = req.moduleParams.id;
+  var cId = req.moduleParams.cid;
+
+  if (id) {
+    return Circle.findById(id, function (err, circle) {
+      if (!err) {
+        if (cId) {
+          return res.send(200, circle.calls.id(cId));
+        } else {
+          return res.send(200, circle.calls);
+        }
+      } else {
+        return res.send(404, err);
+      }
+    });
+  } else {
+    return res.send(400, err);
+  }
+}
+
+function updateCircleCall(req, res, template, block, next) {
+  var Circle = calipso.db.model('Circle');
+  var id = req.moduleParams.id;
+  var cId = req.moduleParams.cid;
+
+  Circle.findById(id, function (err, circle) {
+    if (!circle) {
+      return res.send(404, err);
+    } else {
+      var call = circle.calls.id(cId);
+
+      if (call) {
+        calipso.e.pre_emit('CALL_UPDATE', call);
+        calipso.form.mapFields(req.body, call);
+        circle.save(function (err) {
+          if (!err) {
+            calipso.e.post_emit('CALL_UPDATE', call);
+            return res.send(200, call);
+          } else {
+            calipso.error("Error updating call", err);
+            return res.send(400, err);
+          }
+        });
+      } else {
+        return res.send(404, err);
+      }
+    }
+  });
+}
+
+function deleteCircleCall(req, res, template, block, next) {
+  var Circle = calipso.db.model('Circle');
+  var id = req.moduleParams.id;
+  var cId = req.moduleParams.cid;
+
+  Circle.findById(id, function (err, circle) {
+    if (!circle) {
+      return res.send(404, err);
+    } else {
+      var call = circle.calls.id(cId);
+
+      if (call) {
+        calipso.e.pre_emit('CALL_DELETE', call);
+        circle.calls.pull({ _id: cId });
+        circle.save(function (err) {
+          if (!err) {
+            calipso.e.post_emit('CALL_DELETE', call);
+            return res.send(200, call);
+          } else {
+            calipso.error("Error deleting call", err);
+            return res.send(400, err);
+          }
+        });
+      } else {
+        return res.send(404, err);
+      }
+    }
+  });
 }
 
 /**

@@ -16,7 +16,7 @@ ecr.page.ApiTest = function () {
     this.initialize = function () {
     };
 
-    function showResponse(response, jqXhr) {
+    function showResponse(response, jqXhr, idIndex) {
         $('#status').html(jqXhr.status);
         $('#output').html(JSON.stringify(response));
         
@@ -26,9 +26,9 @@ ecr.page.ApiTest = function () {
           $('#location').hide();          
         }
         if (response._id) {
-          $('#id').html(response._id).show();
+          $('#id' + (idIndex != undefined ? idIndex : '')).html(response._id).show();
         } else {
-          $('#id').hide();          
+          $('#id' + (idIndex != undefined ? idIndex : '')).hide();          
         }
     }
 
@@ -58,18 +58,14 @@ ecr.page.ApiTest = function () {
       var command = 'circles';
       var parameters = null;
 
-      apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
-        showResponse(response, jqXhr);
-      });
+      apiWrapper.apiCall(command, parameters, null, showResponse, showError);
     };
 
     this.read = function () {
       var command = 'circles/' + $('#id').html();
       var parameters = null;
 
-      apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
-        showResponse(response, jqXhr);
-      });
+      apiWrapper.apiCall(command, parameters, null, showResponse, showError);
     };
 
     this.update = function () {
@@ -86,5 +82,56 @@ ecr.page.ApiTest = function () {
     this.delete = function () {
       var command = 'circles/' + $('#id').html();
       apiWrapper.apiCall(command, null, 'DELETE', showResponse, showError);
+    };
+
+    this.createCall = function () {
+      var command = 'circles/' + $('#id').html() + '/calls';
+      var parameters = {
+          name: "Some new call",
+          description: "Some call description",
+          date: new Date("4/13/2013"),
+          location: "New York"
+      };
+      apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
+        showResponse(response, jqXhr, 2);
+      }, showError);
+    };
+
+    this.listCall = function () {
+      var command = 'circles/' + $('#id').html() + '/calls';
+      var parameters = null;
+
+      apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
+        showResponse(response, jqXhr, 2);
+      }, showError);
+    };
+
+    this.readCall = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html();
+      var parameters = null;
+
+      apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
+        showResponse(response, jqXhr, 2);
+      }, showError);
+    };
+
+    this.updateCall = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html();
+      var parameters = {
+          name: "Some updated call",
+          description: "Some updated call description",
+          date: new Date("5/13/2013"),
+          location: "New York"
+      };
+      apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
+        showResponse(response, jqXhr, 2);
+      }, showError);
+    };
+
+    this.deleteCall = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html();
+      apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
+        showResponse(response, jqXhr, 2);
+      }, showError);
     };
 };

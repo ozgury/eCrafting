@@ -6,6 +6,7 @@ var rootpath = process.cwd() + '/',
    Query = require("mongoose").Query,
    calipso = require(path.join(rootpath, 'lib/calipso')),
    mongooseTypes = require("mongoose-types"),
+   mongooseValidate = require('mongoose-validate'),
    extensions = require('./lib/schema.extensions');
 
 module.exports = {
@@ -97,80 +98,93 @@ var routes = [{
     */
    function init(module, app, next) {
       function initEntities(module, app, next) {
-      mongooseTypes.loadTypes(calipso.lib.mongoose);
-   
-      var Circle = new calipso.lib.mongoose.Schema({
-         owner: {
-            type: calipso.lib.mongoose.SchemaTypes.Email
-         },
-      // Image
-         name: {
-            type: String,
-            required: true
-         },
-         description: {
-            type: String,
-            "default": ""
-         },
-         tags: [String],
-         members: [calipso.lib.mongoose.SchemaTypes.Email],
-         links: [calipso.lib.mongoose.SchemaTypes.Url],
-         location: {
-            type:String
-         },
-         calls: {
-            // Image
+         mongooseTypes.loadTypes(calipso.lib.mongoose);
+      
+         var Project = new calipso.lib.mongoose.Schema({
+            owner: {
+               type: calipso.lib.mongoose.SchemaTypes.Email,
+               required: true
+            },
             name: {
                type: String,
+               required: true
             },
             description: {
                type: String,
             },
-            date: {
-               type: Date,
+            approved: {
+               type:Boolean
             },
-            location: {
-               type:String
+            // Media
+            updated: {
+               type: Date
             },
-            projects: {
-               owner: {
-                  type: calipso.lib.mongoose.SchemaTypes.Email
-               },
+            created: {
+               type: Date
+            }
+         });
+
+         var Call = new calipso.lib.mongoose.Schema({
+               // Image
                name: {
                   type: String,
                },
                description: {
                   type: String,
                },
-               approved: {
-                  type:Boolean
-               },
-               // Media
-               updated: {
+               date: {
                   type: Date,
+                  required: true
+               },
+               location: {
+                  type:String
+               },
+               projects: [Project],
+               updated: {
+                  type: Date
                },
                created: {
-                  type: Date,
+                  type: Date
                }
+         });
+
+         var Circle = new calipso.lib.mongoose.Schema({
+            owner: {
+               type: calipso.lib.mongoose.SchemaTypes.Email,
+               required: true
             },
+         // Image
+            name: {
+               type: String,
+               required: true
+            },
+            description: {
+               type: String,
+               "default": ""
+            },
+            tags: [String],
+            members: [calipso.lib.mongoose.SchemaTypes.Email],
+            links: [calipso.lib.mongoose.SchemaTypes.Url],
+            location: {
+               type:String
+            },
+            calls: [Call],
             updated: {
-               type: Date,
+               type: Date
             },
             created: {
-               type: Date,
+               type: Date
             }
-         },
-         updated: {
-            type: Date,
-         },
-         created: {
-            type: Date,
-         }
          });
 
          Circle.path('name').validate(function (v) {
             return v && v.length > 4 && v.length < 20;
          }, 'Circle name should be more than 4 and less than 20 characters');
+         Circle.path('name').validate(function (v) {
+            return v && v.length > 4 && v.length < 20;
+         }, 'Circle name should be more than 4 and less than 20 characters');
+         Project.plugin(extensions, { index: true });
+         Call.plugin(extensions, { index: true });
          Circle.plugin(extensions, { index: true });
 
          calipso.db.model('Circle', Circle);
@@ -179,7 +193,16 @@ var routes = [{
       calipso.e.addEvent('CIRCLE_UPDATE');
       calipso.e.addEvent('CIRCLE_DELETE');
 
+      calipso.e.addEvent('CALL_CREATE');
+      calipso.e.addEvent('CALL_UPDATE');
+      calipso.e.addEvent('CALL_DELETE');
+
+      calipso.e.addEvent('PROJECT_CREATE');
+      calipso.e.addEvent('PROJECT_UPDATE');
+      calipso.e.addEvent('PROJECT_DELETE');
+
       calipso.permission.Helper.addPermission("admin:circles", "Circles", true);
+      calipso.permission.Helper.addPermission("admin:calls", "Calls", true);
 
       calipso.lib.async.map(routes, function (options, next) {
          module.router.addRoute(options, next)
@@ -266,7 +289,6 @@ function createCircle(req, res, template, block, next) {
          var c = new Circle(form.circle);
          var saved;
          
-         c.created = new Date();
          c.owner = req.session.user.username;
          c.tags = form.circle.tags ? form.circle.tags.split(",") : [];
 
@@ -514,7 +536,6 @@ function listCircle(req, res, template, block, next) {
  * TODO - deal with referential integrity
  */
 function deleteCircle(req, res, template, block, next) {
-
    var Circle = calipso.db.model('Circle');
    var id = req.moduleParams.id;
 
