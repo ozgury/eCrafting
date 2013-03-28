@@ -51,6 +51,7 @@ ecr.page.ApiTest = function () {
           location: "New York",
           tags: ["some", "circle"]
       };
+
       apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', showResponse, showError);
     };
 
@@ -76,11 +77,13 @@ ecr.page.ApiTest = function () {
           location: "New York",
           tags: ["some", "circle"]
       };
+
       apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', showResponse, showError);
     };
 
     this.delete = function () {
       var command = 'circles/' + $('#id').html();
+
       apiWrapper.apiCall(command, null, 'DELETE', showResponse, showError);
     };
 
@@ -92,6 +95,7 @@ ecr.page.ApiTest = function () {
           date: new Date("4/13/2013"),
           location: "New York"
       };
+
       apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
         showResponse(response, jqXhr, 2);
       }, showError);
@@ -123,6 +127,7 @@ ecr.page.ApiTest = function () {
           date: new Date("5/13/2013"),
           location: "New York"
       };
+
       apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
         showResponse(response, jqXhr, 2);
       }, showError);
@@ -130,8 +135,60 @@ ecr.page.ApiTest = function () {
 
     this.deleteCall = function () {
       var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html();
+
       apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
         showResponse(response, jqXhr, 2);
+      }, showError);
+    };
+
+    this.createProject = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html() + '/projects';
+      var parameters = {
+          name: "Some new project",
+          description: "Some project description"
+      };
+
+      apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
+        showResponse(response, jqXhr, 3);
+      }, showError);
+    };
+
+    this.listProject = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html() + '/projects';
+      var parameters = null;
+
+      apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
+        showResponse(response, jqXhr, 3);
+      }, showError);
+    };
+
+    this.readProject = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html() + '/projects/' + $('#id3').html();
+      var parameters = null;
+
+      apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
+        showResponse(response, jqXhr, 3);
+      }, showError);
+    };
+
+    this.updateProject = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html() + '/projects/' + $('#id3').html();
+      var parameters = {
+          name: "Updated project",
+          description: "Some updated project description",
+          approved: true
+      };
+
+      apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
+        showResponse(response, jqXhr, 3);
+      }, showError);
+    };
+
+    this.deleteProject = function () {
+      var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html() + '/projects/' + $('#id3').html();
+
+      apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
+        showResponse(response, jqXhr, 3);
       }, showError);
     };
 };

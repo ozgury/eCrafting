@@ -8,10 +8,11 @@ var rootpath = process.cwd() + '/',
    mongooseTypes = require("mongoose-types"),
    mongooseValidate = require('mongoose-validate'),
    extensions = require('./lib/schema.extensions');
-
-   module.exports = {
+   eCrafting = {},
+   eCrafting.domain = module.exports = {
       init: init,
-      install: install
+      install: install,
+      route: route
    }
 
    /**
@@ -37,12 +38,6 @@ var rootpath = process.cwd() + '/',
                type:Boolean
             },
             // Media
-            updated: {
-               type: Date
-            },
-            created: {
-               type: Date
-            }
          });
 
          var Call = new calipso.lib.mongoose.Schema({
@@ -60,13 +55,7 @@ var rootpath = process.cwd() + '/',
                location: {
                   type:String
                },
-               projects: [Project],
-               updated: {
-                  type: Date
-               },
-               created: {
-                  type: Date
-               }
+               projects: [Project]
          });
 
          var Circle = new calipso.lib.mongoose.Schema({
@@ -74,14 +63,13 @@ var rootpath = process.cwd() + '/',
                type: calipso.lib.mongoose.SchemaTypes.Email,
                required: true
             },
-         // Image
+            // Image
             name: {
                type: String,
                required: true
             },
             description: {
                type: String,
-               "default": ""
             },
             tags: [String],
             members: [calipso.lib.mongoose.SchemaTypes.Email],
@@ -89,26 +77,29 @@ var rootpath = process.cwd() + '/',
             location: {
                type:String
             },
-            calls: [Call],
-            updated: {
-               type: Date
-            },
-            created: {
-               type: Date
-            }
+            calls: [Call]
          });
 
          Circle.path('name').validate(function (v) {
             return v && v.length > 4 && v.length < 20;
          }, 'Circle name should be more than 4 and less than 20 characters');
-         Circle.path('name').validate(function (v) {
+         Call.path('name').validate(function (v) {
             return v && v.length > 4 && v.length < 20;
-         }, 'Circle name should be more than 4 and less than 20 characters');
+         }, 'Call name should be more than 4 and less than 20 characters');
+         Project.path('name').validate(function (v) {
+            return v && v.length > 4 && v.length < 20;
+         }, 'Project name should be more than 4 and less than 20 characters');
+
+
          Project.plugin(extensions, { index: true });
          Call.plugin(extensions, { index: true });
          Circle.plugin(extensions, { index: true });
 
          calipso.db.model('Circle', Circle);
+
+         eCrafting.domain.project = Project;
+         eCrafting.domain.call = Call;
+         eCrafting.domain.circle = Circle;
       }
 
       function initCalipsoBindings () {
@@ -130,6 +121,18 @@ var rootpath = process.cwd() + '/',
 
       initEntities();
       initCalipsoBindings();
+   }
+
+   function route(req, res, module, app) {
+      eCrafting.domain.circle.pre("validate", function (next) {
+         //console.log("Circle pre validate");
+         next();
+      });
+
+      eCrafting.domain.circle.pre('save', function (next) {
+        //console.log("Circle pre save");
+        next();
+      });
    }
 
 /**

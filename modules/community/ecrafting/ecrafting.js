@@ -23,6 +23,7 @@ function route(req, res, module, app, next) {
   res.menu.admin.addMenuItem(req, {name:'eCrafting', path:'ecrafting', weight:5, url:'/ecrafting', description:'eCrafting Management ...', permit:aPerm });
   module.router.route(req, res, next);
 
+  domain.route(req, res, next);
   circles.route(req, res, next);
   api.route(req, res, next);
 }
@@ -33,6 +34,7 @@ function init(module, app, next) {
       module.router.addRoute('GET /ecrafting', showMain, {template:'ecrafting', block:'ecrafting.show'}, this.parallel());
     },
     function done() {
+      domain.init(module, app, next);
       circles.init(module, app, next);
       api.init(module, app, next);
       next();

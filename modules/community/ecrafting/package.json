@@ -9,7 +9,8 @@
         "url":"git://github.com/ozgury/ecrafting.git"
     },
     "author":"Ozgur Yogurtcu <oyogurtcu@gmail.com>",
-  "dependencies": {
-     "mongoose-3x-types": "1.0.x"
-  }	
+    "dependencies": {
+      "mongoose":"3.6.x",
+      "mongoose-3x-types": "1.0.x"
+    }	
 }
