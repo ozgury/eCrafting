@@ -90,12 +90,34 @@ var rootpath = process.cwd() + '/',
             return v && v.length > 4 && v.length < 20;
          }, 'Project name should be more than 4 and less than 20 characters');
 
-
          Project.plugin(extensions, { index: true });
          Call.plugin(extensions, { index: true });
          Circle.plugin(extensions, { index: true });
 
          calipso.db.model('Circle', Circle);
+
+         var Media = new calipso.lib.mongoose.Schema({
+           name:{type: String, "default":""},
+           fileName:{type: String},
+           mediaType:{type: String, required: true},
+           path:{type: String, required: true},
+           author:{type: String, required: true},
+           ispublic:{type: Boolean, required: true, "default": false},
+           gallery:{type: String},
+           thumb:{type: String},
+           prevId:{type: String},
+           nextId:{type: String},
+           sort:{type: Number,"default":0},          
+           tags:[String],
+           description:String,          
+           created: { type: Date, "default": Date.now },
+           updated: { type: Date, "default": Date.now }
+         });
+
+         Media.plugin(extensions, { index: true });
+
+         calipso.db.model('Media', Media);
+
 
          eCrafting.domain.project = Project;
          eCrafting.domain.call = Call;

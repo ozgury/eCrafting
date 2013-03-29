@@ -8,68 +8,23 @@ if (typeof (ecr) == 'undefined') {
 
 ecr.ApiWrapper = function () {
 	var apiRootPath = "/api/";
-
-	var getProjectsForBoundsCall = null;
-
-	this.getProjectsForBounds = function (parameters, responseFunction) {
-		if (getProjectsForBoundsCall) {
-			getProjectsForBoundsCall.abort();
-		}
-		var command = 'projects';
-		getProjectsForBoundsCall = this.apiCall(command, parameters, null, function (response, jqXhr) {
-			responseFunction(response, jqXhr);
-			getProjectsForBoundsCall = null;
-		});
-	};
-
-	this.saveProject = function (project, responseFunction) {
-		var command = 'projects/';
-		this.apiCall(command, JSON.stringify(project), 'POST', function (response, jqXhr) {
-			responseFunction(response, jqXhr);
-		});
-	};
-
-	this.saveIncentive = function (project, responseFunction) {
-		var command = 'incentives/';
-		this.apiCall(command, JSON.stringify(project), 'POST', function (response, jqXhr) {
-			responseFunction(response, jqXhr);
-		});
-	};
-
-	this.savePowerOut = function (powerData, responseFunction) {
-		var command = 'powerdata/';
-		this.apiCall(command, JSON.stringify(powerData), 'POST', function (response, jqXhr) {
-			responseFunction(response, jqXhr);
-		});
-	};
-
-	var getPowerDevicesForBounds = null;
-	this.getPowerDevicesForBounds = function (parameters, responseFunction) {
-		if (getPowerDevicesForBounds) {
-			getPowerDevicesForBounds.abort();
-		}
-		var command = 'powerdata/device';
-		getPowerDevicesForBounds = this.apiCall(command, parameters, null, function (response, jqXhr) {
-			responseFunction(response, jqXhr);
-			getPowerDevicesForBounds = null;
-		});
-	};
-
-	this.deleteIncentiveLocation = function (incentivesPath, locationId, responseFunction) {
-		var command = incentivesPath + '/locations/' + locationId;
-		this.call(command, null, 'DELETE', function (response, jqXhr) {
-			responseFunction(response, jqXhr);
-		});
-	};
-
-	this.organizations = function (path, parameters, responseFunction) {
-		this.call(path, parameters, 'GET', function (response, jqXhr) {
-			responseFunction(response, jqXhr);
-		});
-	};
+	var that = this;
 
 	this.apiCall = function (command, parameters, type, successFunction) {
 		return this.call(apiRootPath + command + '?apikey=webclient', parameters, type, successFunction);
+	};
+
+	this.ajaxifyFormSubmission = function ($form, successFunction, errorFunction) {
+		$form.submit(function () {
+			$('html, body').animate({ scrollTop: 0 }, 'slow');
+			new that.postForm(this, this.action, successFunction, (errorFunction != null) ? errorFunction : function (result, other, exception) {
+				if (result.status == 400) {
+					// We have some error here
+					ecr.app.userError('Form post ' + result.status);
+				}
+			});
+			return false;
+		});
 	};
 
 	this.postForm = function (form, action, successFunction, errorFunction) {

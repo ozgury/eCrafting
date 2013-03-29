@@ -1,0 +1,47 @@
+<script type="text/javascript">
+$(function(){
+    // setup common ajax setting
+    $.ajaxSetup({
+        url: '/gallery/upsert',
+        type: 'POST',
+        async: false,
+        timeout: 500
+    });
+
+    // call inlineEdit
+    $('.editable').inlineEdit({      
+       buttons: '',
+       cancelOnBlur: true,  
+        save: function(event, data) {
+
+        	var url = this.id;
+        	var name = data.value;
+
+            var html = $.ajax({
+                data: { 'mediaGallery' : { url : url, name: name}, type:'json' }
+            }).responseText;            
+            
+            return html === 'OK' ? true : false;
+        }
+    });
+});
+</script>
+<div class="gallery">    
+    <ul class="gallery-images">
+    <% 
+	galleries.forEach(function(gallery) {	
+		%>
+			<li>
+				<span>
+					<a href="/gallery/show/<%= gallery.url %>" title="<%= gallery.name %>">				
+					<img src="<%- gallery.coverImage ? gallery.coverImage : '/images/default_thumb.jpg' %>"/>
+					</a>	
+					<div class='<%= user.isAdmin ? "editable" : "" %>' title='<%= user.isAdmin ? "Click to edit ..." : "" %>' id='<%= gallery.url %>'><%= gallery.name %></div>			
+				</span>
+			</li>
+		<%		
+	});
+	%>
+	</ul>
+</div>
+<script src="/js/jquery.inlineedit.js"></script>

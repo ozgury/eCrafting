@@ -14,7 +14,14 @@ ecr.page.ApiTest = function () {
     var apiWrapper = new ecr.ApiWrapper();
 
     this.initialize = function () {
-    };
+      ecr.app.ajaxifyFormSubmission($('form#imageformxx'), function (result) {
+        // File uploaded.
+      }, function (result, other, exception) {
+        if (result.status == 400) {
+          // Some error.
+        }
+      });
+    }
 
     function showResponse(response, jqXhr, idIndex) {
         $('#status').html(jqXhr.status);

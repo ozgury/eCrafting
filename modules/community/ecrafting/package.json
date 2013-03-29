@@ -11,6 +11,9 @@
     "author":"Ozgur Yogurtcu <oyogurtcu@gmail.com>",
     "dependencies": {
       "mongoose":"3.6.x",
-      "mongoose-3x-types": "1.0.x"
+      "mongoose-3x-types": "1.0.x",
+        "mkdirp": "0.0.7",
+        "async": "0.1.x",
+        "imagemagick": "0.1.x"      
     }	
 }
