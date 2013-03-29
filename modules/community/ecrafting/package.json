@@ -1,19 +1,19 @@
 {
-    "name":"ecrafting",
-    "label":"eCrafting",
-    "description":"eCrafting main module.",
-    "version":"0.1.0",
-    "homepage":"http://ecrafting.com",
-    "repository":{
-        "type":"git",
-        "url":"git://github.com/ozgury/ecrafting.git"
-    },
-    "author":"Ozgur Yogurtcu <oyogurtcu@gmail.com>",
-    "dependencies": {
-      "mongoose":"3.6.x",
-      "mongoose-3x-types": "1.0.x",
-        "mkdirp": "0.0.7",
-        "async": "0.1.x",
-        "imagemagick": "0.1.x"      
-    }	
+	"name":"ecrafting",
+	"label":"eCrafting",
+	"description":"eCrafting main module.",
+	"version":"0.1.0",
+	"homepage":"http://ecrafting.com",
+	"repository":{
+		"type":"git",
+		"url":"git://github.com/ozgury/ecrafting.git"
+	},
+	"author":"Ozgur Yogurtcu <oyogurtcu@gmail.com>",
+	"dependencies": {
+	  "mongoose":"3.6.x",
+	  "mongoose-3x-types": "1.0.x",
+		"mkdirp": "0.0.7",
+		"async": "0.1.x",
+		"imagemagick": "0.1.x"      
+	}	
 }

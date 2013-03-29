@@ -14,23 +14,12 @@
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
-      "workers": "",
+      "workers": 0,
       "restartWorkers": true,
-      "maximumRestarts": "1"
+      "maximumRestarts": 1
     },
     "events": {
-      "maxListeners": "500"
-    },
-    "loginPath": "",
-    "authentication": {
-      "password": false,
-      "migrate2pbkdf2": false,
-      "facebookAppId": "",
-      "facebookAppSecret": "",
-      "googleClientId": "",
-      "googleClientSecret": "",
-      "twitterConsumerKey": "",
-      "twitterConsumerSecret": ""
+      "maxListeners": 500
     }
   },
   "calipso": {
@@ -42,13 +31,12 @@
   "performance": {
     "cache": {
       "enabled": false,
-      "ttl": "600"
+      "ttl": 600
     },
     "watchFiles": true
   },
   "session": {
-    "secret": "calipso",
-    "maxAge": ""
+    "secret": "calipso"
   },
   "theme": {
     "default": "cleanslate",
@@ -62,13 +50,13 @@
   "logging": {
     "console": {
       "enabled": true,
-      "level": "info",
+      "level": "debug",
       "timestamp": true,
       "colorize": true
     },
     "file": {
-      "enabled": false,
-      "level": "info",
+      "enabled": true,
+      "level": "debug",
       "filepath": "logs/calipso.log",
       "timestamp": true
     }
@@ -88,7 +76,7 @@
       "enabled": true
     },
     "devtools": {
-      "enabled": true
+      "enabled": false
     },
     "ecrafting": {
       "enabled": true
@@ -101,6 +89,9 @@
         "track-pagespeed": true
       }
     },
+    "media": {
+      "enabled": false
+    },
     "pusher": {
       "enabled": false
     },
@@ -111,7 +102,7 @@
       "enabled": false
     },
     "aloha": {
-      "enabled": true
+      "enabled": false
     },
     "assets": {
       "enabled": false
@@ -155,9 +146,6 @@
       "enabled": true
     },
     "user": {
-      "enabled": true
-    },
-    "media": {
       "enabled": true
     }
   }
