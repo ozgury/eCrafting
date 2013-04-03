@@ -4,7 +4,8 @@
 var rootpath = process.cwd() + '/',
 	path = require('path'),
 	Query = require("mongoose").Query,
-	calipso = require(path.join(rootpath, 'lib/calipso'));
+	calipso = require(path.join(rootpath, 'lib/calipso')),
+	media = require('./ecrafting.media');
 
 module.exports = {
 	init:init,
@@ -56,6 +57,15 @@ function apiDefault(req, res, template, block, next) {
 	res.send('eCrafting API is running');
 }
 
+function responseOk(res, body) {
+	return res.send(200, body);
+}
+
+function responseError(res, code, error) {
+	calipso.error("Error", (error) ? error.stack : null);
+	res.send(code, error);
+}
+
 /**
  * Circles
  */
@@ -67,11 +77,10 @@ function createCircle(req, res, template, block, next) {
 	calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
 	newCircle.save(function (err) {
 		if (err) {
-			calipso.error("Error creating circle", err);
-			return res.send(400, err);
+			return responseError(res, 400, err);
 		}
 		calipso.e.post_emit('CIRCLE_CREATE', newCircle);
-		return res.send(200, newCircle);
+		return responseOk(res, newCircle);
 	});
 }
 
@@ -82,16 +91,16 @@ function listCircles(req, res, template, block, next) {
 	if (id) {
 		Circle.findById(id, function (err, circle) {
 			if (err) {
-				return res.send(404, err);
+				return responseError(res, 404, err);
 			}
-			return res.send(200, circle);
+			return responseOk(res, circle);
 		});
 	} else {
 		Circle.find(function (err, circles) {
 			if (err) {
-				return res.send(404, err);
+				return responseError(res, 404, err);
 			}
-			return res.send(200, circles);
+			return responseOk(res, circles);
 		});
 	}
 }
@@ -102,17 +111,17 @@ function updateCircle(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, oldCircle) {
 		if (!oldCircle) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		} else {
 			calipso.form.mapFields(req.body, oldCircle);
 			calipso.e.pre_emit('CIRCLE_UPDATE', oldCircle);
 			oldCircle.save(function (err) {
 				if (err) {
 					calipso.error("Error updating circle", err);
-					return res.send(400, err);
+					return responseError(res, 400, err);
 				}
 				calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
-				return res.send(200, oldCircle);
+				return responseOk(res, oldCircle);
 			});
 		}
 	});
@@ -124,7 +133,7 @@ function deleteCircle(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, c) {
 		if (err)  {
-			return res.send(404, err);      
+			return responseError(res, 404, err);
 		}
 		calipso.e.pre_emit('CIRCLE_DELETE', c);
 		Circle.remove({
@@ -132,10 +141,10 @@ function deleteCircle(req, res, template, block, next) {
 		}, function (err) {
 			if (err) {
 				calipso.error("Error deleting circle", err);
-				return res.send(400, err);
+				return responseError(res, 400, err);
 			}
 			calipso.e.post_emit('CIRCLE_DELETE', c);
-			return res.send(200, c);
+			return responseOk(res, c);
 		});
 	});
 }
@@ -149,7 +158,7 @@ function createCircleCall(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, circle) {
 		if (!circle) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var newCall = req.body;
 
@@ -158,10 +167,10 @@ function createCircleCall(req, res, template, block, next) {
 		circle.save(function (err) {
 			if (err) {
 				calipso.error("Error creating call", err);
-				return res.send(400, err);
+				return responseError(res, 400, err);
 			}
 			calipso.e.post_emit('CALL_CREATE', circle.calls[circle.calls.length - 1]);
-			return res.send(200, circle.calls[circle.calls.length - 1]);
+			return responseOk(res, circle.calls[circle.calls.length - 1]);
 		});
 	});
 }
@@ -174,16 +183,16 @@ function listCircleCalls(req, res, template, block, next) {
 	if (id) {
 		return Circle.findById(id, function (err, circle) {
 			if (err) {
-				return res.send(404, err);
+				return responseError(res, 404, err);
 			}
 			if (cId) {
-				return res.send(200, circle.calls.id(cId));
+				return responseOk(res, circle.calls.id(cId));
 			} else {
-				return res.send(200, circle.calls);
+				return responseOk(res, circle.calls);
 			}
 		});
 	} else {
-		return res.send(400, err);
+		return responseError(res, 400, err);
 	}
 }
 
@@ -194,22 +203,22 @@ function updateCircleCall(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, circle) {
 		if (!circle) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var call = circle.calls.id(cId);
 
 		if (!call) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		calipso.e.pre_emit('CALL_UPDATE', call);
 		calipso.form.mapFields(req.body, call);
 		circle.save(function (err) {
 			if (err) {
 				calipso.error("Error updating call", err);
-				return res.send(400, err);
+				return responseError(res, 400, err);
 			}
 			calipso.e.post_emit('CALL_UPDATE', call);
-			return res.send(200, call);
+			return responseOk(res, call);
 		});
 	});
 }
@@ -221,22 +230,22 @@ function deleteCircleCall(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, circle) {
 		if (!circle) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		} else {
 			var call = circle.calls.id(cId);
 
 			if (!call) {
-				return res.send(404, err);
+				return responseError(res, 404, err);
 			}
 			calipso.e.pre_emit('CALL_DELETE', call);
 			circle.calls.pull({ _id: cId });
 			circle.save(function (err) {
 				if (!err) {
 					calipso.e.post_emit('CALL_DELETE', call);
-					return res.send(200, call);
+					return responseOk(res, call);
 				} else {
 					calipso.error("Error deleting call", err);
-					return res.send(400, err);
+					return responseError(res, 400, err);
 				}
 			});
 		}
@@ -253,12 +262,12 @@ function createCallProject(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, circle) {
 		if (!circle) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var call = circle.calls.id(cId);
 
 		if (!call) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var newProject = req.body;
 
@@ -268,10 +277,10 @@ function createCallProject(req, res, template, block, next) {
 		circle.save(function (err) {
 			if (err) {
 				calipso.error("Error creating project", err);
-				return res.send(400, err);
+				return responseError(res, 400, err);
 			}
 			calipso.e.post_emit('PROJECT_CREATE', call.projects[call.projects.length - 1]);
-			return res.send(200, call.projects[call.projects.length - 1]);
+			return responseOk(res, call.projects[call.projects.length - 1]);
 		});
 	});
 }
@@ -285,21 +294,21 @@ function listCallProjects(req, res, template, block, next) {
 	if (id) {
 		return Circle.findById(id, function (err, circle) {
 			if (err) {
-				return res.send(404, err);
+				return responseError(res, 404, err);
 			}
 			var call = circle.calls.id(cId);
 
 			if (!call) {
-				return res.send(404, err);
+				return responseError(res, 404, err);
 			}
 			if (pId) {
-				return res.send(200, call.projects.id(pId));
+				return responseOk(res, call.projects.id(pId));
 			} else {
-				return res.send(200, call.projects);
+				return responseOk(res, call.projects);
 			}
 		});
 	} else {
-		return res.send(400, err);
+		return responseError(res, 400, err);
 	}
 }
 
@@ -311,27 +320,27 @@ function updateCallProject(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, circle) {
 		if (!circle) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var call = circle.calls.id(cId);
 
 		if (!call) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var project = call.projects.id(pId);
 
 		if (!project) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		calipso.e.pre_emit('PROJECT_UPDATE', project);
 		calipso.form.mapFields(req.body, project);
 		circle.save(function (err) {
 			if (err) {
 				calipso.error("Error updating project", err);
-				return res.send(400, err);
+				return responseError(res, 400, err);
 			}
 			calipso.e.post_emit('PROJECT_UPDATE', project);
-			return res.send(200, project);
+			return responseOk(res, project);
 		});
 	});
 }
@@ -344,16 +353,16 @@ function deleteCallProject(req, res, template, block, next) {
 
 	Circle.findById(id, function (err, circle) {
 		if (!circle) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var call = circle.calls.id(cId);
 
 		if (!call) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 		var project = call.projects.id(pId);
 		if (!project) {
-			return res.send(404, err);
+			return responseError(res, 404, err);
 		}
 
 		calipso.e.pre_emit('PROJECT_DELETE', project);
@@ -361,10 +370,10 @@ function deleteCallProject(req, res, template, block, next) {
 		circle.save(function (err) {
 			if (err) {
 				calipso.error("Error deleting project", err);
-				return res.send(400, err);
+				return responseError(res, 400, err);
 			}
 			calipso.e.post_emit('PROJECT_DELETE', project);
-			return res.send(200, project);
+			return responseOk(res, project);
 		});
 	});
 }
@@ -373,255 +382,145 @@ function deleteCallProject(req, res, template, block, next) {
  * Media
  */
 
-function createThumbnail(media, next) {
-/*
-	var metadata = media.get('metadata');
-	var im = require('imagemagick');
-	var isPortrait = (metadata.width < metadata.height);
-	
-	var thumbPortrait = '100' //calipso.config.moduleConfig('media','thumbnails:portrait') || '150x';
-	var thumbLandscape = '225' //calipso.config.moduleConfig('media','thumbnails:landscape') || 'x150';
-	var thumbSharpen = '0.2' //calipso.config.moduleConfig('media','thumbnails:sharpen') || '0.2';
-	var thumbQuality = '90' //calipso.config.moduleConfig('media','thumbnails:quality') || '80';
-
-	var thumbSize = isPortrait ? thumbPortrait : thumbLandscape;
-
-	im.convert([path.join(rootpath,"media", media.path), '-resize', thumbSize,'-filter','lagrange','-sharpen',thumbSharpen,'-quality',thumbQuality, path.join(rootpath,"media", media.thumb)], function(err, stdout, stderr) {
-		next(err,media);
-	});
-*/
-}
-
-function mv(from, to, next) {
-
-	var fs = require('fs'),
-			mkdirp = require('mkdirp'),
-			util = require('util');
-
-	calipso.silly("Moving file " + from + " to " + to + "...");
-
-	mkdirp(path.dirname(to), 0755, function (err) {
-
-		var is = fs.createReadStream(from);
-		var os = fs.createWriteStream(to);
-
-		util.pump(is, os, function() {
-			fs.unlinkSync(from);
-			next(err);
-		});
-	});
-}
-
-function processFile(file, next) {
-
-	var tbHeight = '100';
-	var im = require('imagemagick');
-	// Create our mongoose object
-	var Media = calipso.db.model('Media');  
-
-	// For each file, we need to process it
-	mv(file.from, file.to, function() {    
-		// Now, create the mongoose object for it
-		var m = new Media();
-
-		console.log("file.to: ", file.to);
-
-		m.name = ''; // path.basename(file.file.name, path.extname(file.file.name)); TODO make configurable
-		m.fileName = file.file.name;
-		m.mediaType = file.file.type;
-		m.path = file.to.replace(path.join(rootpath,"media"),"");
-		m.author = file.author;
-		m.sort = -1;
-		if(file.gallery) {
-			m.gallery = file.gallery.url;
-		}
-		console.log("m.path: ", m.path);
-
-		im.identify(file.to, function(err, ident_metadata){
-
-			// If imagemagick fails (not installed) ignore silently
-			if (!err) {    
-				
-				var thumb = path.join(
-						path.dirname(file.to),
-						path.basename(file.to, path.extname(file.to)) + "-thumb" + path.extname(file.to));
-				
-				m.thumb = thumb.replace(path.join(rootpath,"media"),"");;
-
-				im.readMetadata(file.to, function(err, exif_metadata) {
-
-					var metadata = calipso.lib._.extend(ident_metadata, exif_metadata);
-				
-					// Set our metadata
-					m.set('metadata',metadata);          
-
-					fixRotation(m, function(err, m) {
-							createThumbnail(m, function(err, m) {
-								if (err) throw err                
-								m.save(function(err) {
-									next(err, m._id);  
-								});      
-							});              
-
-					});
-
-				});
-				
-			} else {
-				
-				calipso.silly("ImageMagick failed, no thumbnail or rotation available ...");
-
-				m.save(function(err) {
-					console.log("Err:", err)
-					next(err);
-				});
-
-			}      
-
-		});
-		
-	});  
-
-}
-
-function mediaPath(filePath) {
-	
-	var max = 3, split = 2;
-	var newPath = "";
-
-	// Convert the uploaded file guid into a path for saving    
-	for(var i = 1; i <= max; i++) {
-		newPath += filePath.substring((i-1)*split, (i-1)*split + split); // + "/";
-	}
-	filePath = filePath.substring(max*split - 1, filePath.length);
-
-	return newPath + filePath;
-}
-
 function createMedia(req, res, template, block, next) {
-	var async = require('async'),
-			basePath = "uploads";
-	
-	// Set the author
+	var Media = calipso.db.model('Media');  
 	var author;
+	var results = [];
+
 	if(req.session && req.session.user) {      
 		author = req.session.user.username;
 	} else {
 		author = 'Unknown';
 	}
 
-	var fileQueue = [];
-
-	for(var upload in req.files) {
-		var upload = req.files[upload];
-		upload.forEach(function(files) {        
-			console.log("files: ", files);
-
-			files.forEach(function(file) {        
-				if (file.size > 0) {
-					console.log("rootpath: ", rootpath);
-
-					console.log("rootpath: ", rootpath);
-					console.log("basePath: ", basePath);
-					console.log("file.path: ", file.path);
-					console.log("path.basename(file.path): ", path.basename(file.path));
-
-					var toFile = path.join(rootpath, basePath, mediaPath(path.basename(file.path)));
-
-					fileQueue.push({ author: author, file: file, from: file.path, to: toFile });
-				}
-			});
-		});
-	}
-
-	// Process everything in the queue - do it in series for now
-	async.mapSeries(fileQueue, processFile, function(err, results) {            
-
-		console.log("Result: ", err);    
-		if(err) {
-			console.dir(err);        
-			next(err);
-		}
-		res.end(JSON.stringify({status:"OK"}));
-	});
-	return;
-
-	var Circle = calipso.db.model('Circle');
-	var newCircle = new Circle(req.body);
-
-	newCircle.owner = req.session.user.username;
-	calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
-	newCircle.save(function (err) {
+	media.processUploadedFiles(req, res, function(err, file, next) {
 		if (err) {
-			calipso.error("Error creating circle", err);
-			return res.send(400, err);
+			returnError();
+			return responseError(res, 400, err);
 		}
-		calipso.e.post_emit('CIRCLE_CREATE', newCircle);
-		return res.send(200, newCircle);
+		var m = new Media();
+
+		m.name = ''; // path.basename(file.file.name, path.extname(file.file.name)); TODO make configurable
+		m.fileName = file.file.name;
+		m.mediaType = file.file.type;
+		m.path = file.to;
+		m.author = author;
+		calipso.e.pre_emit('MEDIA_CREATE', m);
+		m.save(function(err) {
+			if (err) {
+				responseError(res, 400, err);
+			}
+			calipso.e.post_emit('MEDIA_CREATE', m);
+			next(err);
+		});
+		results.push(m);
+	}, function(err) {
+		if (err) {
+			responseError(res, 400, err);
+		}
+		responseOk(res, results);
 	});
 }
 
 function listMedia(req, res, template, block, next) {
-	var Circle = calipso.db.model('Circle');
+	var Media = calipso.db.model('Media');
 	var id = req.moduleParams.id;
 
 	if (id) {
-		Circle.findById(id, function (err, circle) {
+		Media.findById(id, function (err, m) {
 			if (err) {
-				return res.send(404, err);
+				return responseError(res, 404, err);
 			}
-			return res.send(200, circle);
+			var data = fs.readFile(m.path, function (err, data) {
+				if (err) {
+					return responseError(res, 404, err);
+				};
+				res.writeHead(200, {'Content-Type': m.mediaType });
+				return res.end(data, 'binary');
+			});
 		});
 	} else {
-		Circle.find(function (err, circles) {
-			if (err) {
-				return res.send(404, err);
-			}
-			return res.send(200, circles);
-		});
+		return responseError(res, 404);
 	}
 }
 
 function updateMedia(req, res, template, block, next) {
-	var Circle = calipso.db.model('Circle');
+	var Media = calipso.db.model('Media');
 	var id = req.moduleParams.id;
 
-	Circle.findById(id, function (err, oldCircle) {
-		if (!oldCircle) {
-			return res.send(404, err);
-		} else {
-			calipso.form.mapFields(req.body, oldCircle);
-			calipso.e.pre_emit('CIRCLE_UPDATE', oldCircle);
-			oldCircle.save(function (err) {
-				if (err) {
-					calipso.error("Error updating circle", err);
-					return res.send(400, err);
-				}
-				calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
-				return res.send(200, oldCircle);
-			});
+	if (!id) {
+		return responseError(res, 404);
+	}
+	Media.findById(id, function (err, m) {
+		if (err) {
+			return responseError(res, 404, err);
 		}
+
+		var author;
+		var results = [];
+
+		if(req.session && req.session.user) {      
+			author = req.session.user.username;
+		} else {
+			author = 'Unknown';
+		}
+		fs.unlink(m.path, function (err) {
+		  calipso.error('Error deleting file ', m.path, err);
+		});
+		media.processUploadedFiles(req, res, function(err, file, next) {
+			if (err) {
+				returnError();
+				return responseError(res, 400, err);
+			}
+			m.fileName = file.file.name;
+			m.mediaType = file.file.type;
+			m.path = file.to;
+			m.author = author;
+			calipso.e.pre_emit('MEDIA_UPDATE', m);
+			m.save(function(err) {
+				if (err) {
+					responseError(res, 400, err);
+				}
+				calipso.e.post_emit('MEDIA_UPDATE', m);
+				next(err);
+			});
+			results.push(m);
+		}, function(err) {
+			if (err) {
+				responseError(res, 400, err);
+			}
+			responseOk(res, results);
+		});
+
 	});
 }
 
 function deleteMedia(req, res, template, block, next) {
-	var Circle = calipso.db.model('Circle');
+	var Media = calipso.db.model('Media');
 	var id = req.moduleParams.id;
 
-	Circle.findById(id, function (err, c) {
-		if (err)  {
-			return res.send(404, err);      
+	if (!id) {
+		return responseError(res, 404);
+	}
+	Media.findById(id, function (err, m) {
+		if (err) {
+			return responseError(res, 404, err);
 		}
-		calipso.e.pre_emit('CIRCLE_DELETE', c);
-		Circle.remove({
+		calipso.e.pre_emit('MEDIA_DELETE', m);
+		fs.unlink(m.path, function (err) {
+			if (err) {
+			  calipso.error('Error deleting file ' + m.path, err);
+			}
+		});
+		Media.remove({
 			_id: id
 		}, function (err) {
 			if (err) {
-				calipso.error("Error deleting circle", err);
-				return res.send(400, err);
+				calipso.error("Error deleting media", err);
+				return responseError(res, 400, err);
 			}
-			calipso.e.post_emit('CIRCLE_DELETE', c);
-			return res.send(200, c);
+			calipso.e.post_emit('MEDIA_DELETE', m);
+			return responseOk(res, m);
 		});
 	});
 }

@@ -867,7 +867,7 @@ function processFile(file, next) {
 				calipso.silly("ImageMagick failed, no thumbnail or rotation available ...");
 
 				m.save(function(err) {
-					next(err);  
+					next(err);
 				});
 
 			}      

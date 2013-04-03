@@ -13,7 +13,8 @@
 	  "mongoose":"3.6.x",
 	  "mongoose-3x-types": "1.0.x",
 		"mkdirp": "0.0.7",
-		"async": "0.1.x",
-		"imagemagick": "0.1.x"      
+		"async": "0.2.x",
+		"imagemagick": "0.1.x",
+		"gm": "1.8.x"      
 	}	
 }

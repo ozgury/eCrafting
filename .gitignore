@@ -16,4 +16,4 @@ conf/*
 *.gz
 *.sass-cache
 .idea
-uploads
+uploads/
