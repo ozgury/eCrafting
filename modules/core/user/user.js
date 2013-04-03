@@ -6,6 +6,7 @@ var rootpath = process.cwd() + '/',
   calipso = require(path.join(rootpath, 'lib/calipso')),
   roles = require('./user.roles'),
   Query = require("mongoose").Query,
+  mongooseTypes = require("mongoose-types"),
   everyauth = require("everyauth");
 
 exports = module.exports = {
@@ -80,11 +81,11 @@ function init(module, app, next) {
 
       var User = new calipso.lib.mongoose.Schema({
         // Single default property
-        username:{type:String, required:true, unique:true},
+        username:{type:calipso.lib.mongoose.SchemaTypes.Email, required:true, unique:true},
         fullname:{type:String, required:false},
         password:{type:String, required:false},
         hash:{type:String, required:true, "default":''},
-        email:{type:String, required:true, unique:true},
+        email:{type:calipso.lib.mongoose.SchemaTypes.Email, required:true, unique:true},
         showName:{type:String, "default":'registered'},
         showEmail:{type:String, "default":'registered'},
         about:{type:String},
@@ -291,10 +292,9 @@ function registerUserForm(req, res, template, block, next) {
         id:'form-section-core',
         label:'Your Details',
         fields:[
-          {label:'Username', name:'user[username]', type:'text', description:'Enter the username you would like to use on this site.'},
-          {label:'Full Name', name:'user[fullname]', type:'text', description:'Enter your actual name, you can control the privacy settings of this.'},
           {label:'Email', name:'user[email]', type:'text', description:'Enter your email address, you can control the privacy settings of this.'},
-          {label:'Language', name:'user[language]', type:'select', options:req.languages, description:'Select your default language.'},
+          {label:'Full Name', name:'user[fullname]', type:'text', description:'Enter your actual name, you can control the privacy settings of this.'},
+          //{label:'Language', name:'user[language]', type:'select', options:req.languages, description:'Select your default language.'},
           // TODO : Select based on available
           {label:'About You', name:'user[about]', type:'textarea', description:'Write something about yourself, this will appear on your profile page.'},
           {label:'New Password', name:'user[new_password]', type:'password', description:'Enter a password, the stronger the better.'},
@@ -844,6 +844,7 @@ function registerUser(req, res, template, block, next) {
 
       var u = new User(form.user);
 
+      u.username = u.email;
       // Over ride admin
       if (req.session.user && req.session.user.isAdmin) {
 
@@ -860,9 +861,7 @@ function registerUser(req, res, template, block, next) {
         u.roles = newRoles;
 
       } else {
-
         u.roles = ['Guest']; // Todo - need to make sure guest role can't be deleted?
-
       }
 
       //TODO : Add form validation and email confirmation

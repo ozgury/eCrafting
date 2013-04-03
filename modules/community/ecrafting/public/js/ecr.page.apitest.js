@@ -30,7 +30,7 @@ ecr.page.ApiTest = function () {
 
 		function setFileUpload() {
 	    $(':file').fileupload({
-			    url: '/api/media/' + $('#id').html(),
+			    url: '/api/media/' + $('#imageid').html(),
 			    sequentialUploads: true,
 			    singleFileUploads: false,
 	        dataType: 'json',
@@ -43,10 +43,11 @@ ecr.page.ApiTest = function () {
 			    },
 	    }).bind('fileuploadalways', function (e, data) {
 	    	if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
-		    	showResponse((JSON.parse(data.xhr().response))[0], data.xhr());
+		    	//showResponse((JSON.parse(data.xhr().response))[0], data.xhr());
 		    	$('.fileupload').removeClass('fileupload-new').addClass('fileupload-exists');
 		    	$('.fileupload').find('.fileupload-preview img').attr('src', '/api/media/' + (JSON.parse(data.xhr().response))[0]._id);
 		    	$('.fileupload').find('span.fileupload-preview').html((JSON.parse(data.xhr().response))[0].fileName);
+					$('#imageid').html((JSON.parse(data.xhr().response))[0]._id);
 		    	setFileUpload();
 	    	}
 	    }).bind('fileuploadadd', function (e, data) {
@@ -88,10 +89,12 @@ ecr.page.ApiTest = function () {
 		this.create = function () {
 			var command = 'circles';
 			var parameters = {
-					name: "Some new circle",
-					description: "Some circle description",
-					location: "New York",
-					tags: ["some", "circle"]
+					name: "The Franklin Makers",
+					description: "We are a crafting group from the Franklin Institute interested in teaching and learning electronics.",
+					location: "Philadelphia, 19103",
+					tags: ["some", "circle"],
+					members: ["ke@fi.edu", "otelhan@gmail.com"],
+					links: ["www.fi.edu"]
 			};
 			apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', showResponse, showError);
 		};
@@ -113,12 +116,15 @@ ecr.page.ApiTest = function () {
 		this.update = function () {
 			var command = 'circles/' + $('#id').html();
 			var parameters = {
-					name: "Some updated circle",
-					description: "Some updated circle description",
-					location: "New York",
+					name: "The Franklin Makers Updated",
+					description: "Update: We are a crafting group from the Franklin Institute interested in teaching and learning electronics.",
+					location: "Philadelphia, 19103",
 					tags: ["some", "circle"]
 			};
 
+			if ($('#imageid').html()) {
+				parameters.image = $('#imageid').html();
+			}
 			apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', showResponse, showError);
 		};
 
@@ -131,10 +137,10 @@ ecr.page.ApiTest = function () {
 		this.createCall = function () {
 			var command = 'circles/' + $('#id').html() + '/calls';
 			var parameters = {
-					name: "Some new call",
-					description: "Some call description",
-					date: new Date("4/13/2013"),
-					location: "New York"
+					name: "Astronomy Night",
+					description: "We invite everyone from eight to eighty to join our Astronomy night workshop. We will be making t-shirts with different constellation themes and use electronic textiles to create interactive t-designs.",
+					date: new Date("4/26/2013"),
+					location: "The Franklin Institute"
 			};
 
 			apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
@@ -163,10 +169,10 @@ ecr.page.ApiTest = function () {
 		this.updateCall = function () {
 			var command = 'circles/' + $('#id').html() + '/calls/' + $('#id2').html();
 			var parameters = {
-					name: "Some updated call",
-					description: "Some updated call description",
-					date: new Date("5/13/2013"),
-					location: "New York"
+					name: "Astronomy Night Updated",
+					description: "We invite everyone from eight to eighty to join our Astronomy night workshop. We will be making t-shirts with different constellation themes and use electronic textiles to create interactive t-designs.",
+					date: new Date("4/26/2013"),
+					location: "The Franklin Institute"
 			};
 
 			apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', function (response, jqXhr) {
@@ -240,7 +246,7 @@ ecr.page.ApiTest = function () {
 				showResponse(response, jqXhr);
 			  $('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
 	    	$('.fileupload').find('span.fileupload-preview').html('');
-				$('#id').html('');
+				$('#imageid').html('');
 				setFileUpload();
 			}, showError);
 		};

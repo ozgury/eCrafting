@@ -22,6 +22,20 @@ function init(module, app, next) {
 	function initEntities(module, app, next) {
 		mongooseTypes.loadTypes(calipso.lib.mongoose);
 		
+		var Media = new calipso.lib.mongoose.Schema({
+			name:{type: String, "default":""},
+			fileName:{type: String},
+			mediaType:{type: String, required: true},
+			path:{type: String, required: true},
+			author:{type: String, required: true},
+			sort:{type: Number,"default":0},
+			description:String
+		});
+
+		Media.plugin(extensions, { index: true });
+
+		calipso.db.model('Media', Media);
+
 		var Project = new calipso.lib.mongoose.Schema({
 			owner: {
 				 type: calipso.lib.mongoose.SchemaTypes.Email,
@@ -37,11 +51,14 @@ function init(module, app, next) {
 			approved: {
 				 type:Boolean
 			},
-			// Media
+			media: [Media]
 		});
 
 		var Call = new calipso.lib.mongoose.Schema({
- 			// Image
+			image: {
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Media'
+			},
 			name: {
 					type: String,
 			},
@@ -63,7 +80,10 @@ function init(module, app, next) {
 				type: calipso.lib.mongoose.SchemaTypes.Email,
 				required: true
 			},
-			// Image
+			image: {
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Media'
+			},
 			name: {
 				type: String,
 				required: true
@@ -81,39 +101,20 @@ function init(module, app, next) {
 		});
 
 		Circle.path('name').validate(function (v) {
-			return v && v.length > 4 && v.length < 20;
-	 	}, 'Circle name should be more than 4 and less than 20 characters');
+			return v && v.length > 4 && v.length < 40;
+	 	}, 'Circle name should be more than 4 and less than 40 characters');
 	 	Call.path('name').validate(function (v) {
-			return v && v.length > 4 && v.length < 20;
-	 	}, 'Call name should be more than 4 and less than 20 characters');
+			return v && v.length > 4 && v.length < 40;
+	 	}, 'Call name should be more than 4 and less than 40 characters');
 	 	Project.path('name').validate(function (v) {
-			return v && v.length > 4 && v.length < 20;
-	 	}, 'Project name should be more than 4 and less than 20 characters');
+			return v && v.length > 4 && v.length < 40;
+	 	}, 'Project name should be more than 4 and less than 40 characters');
 
 		Project.plugin(extensions, { index: true });
 		Call.plugin(extensions, { index: true });
 		Circle.plugin(extensions, { index: true });
 
 		calipso.db.model('Circle', Circle);
-
-		var Media = new calipso.lib.mongoose.Schema({
-			name:{type: String, "default":""},
-			fileName:{type: String},
-			mediaType:{type: String, required: true},
-			path:{type: String, required: true},
-			author:{type: String, required: true},
-			thumb:{type: String},
-			prevId:{type: String},
-			nextId:{type: String},
-			sort:{type: Number,"default":0},
-			tags:[String],
-			description:String,
-		});
-
-		Media.plugin(extensions, { index: true });
-
-		calipso.db.model('Media', Media);
-
 
 		eCrafting.domain.project = Project;
 		eCrafting.domain.call = Call;
