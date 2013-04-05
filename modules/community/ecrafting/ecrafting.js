@@ -9,7 +9,8 @@
 	domain = require('./ecrafting.domain'),
 	circles = require('./ecrafting.circles'),
 	api = require('./ecrafting.api'),
-	
+	ui = require('./lib/ui.extensions'),
+
 	exports = module.exports = {
 		init:init,
 		route:route,
