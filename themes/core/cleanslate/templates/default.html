@@ -1,47 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="description" content="put your site description here">
-    <meta name="keywords" content="put your site keywords here">
-    <title>Clean Slate</title>
+	<meta charset="utf-8">
+	<meta name="description" content="put your site description here">
+	<meta name="keywords" content="put your site keywords here">
+	<title>Clean Slate</title>
 
-    <%- styles %>
-    <%- scripts %>
+	<%- styles %>
+	<%- scripts %>
 </head>
 <body>
-<nav class="admin-menu row extended-height">
-    <%- admin %>
-</nav>
 <div class="container">
-    <header class="row">
-        <div class="logo threecol">
-            <%- header %>
-        </div>
 
-        <nav class="secondary ninecol last">
-            <%- secondary %>
-        </nav>
-    </header>
-    <div id="messages" class="row">
-        <%- messages %>
-    </div>
-    <nav class="adminToolbar">
-        <%- getMenu('adminToolbar') %>
-    </nav>
-    <article class="row">
-        <div class="body ninecol">
-            <!--PAGE_BODY_START-->
-            <%- body %>
-            <!--PAGE_BODY_END-->
-        </div>
-        <aside class="sidePanel threecol last">
-            <%- sidePanel %>
-        </aside>
-    </article>
-    <footer class="footer row centred">
-        <%- footer %>
-    </footer>
+      <div class="masthead">
+        <h3 class="muted"> <%- header %> </h3>
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="container">
+              <%- admin %>
+            </div>
+          </div>
+        </div><!-- /.navbar -->
+      </div>
+
+
+	<div id="messages" class="row-fluid">
+		<div span="12">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<%- messages %>
+		</div>
+	</div>
+	<nav class="row-fluid">
+		<%- getMenu('adminToolbar') %>
+		++++++++++++++++ d
+	</nav>
+	<div class="row-fluid">
+		<div class="body ninecol">
+			<!--PAGE_BODY_START-->
+			<%- body %>
+			++++++++++++++++ C
+			<!--PAGE_BODY_END-->
+		</div>
+		<aside class="sidePanel threecol last">
+			<%- sidePanel %>
+			++++++++++++++++ D
+		</aside>
+	</div>
+	<footer class="row-fluid">
+		<%- footer %>
+		++++++++++++++++ E
+	</footer>
 </div>
 </body>
 </html>
