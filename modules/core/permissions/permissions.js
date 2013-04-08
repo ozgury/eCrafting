@@ -31,7 +31,7 @@ function route(req, res, module, app, next) {
   var permPermit = calipso.permission.Helper.hasPermission("admin:permission:configuration");
 
   // Menu
-  res.menu.admin.addMenuItem(req, {name:'Permissions', permit:permPermit, path:'admin/security/permissions', weight:10, url:'/admin/permissions', description:'Manage permissions ...', security:[] });
+  res.menu.admin.addMenuItem(req, {name:'Permissions', permit:permPermit, path:'security/permissions', weight:10, url:'/admin/permissions', description:'Manage permissions ...', security:[] });
 
   // Router
   module.router.route(req, res, next);
@@ -110,7 +110,7 @@ function renderPermissionTable(structuredPermissions, roles) {
   var output = "<form action='/admin/permissions' method='POST'>", cols = roles.length;
 
   // First we need to create the header structure
-  output += "<table class='admin-permissions'><thead><tr><th class='admin-permissions-permission'>Permissions</th>";
+  output += "<table class='table table-bordered table-hover'><thead><tr><th class='admin-permissions-permission'>Permissions</th>";
   roles.forEach(function (role, key) {
     if (role.name !== 'Administrator') {
       output += "<th class='admin-permissions-role'>" + role.name + "</th>";

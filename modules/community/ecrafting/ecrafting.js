@@ -10,13 +10,15 @@
 	circles = require('./ecrafting.circles'),
 	api = require('./ecrafting.api'),
 	ui = require('./lib/ui.extensions'),
-	//form = require('./lib/form'),
 
 	exports = module.exports = {
 		init:init,
 		route:route,
 		last:true
 	};
+
+// Override default Calipso form.
+calipso.form = require('./lib/form');
 	
 function route(req, res, module, app, next) {
 	var aPerm = calipso.permission.Helper.hasPermission("admin:user");

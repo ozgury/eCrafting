@@ -292,7 +292,7 @@ function registerUserForm(req, res, template, block, next) {
         id:'form-section-core',
         label:'Your Details',
         fields:[
-          {label:'Email', name:'user[email]', type:'text', description:'Enter your email address, you can control the privacy settings of this.'},
+          {label:'Email', name:'user[email]', type:'text', placeholder: "email address", description:'Enter your email address, you can control the privacy settings of this.', cls: "input-xlarge"},
           {label:'Full Name', name:'user[fullname]', type:'text', description:'Enter your actual name, you can control the privacy settings of this.'},
           //{label:'Language', name:'user[language]', type:'select', options:req.languages, description:'Select your default language.'},
           // TODO : Select based on available
@@ -313,7 +313,8 @@ function registerUserForm(req, res, template, block, next) {
       }
     ],
     buttons:[
-      {name:'submit', type:'submit', value:'Register'}
+      {tag:'button', name:'submit', type:'submit', cls:"btn btn-primary", value:'Register'},
+      {tag:'button', name:'submit', type:'button', cls:"btn", value:'Cancel'},
     ]
   };
 
@@ -1071,7 +1072,7 @@ function listUsers(req, res, template, block, next) {
       if (format === 'html') {
 
         var table = {
-          id:'user-list', sort:true, cls:'table-admin',
+          id:'user-list', sort:true, cls:'table table-bordered table-hover',
           columns:[
             {name:'_id', sort:'username', label:'User', fn:userLink},
             {name:'fullname', label:'Full Name'},

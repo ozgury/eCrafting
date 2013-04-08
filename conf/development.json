@@ -14,12 +14,23 @@
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
-      "workers": 0,
+      "workers": "",
       "restartWorkers": true,
-      "maximumRestarts": 1
+      "maximumRestarts": "1"
     },
     "events": {
-      "maxListeners": 500
+      "maxListeners": "500"
+    },
+    "loginPath": "",
+    "authentication": {
+      "password": true,
+      "migrate2pbkdf2": false,
+      "facebookAppId": "573278046017651",
+      "facebookAppSecret": "8062c524ef4396572deeedb0ea646fbb",
+      "googleClientId": "",
+      "googleClientSecret": "",
+      "twitterConsumerKey": "",
+      "twitterConsumerSecret": ""
     }
   },
   "calipso": {
@@ -31,12 +42,13 @@
   "performance": {
     "cache": {
       "enabled": false,
-      "ttl": 600
+      "ttl": "600"
     },
     "watchFiles": true
   },
   "session": {
-    "secret": "calipso"
+    "secret": "calipso",
+    "maxAge": ""
   },
   "theme": {
     "default": "cleanslate",

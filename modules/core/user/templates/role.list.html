@@ -1,12 +1,14 @@
 <div class="template-module">
     <h2><%- t('User Roles') %></h2>
-    <table>
-        <tr>
-            <th><%- t('Name') %></th>
-            <th><%- t('Description') %></th>
-            <th><%- t('Is Admin') %></th>
-            <th><%- t('Is Default') %></th>
-        </tr>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th><%- t('Name') %></th>
+                <th><%- t('Description') %></th>
+                <th><%- t('Is Admin') %></th>
+                <th><%- t('Is Default') %></th>
+            </tr>
+        </thead>
 
         <%
         items.forEach(function(item) {
