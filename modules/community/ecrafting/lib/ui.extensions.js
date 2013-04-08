@@ -11,8 +11,6 @@
  * Over-write to enable custom menu rendering
  */
 
-menu.cls = "nav nav-pils"
-
 menu.prototype.startTag = function () {
   return "<ul id='" + this.name + "-menu' class='nav nav-pills'>";
 };
@@ -21,20 +19,19 @@ menu.prototype.endTag = function () {
 };
 menu.prototype.menuStartTag = function (menu, selected) {
   var menuItemTagId = menu.path.replace(/\//g, '-') + "-menu-item";
-  menu.started = true;
+
   return "<li id='" + menuItemTagId + "' class='dropdown " + selected + "'>";
 };
 menu.prototype.menuLinkTag = function (req, menu, selected) {
   var popup = menu.popup ? 'popupMenu' : '';
-  calipso.debug("Type, Menu ", menu.type + ' ' + menu.path);
-  if (menu.started) {
-    return "<a href='" + menu.url + "' title='" + req.t(menu.description) + "'>" + req.t(menu.name) + "</a>";
+
+  if (menu.sortedChildren.length > 0) {
+    return "<a href='" + menu.url + "' title='" + req.t(menu.description) + "' data-toggle='dropdown'>" + req.t(menu.name) + "</a>";
   }
-  return "<a href='" + menu.url + "' title='" + req.t(menu.description) + "' data-toggle='dropdown'>" + req.t(menu.name) + "</a>";
+  return "<a href='" + menu.url + "' title='" + req.t(menu.description) + "'>" + req.t(menu.name) + "</a>";
 //  return "<a href='" + menu.url + "' title='" + req.t(menu.description) + "' class='" + popup + " " + this.name + "-menu-link" + selected + (menu.cls ? " " + menu.cls : "") + "'>" + req.t(menu.name) + "</a>";
 };
 menu.prototype.menuEndTag = function (menu) {
-  menu.started = false;
   return "</li>";
 };
 menu.prototype.childrenStartTag = function () {
