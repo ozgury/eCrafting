@@ -81,7 +81,7 @@ function init(module, app, next) {
 
       var User = new calipso.lib.mongoose.Schema({
         // Single default property
-        username:{type:calipso.lib.mongoose.SchemaTypes.Email, required:true, unique:true},
+        username:{type:String, required:true, unique:true},
         fullname:{type:String, required:false},
         password:{type:String, required:false},
         hash:{type:String, required:true, "default":''},
