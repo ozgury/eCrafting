@@ -32,7 +32,7 @@ var routes = [
 function route(req, res, module, app) {
 
   // Menu
-  res.menu.admin.addMenuItem(req, {name:'Roles', path:'admin/security/roles', weight:10, url:'/user/role/list', description:'Manage roles ...', security:[] });
+  res.menu.admin.addMenuItem(req, {name:'Roles', path:'security/roles', weight:10, url:'/user/role/list', description:'Manage roles ...', security:[] });
 }
 
 /**
