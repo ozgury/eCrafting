@@ -245,7 +245,7 @@ function roleForm(req, res, template, block, next) {
       res.menu.adminToolbar.addMenuItem({name:'Delete Role', path:'return', url:'/admin/roles/' + role._id + '/delete', description:'Delete role ...', security:[]});
     }
     var roleForm = {
-      id:'FORM', title:req.t('Register'), type:'form', method:'POST', action:'/admin/roles/' + (role && role._id ? role._id : ""),
+      id:'FORM', title:req.t('Register'), type:'form', method:'POST', action:'/admin/roles/' + (role && role._id ? role._id : ""), cls: 'form-horizontal',
       sections:[
         {
           id:'form-section-core',

@@ -10,6 +10,7 @@
 	circles = require('./ecrafting.circles'),
 	api = require('./ecrafting.api'),
 	ui = require('./lib/ui.extensions'),
+	//form = require('./lib/form'),
 
 	exports = module.exports = {
 		init:init,
@@ -32,7 +33,11 @@ function route(req, res, module, app, next) {
 function init(module, app, next) {
 	calipso.lib.step(
 		function defineRoutes() {
-			module.router.addRoute('GET /ecrafting', showMain, {template:'ecrafting', block:'ecrafting.show'}, this.parallel());
+			module.router.addRoute('GET /ecrafting', showMain, {template:'ecrafting', block:'admin.show'}, this.parallel());
+			module.router.addRoute('GET /about', showMain, {template:'about', block:'admin.show'}, this.parallel());
+			module.router.addRoute('GET /locations', showMain, {template:'locations', block:'admin.show'}, this.parallel());
+			module.router.addRoute('GET /timeline', showMain, {template:'timeline', block:'admin.show'}, this.parallel());
+			module.router.addRoute('GET /current', showMain, {template:'current', block:'admin.show'}, this.parallel());
 		},
 		function done() {
 			domain.init(module, app, next);
