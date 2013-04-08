@@ -10,10 +10,29 @@
 	<%- scripts %>
 </head>
 <body>
-<div class="container">
+	<div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+	        	<div class="container">
+				    <a class="brand" id="logo" href="#">
+					  <img class="bottom" src="images/e-logo-1.png">
+				    </a>
+				    <ul class="nav">
+				      <li class="active"><a href="#tab1" data-toggle="tab">Home</a></li>
+						<li class=""><a href="#tab2" data-toggle="tab">About</a></li>
+						<li class=""><a href="#tab3" data-toggle="tab">Current Call</a></li>
+						<li class=""><a href="#tab4" data-toggle="tab">Locations</a></li>
+						<li class=""><a href="#tab5" data-toggle="tab">Timeline</a></li>
+						<li class=""><a href="#tab6" data-toggle="tab">Browse</a></li>
+						<li><a href="user/login" role="button" class="btn-mini" data-toggle="modal">Login</a></li>
+				    </ul>
+					<input type="search" placeholder="Enter search term" data-provide="typeahead" id="search">
+			  </div>
+		  </div>
+    </div>
+    <br><br><br>
 
+<div class="container">
       <div class="masthead">
-        <h3 class="muted"> <%- header %> </h3>
         <div class="navbar">
           <div class="navbar-inner">
             <div class="container">
@@ -32,19 +51,17 @@
 	</div>
 	<nav class="row-fluid">
 		<%- getMenu('adminToolbar') %>
-		++++++++++++++++ d
 	</nav>
 	<div class="row-fluid">
-		<div class="body ninecol">
+		<div class="span8">
 			<!--PAGE_BODY_START-->
 			<%- body %>
-			++++++++++++++++ C
 			<!--PAGE_BODY_END-->
 		</div>
-		<aside class="sidePanel threecol last">
+		<div class="span4">
 			<%- sidePanel %>
 			++++++++++++++++ D
-		</aside>
+		</div>
 	</div>
 	<footer class="row-fluid">
 		<%- footer %>
