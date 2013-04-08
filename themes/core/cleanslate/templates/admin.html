@@ -13,28 +13,41 @@
 
 </head>
 <body>
-<nav class="adminMenu row extended-height">
-    <%- admin %>
-</nav>
 <div class="container">
-    <header class="row">
-        <%- header %>
-        <nav class="adminToolbar">
-            <%- getMenu('adminToolbar') %>
-        </nav>
-    </header>
+      <div class="masthead">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="container">
+              <%- admin %>
+            </div>
+          </div>
+        </div><!-- /.navbar -->
+      </div>
 
-    <aside id="messages" class="row">
-        <%- messages %>
-    </aside>
 
-    <article class="admin-body row">
-        <!--PAGE_BODY_START-->
-        <%- body %>
-        <!--PAGE_BODY_END-->
-    </article>
-    <footer class="row">
+    <div id="messages" class="row-fluid">
+        <div span="12">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <%- messages %>
+        </div>
+    </div>
+    <nav class="row-fluid">
+        <%- getMenu('adminToolbar') %>
+    </nav>
+    <div class="row-fluid">
+        <div class="span8">
+            <!--PAGE_BODY_START-->
+            <%- body %>
+            <!--PAGE_BODY_END-->
+        </div>
+        <div class="span4">
+            <%- sidePanel %>
+            ++++++++++++++++ D
+        </div>
+    </div>
+    <footer class="row-fluid">
         <%- footer %>
+        ++++++++++++++++ E
     </footer>
 </div>
 </body>
