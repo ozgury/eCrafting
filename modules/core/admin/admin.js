@@ -22,7 +22,7 @@ function route(req, res, module, app, next) {
     cachePermit = "admin:core:cache";
 
   // Menu items
-  res.menu.admin.addMenuItem(req, {name:'Administration', type: 'root', path:'admin', url:'/admin', description:'Calipso administration ...', permit:corePermit});
+  res.menu.admin.addMenuItem(req, {name:'Administration', path:'admin', url:'/admin', description:'Calipso administration ...', permit:corePermit});
   res.menu.admin.addMenuItem(req, {name:'Core', path:'admin/core', url:'/admin', description:'Manage core settings for Calipso ...', permit:corePermit});
   res.menu.admin.addMenuItem(req, {name:'Configuration', path:'admin/core/config', url:'/admin/core/config', description:'Core configuration ...', permit:corePermit});
   res.menu.admin.addMenuItem(req, {name:'View Languages', path:'admin/core/languages', url:'/admin/core/languages', description:'Languages ...', permit:corePermit});
