@@ -1,20 +1,94 @@
 /*!
- * Bootstrap v2.3.1
+ * ecrafting v1
  *
- * Copyright 2012 Twitter, Inc
+ * Copyright 2013 ecrafting.org
  * Licensed under the Apache License v2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Designed and built with all the love in the world @twitter by @mdo and @fat.
  */
 
+ @import url(http://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic,700italic);
+
+body, input {
+	font-family: 'Noto Sans', sans-serif;
+}
+
+#top-nav {
+	padding-top: 20px;
+}
  
  #logo {
  	/*float: left;*/
- 	max-height: 50px;
+ 	max-height: 20px;
  	overflow: visible;
+ 	margin-top: -30px;
  }
 
  #logo img {
  	height: 120px;
  }
+
+.copyright {
+	margin: 50px 0;
+	border-top: 1px solid #eee;
+	font-size: 10px;
+	padding: 10px 80px 10px 0; 
+	background: none;
+}
+
+.tile {
+	padding: 20px;
+}
+
+/* CUSTOMIZE THE CAROUSEL
+    -------------------------------------------------- */
+
+    /* Carousel base class */
+    .carousel {
+      margin-bottom: 60px;
+    }
+
+    .carousel .container {
+      position: relative;
+      z-index: 9;
+    }
+
+    .carousel-control {
+      height: 80px;
+      margin-top: 0;
+      font-size: 120px;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+      background-color: transparent;
+      border: 0;
+      z-index: 10;
+    }
+
+    .carousel .item {
+      height: 500px;
+    }
+    .carousel img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      /*height: 500px;*/
+      overflow: hidden;
+    }
+
+    .carousel-caption {
+      background-color: transparent;
+      position: static;
+      max-width: 550px;
+      padding: 0 20px;
+      margin-top: 200px;
+    }
+    .carousel-caption h1,
+    .carousel-caption .lead {
+      margin: 0;
+      line-height: 1.25;
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+    .carousel-caption .btn {
+      margin-top: 10px;
+    }
