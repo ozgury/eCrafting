@@ -42,9 +42,9 @@ var routes = [
 		// Media Calls
 		{ path:'GET /api/media', fn:listMedia },
 		{ path:'GET /api/media/:id', fn:listMedia },
-		{ path: 'POST /api/media', fn: createMedia },
-		{ path: 'POST /api/media/:id', fn: updateMedia },
-		{ path: 'DELETE /api/media/:id', fn: deleteMedia }
+		{ path: 'POST /api/media', fn: createMedia, permit: calipso.permission.Helper.hasPermission("admin:media:create") },
+		{ path: 'POST /api/media/:id', fn: updateMedia, permit: calipso.permission.Helper.hasPermission("admin:media:update") },
+		{ path: 'DELETE /api/media/:id', fn: deleteMedia, permit: calipso.permission.Helper.hasPermission("admin:media:delete") }
 ]
 
 /**
@@ -435,7 +435,8 @@ function listMedia(req, res, template, block, next) {
 				if (err) {
 					return responseError(res, 404, err);
 				};
-				res.writeHead(200, {'Content-Type': m.mediaType });
+				// Below line somehow kills the login.
+				//res.writeHead(200, {'Content-Type': m.mediaType });
 				return res.end(data, 'binary');
 			});
 		});

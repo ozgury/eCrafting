@@ -7,7 +7,8 @@ var rootpath = process.cwd() + '/',
 	 calipso = require(path.join(rootpath, 'lib/calipso')),
 	 mongooseTypes = require("mongoose-types"),
 	 mongooseValidate = require('mongoose-validate'),
-	 extensions = require('./lib/schema.extensions');
+	 extensions = require('./lib/schema.extensions'),
+	 utilities = require('./lib/utilities');
 
 module.exports = {
 	 init: init,
@@ -199,6 +200,26 @@ function createCircleForm(req, res, template, block, next) {
 
 }
 
+function readCircleFromForm(form, existingCircle) {
+	var c = existingCircle;
+
+	if (form.circle.image === '') {
+		form.circle.image = null;
+	}
+	if (c) {
+		calipso.form.mapFields(form.circle, existingCircle);
+		c.members = utilities.commaSeparatedtoArray(form.circle.members, c.members);
+		c.links = utilities.commaSeparatedtoArray(form.circle.links, c.links);
+		c.tags = utilities.commaSeparatedtoArray(form.circle.tags, c.tags);
+	} else {
+		c = new Circle(form.circle);
+		c.owner = req.session.user.username;
+		c.members = utilities.commaSeparatedtoArray(form.circle.members, []);
+		c.links = utilities.commaSeparatedtoArray(form.circle.links, []);
+		c.tags = utilities.commaSeparatedtoArray(form.circle.tags, []);
+	}
+	return c;
+}
 /**
  * Create new circle
  */
@@ -208,8 +229,8 @@ function createCircle(req, res, template, block, next) {
 
 			if (form) {
 				 var Circle = calipso.db.model('Circle');
+				 var c = readCircleFromForm(form, existingCircle)
 				 var c = new Circle(form.circle);
-				 var saved;
 				 
 				 c.owner = req.session.user.username;
 				 c.members = form.circle.members ? form.circle.members.split(",") : [];
@@ -319,30 +340,28 @@ function updateCircle(req, res, template, block, next) {
 			if (form) {
 				 var Circle = calipso.db.model('Circle');
 				 var id = req.moduleParams.id;
-
 				 Circle.findById(id, function (err, c) {
 						if (!err && c) {
-							 calipso.form.mapFields(form.circle, c);
-							 calipso.e.pre_emit('CIRCLE_UPDATE', c, function (c) {
-
-									c.save(function (err) {
-										 if (err) {
-												req.flash('error', req.t('Could not update circle because {msg}.', {
-													 msg: err.message
-												}));
-												if (res.statusCode != 302) {
-													 // Don't redirect if we already are, multiple errors
-													 res.redirect('/circle/edit/' + id);
-												}
-												next();
-										 } else {
-												calipso.e.post_emit('CIRCLE_UPDATE', c, function (c) {
-													 res.redirect('/circle/show/' + id);
-													 next();
-												});
-										 }
+					 		c = readCircleFromForm(form, c)
+							calipso.e.pre_emit('CIRCLE_UPDATE', c, function (c) {
+								c.save(function (err) {
+									if (err) {
+										req.flash('error', req.t('Could not update circle because {msg}.', {
+											msg: err.message
+										}));
+									if (res.statusCode != 302) {
+										// Don't redirect if we already are, multiple errors
+										res.redirect('/circle/edit/' + id);
+									}
+									next();
+									} else {
+										calipso.e.post_emit('CIRCLE_UPDATE', c, function (c) {
+										res.redirect('/circle/show/' + id);
+										next();
 									});
-							 });
+								}
+							});
+							});
 						} else {
 							 req.flash('error', req.t('Could not locate that circle.'));
 							 res.redirect('/circle');

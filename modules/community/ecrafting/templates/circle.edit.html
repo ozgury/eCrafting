@@ -18,9 +18,19 @@
      <div class="controls">
         <input type="hidden" id="circle[image]" name="circle[image]" value="<%- item.image %>" />
 
+        <% if(item.image) { %>
+        <div class="fileupload fileupload-exists" data-provides="fileupload">
+        <% } else { %>
         <div class="fileupload fileupload-new" data-provides="fileupload">
+        <% } %>
         <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
-        <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+        <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;">
+        <% if(item.image) { %>
+          <img src="/api/media/<%- item.image %>" />
+        <% } else { %>
+          <img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" />
+        <% } %>
+        </div>
           <span class="btn btn-file">
             <span class="fileupload-new">Select image</span>
             <span class="fileupload-exists">Change</span>
