@@ -1,5 +1,5 @@
 
-<form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="/circle/update/5162171b09e0bd7890000085" class="form-horizontal">
+<form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="/circle/update/<%- item.id %>" class="form-horizontal">
  <input type="hidden" value="FORM" name="form[id]" /><legend>Edit Circle</legend>
 
  <fieldset class="form-fields tab-content">
@@ -14,9 +14,20 @@
    </div>
 
    <div class="control-group field-type-file" id="circle_image-wrapper">
-     <label class="control-label" for="circle[image]">Image:</label>
+     <label class="control-label" for="fileupload">Image:</label>
      <div class="controls">
-       <input type="file" class="file" name="circle[image]" id="circle[image]" value="" />
+        <input type="hidden" id="circle[image]" name="circle[image]" value="<%- item.image %>" />
+
+        <div class="fileupload fileupload-new" data-provides="fileupload">
+        <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+        <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+          <span class="btn btn-file">
+            <span class="fileupload-new">Select image</span>
+            <span class="fileupload-exists">Change</span>
+            <input id="fileupload" name="files[]" type="file" />
+          </span>
+        <a href="#" onclick="ecr.page.deleteMedia()" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+        </div>
        <p class="help-block">Enter an image for circle.</p>
      </div>
    </div>
@@ -77,3 +88,13 @@
  </fieldset>
 </form>
 
+<script src="/js/ecr.page.circle.edit.js"></script>
+<script type="text/javascript">
+  //<![CDATA[
+  ecr.load();
+  $(document).ready(function () {
+    ecr.page = new ecr.page.ApiTest();
+    ecr.page.initialize();
+  });
+  //]]>
+</script>

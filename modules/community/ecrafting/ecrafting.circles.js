@@ -77,6 +77,10 @@ var routes = [{
 	 block: 'content.circle.show'
 }]
 
+function allPages(req, res, template, block, next) {
+  calipso.theme.renderItem(req, res, template, block, {}, next);
+};
+
 /**
  * Router - not async
  */
@@ -98,6 +102,16 @@ var routes = [{
 		* Initialization
 		*/
 	 function init(module, app, next) {
+			module.router.addRoute(/.*/, allPages, {
+				end:false,
+				template:'ecrafting.script',
+				block:'scripts.aloha'
+			}, next);
+			module.router.addRoute(/.*/, allPages, {
+				end:false,
+				template:'ecrafting.style',
+				block:'styles.aloha'
+			}, next);
 			calipso.lib.async.map(routes, function (options, next) {
 				 module.router.addRoute(options, next)
 			},
