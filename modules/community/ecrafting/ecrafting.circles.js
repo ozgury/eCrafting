@@ -17,7 +17,7 @@ module.exports = {
 }
 
 /**
- * Define the routes that this module will repsond to.
+ * Define the routes that this module will respond to
  */
 var routes = [{
 	 path: 'GET /circle',
@@ -36,24 +36,17 @@ var routes = [{
 }, {
 	 path: 'POST /circle/create',
 	 fn: createCircle,
-	 admin: true,
+	 admin: false,
 	 permit: calipso.permission.Helper.hasPermission("admin:circle:create")
-}, {
-	 path: 'GET /circle/new',
-	 fn: createCircleForm,
-	 admin: true,
-	 permit: calipso.permission.Helper.hasPermission("admin:circle:create"),
-	 block: 'content.circle.new',
-	 template: 'circle.form'
 }, {
 	 path: 'GET /circle/show/:id.:format?',
 	 fn: showCircle,
-	 admin: true,
+	 admin: false,
 	 permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
 	 template: 'circle.show',
 	 block: 'content.circle.show'
 }, {
-	 path: 'GET /circle/edit/:id',
+	 path: 'GET /circle/edit/:id?',
 	 fn: editCircleForm,
 	 admin: false,
 	 permit: calipso.permission.Helper.hasPermission("admin:circle:update"),
@@ -62,20 +55,37 @@ var routes = [{
 }, {
 	 path: 'GET /circle/delete/:id',
 	 fn: deleteCircle,
-	 admin: true,
+	 admin: false,
 	 permit: calipso.permission.Helper.hasPermission("admin:circle:delete")
 }, {
-	 path: 'POST /circle/update/:id',
+	 path: 'POST /circle/edit/:id',
 	 fn: updateCircle,
-	 admin: true,
+	 admin: false,
 	 permit: calipso.permission.Helper.hasPermission("admin:circle:update")
 }, {
-	 path: 'GET /circle/:id/addcall',
-	 fn: createCircleCallForm,
-	 admin: true,
-	 permit: calipso.permission.Helper.hasPermission("admin:circle:edit"),
-	 template: 'call.circle.form',
-	 block: 'content.circle.show'
+	 path: 'GET /circle/:id/call/edit/:cid?',
+	 fn: editCircleCallForm,
+	 admin: false,
+	 permit: calipso.permission.Helper.hasPermission("admin:call:edit"),
+	 template: 'call.edit',
+	 block: 'content.call.edit'
+}, {
+	 path: 'POST /circle/:id/call/edit/:cid?',
+	 fn: updateCircleCall,
+	 admin: false,
+	 permit: calipso.permission.Helper.hasPermission("admin:call:update")
+}, {
+	 path: 'GET /circle/:id/call/:cid/project/edit/:pid?',
+	 fn: editCallProjectForm,
+	 admin: false,
+	 permit: calipso.permission.Helper.hasPermission("admin:project:edit"),
+	 template: 'project.edit',
+	 block: 'content.project.edit'
+}, {
+	 path: 'POST /circle/:id/call/:cid/project/edit/:pid?',
+	 fn: updateCallProject,
+	 admin: false,
+	 permit: calipso.permission.Helper.hasPermission("admin:project:update")
 }]
 
 function allPages(req, res, template, block, next) {
@@ -184,23 +194,7 @@ var circleForm = {
 	 }]
 };
 
-/**
- * Create new circle
- */
-function createCircleForm(req, res, template, block, next) {
-
-	 circleForm.title = "Create Circle";
-	 circleForm.action = "/circle/create";
-
-	 calipso.form.render(circleForm, null, req, function (form) {
-			calipso.theme.renderItem(req, res, template, block, {
-				 form: form
-			}, next);
-	 });
-
-}
-
-function readCircleFromForm(form, existingCircle) {
+function readCircleFromForm(req, form, existingCircle) {
 	var c = existingCircle;
 
 	if (form.circle.image === '') {
@@ -212,6 +206,8 @@ function readCircleFromForm(form, existingCircle) {
 		c.links = utilities.commaSeparatedtoArray(form.circle.links, c.links);
 		c.tags = utilities.commaSeparatedtoArray(form.circle.tags, c.tags);
 	} else {
+		var Circle = calipso.db.model('Circle');
+
 		c = new Circle(form.circle);
 		c.owner = req.session.user.username;
 		c.members = utilities.commaSeparatedtoArray(form.circle.members, []);
@@ -220,6 +216,23 @@ function readCircleFromForm(form, existingCircle) {
 	}
 	return c;
 }
+
+function readCallFromForm(req, form, existingCall) {
+	var call = existingCall;
+
+	if (form.call.image === '') {
+		form.call.image = null;
+	}
+	if (call) {
+		calipso.form.mapFields(form.call, existingCall);
+	} else {
+		var Call = calipso.db.model('Call');
+
+		call = new Call(form.call);
+	}
+	return call;
+}
+
 /**
  * Create new circle
  */
@@ -228,34 +241,27 @@ function createCircle(req, res, template, block, next) {
 	 calipso.form.process(req, function (form) {
 
 			if (form) {
-				 var Circle = calipso.db.model('Circle');
-				 var c = readCircleFromForm(form, existingCircle)
-				 var c = new Circle(form.circle);
+				var c = readCircleFromForm(req, form);
 				 
-				 c.owner = req.session.user.username;
-				 c.members = form.circle.members ? form.circle.members.split(",") : [];
-				 c.links = form.circle.links ? form.circle.links.split(",") : [];
-				 c.tags = form.circle.tags ? form.circle.tags.split(",") : [];
-
-				 calipso.e.pre_emit('CIRCLE_CREATE', c, function (c) {
-						c.save(function (err) {
-							 if (err) {
-									req.flash('error', req.t('Could not save circle because {msg}.', {
-										 msg: err.message
-									}));
-									calipso.debug("Err: " + err);
-									if (res.statusCode != 302) {
-										 res.redirect('/circle/new');
-									}
-									next();
-							 } else {
-									calipso.e.post_emit('CIRCLE_CREATE', c, function (c) {
-										 res.redirect('/circle');
-										 next();
-									});
-							 }
-						});
-				 });
+				calipso.e.pre_emit('CIRCLE_CREATE', c, function (c) {
+					c.save(function (err) {
+						if (err) {
+							req.flash('error', req.t('Could not save circle because {msg}.', {
+								msg: err.message
+							}));
+							calipso.debug("Err: " + err);
+							if (res.statusCode != 302) {
+								res.redirect('/circle/new');
+							}
+							next();
+						} else {
+							calipso.e.post_emit('CIRCLE_CREATE', c, function (c) {
+								res.redirect('/circle');
+								next();
+							});
+						}
+					});
+				});
 			}
 	 });
 }
@@ -306,20 +312,18 @@ function editCircleForm(req, res, template, block, next) {
 			permit: calipso.permission.Helper.hasPermission("admin:circle:delete")
 	 });
 
-	 Circle.findById(id, function (err, c) {
-
+	 if (id) {
+		Circle.findById(id, function (err, c) {
 			if (err || c === null) {
 				 res.statusCode = 404;
 				 next();
 			} else {
-				 circleForm.title = "Edit Circle";
-				 circleForm.action = "/circle/update/" + id;
-
 				 var values = {
-						circle: c
+						circle: c,
+						action: '/circle/edit/' + c._id
 				 }
 				 calipso.form.render(circleForm, values, req, function (form) {
-						calipso.theme.renderItem(req, res, template, block, { item: c }, next);
+						calipso.theme.renderItem(req, res, template, block, values, next);
 				 });
 				 /*
 				 calipso.theme.renderItem(req, res, template, block, {
@@ -327,7 +331,13 @@ function editCircleForm(req, res, template, block, next) {
 				 }, next);
 				*/
 			}
-	 });
+		});
+	} else {
+		var Circle = calipso.db.model('Circle');
+		var c = new Circle();
+
+		calipso.theme.renderItem(req, res, template, block, { circle: c, action: "/circle/create" }, next);
+	 }
 }
 
 /**
@@ -342,7 +352,7 @@ function updateCircle(req, res, template, block, next) {
 				 var id = req.moduleParams.id;
 				 Circle.findById(id, function (err, c) {
 						if (!err && c) {
-					 		c = readCircleFromForm(form, c)
+					 		c = readCircleFromForm(req, form, c)
 							calipso.e.pre_emit('CIRCLE_UPDATE', c, function (c) {
 								c.save(function (err) {
 									if (err) {
@@ -422,7 +432,7 @@ function showCircle(req, res, template, block, next) {
 			// Set the page layout to the circle
 			if (format === "html") {
 				 calipso.theme.renderItem(req, res, template, block, {
-						item: circle
+						circle: circle
 				 }, next);
 			}
 			if (format === "json") {
@@ -508,18 +518,171 @@ function deleteCircle(req, res, template, block, next) {
 }
 
 /**
- * Create new circle
+ * Edit circle
  */
-function createCircleCallForm(req, res, template, block, next) {
+function editCircleCallForm(req, res, template, block, next) {
+	var Circle = calipso.db.model('Circle');
+	var id = req.moduleParams.id;
+	var cId = req.moduleParams.cid;
+	var item;
 
-	 circleForm.title = "Create Circle Call";
-	 circleForm.action = "/circle/create";
+	if (id) {
+		Circle.findById(id, function (err, c) {
+			if (err || c === null && (cId && c.calls.id(cId) === null)) {
+				res.statusCode = 404;
+				next();
+			} else {
+				var values = {
+					circle: c, 
+					call: c.calls.id(cId), 
+					action: '/circle/' + c._id + '/call/edit/' + (cId ? cId : "")
+				}
 
-	 calipso.form.render(circleForm, null, req, function (form) {
-			calipso.theme.renderItem(req, res, template, block, {
-				 form: form
-			}, next);
-	 });
+				if (values.call == null) {
+					var Call = calipso.db.model('Call');
+					var c = new Call();
+				 	values.call = c;
+				}
+				calipso.form.render(circleForm, values, req, function (form) {
+						calipso.theme.renderItem(req, res, template, block, values, next);
+				});
+			}
+		});
+	} else {
+		res.statusCode = 404;
+		next();
+	}
+}
+
+function updateCircleCall(req, res, template, block, next) {
+	calipso.form.process(req, function (form) {
+		if (form) {
+			var Circle = calipso.db.model('Circle');
+			var id = req.moduleParams.id;
+			var cId = req.moduleParams.cid;
+
+			Circle.findById(id, function (err, c) {
+				if (!err && c) {
+					var call = c.calls.id(cId);
+
+					if (cId && !call) {
+						req.flash('error', req.t('Could not locate that call.'));
+						res.redirect('/circle');
+						next();
+						return;
+					}
+
+			 		call = readCallFromForm(req, form, call)
+					calipso.e.pre_emit('CALL_UPDATE', call, function (call) {
+						c.save(function (err) {
+							if (err) {
+								req.flash('error', req.t('Could not update call because {msg}.', {
+									msg: err.message
+								}));
+							if (res.statusCode != 302) {
+								// Don't redirect if we already are, multiple errors
+								res.redirect('/circle/edit/' + id);
+							}
+							next();
+							} else {
+								calipso.e.post_emit('CIRCLE_UPDATE', c, function (c) {
+								res.redirect('/circle/show/' + id);
+								next();
+							});
+						}
+					});
+					});
+				} else {
+					 req.flash('error', req.t('Could not locate that circle.'));
+					 res.redirect('/circle');
+					 next();
+				}
+			});
+		}
+	});
+}
+
+function editCallProjectForm(req, res, template, block, next) {
+	var Circle = calipso.db.model('Circle');
+	var id = req.moduleParams.id;
+	var cId = req.moduleParams.cid;
+	var pId = req.moduleParams.pid;
+
+	if (id) {
+		Circle.findById(id, function (err, c) {
+			if (err || c === null) {
+				res.statusCode = 404;
+				next();
+			} else {
+				var values = {
+					circle: c, 
+					call: c.calls.id(cId), 
+					action: '/circle/' + c._id + '/call/' + cId + '/edit/' + pId
+				}
+
+				if (values.call == null) {
+					var Call = calipso.db.model('Call');
+					var c = new Call();
+				 	values.call = c;
+				}
+				calipso.form.render(circleForm, values, req, function (form) {
+						calipso.theme.renderItem(req, res, template, block, values, next);
+				});
+			}
+		});
+	} else {
+		res.statusCode = 404;
+		next();
+	}
+}
+
+function updateCallProject(req, res, template, block, next) {
+	calipso.form.process(req, function (form) {
+		if (form) {
+			var Circle = calipso.db.model('Circle');
+			var id = req.moduleParams.id;
+			var cId = req.moduleParams.cid;
+
+			Circle.findById(id, function (err, c) {
+				if (!err && c) {
+					var call = c.calls.id(cId);
+
+					if (cId && !call) {
+						req.flash('error', req.t('Could not locate that call.'));
+						res.redirect('/circle');
+						next();
+						return;
+					}
+
+			 		call = readCallFromForm(req, form, call)
+					calipso.e.pre_emit('CALL_UPDATE', call, function (call) {
+						c.calls.id(cId) = call;
+						c.save(function (err) {
+							if (err) {
+								req.flash('error', req.t('Could not update call because {msg}.', {
+									msg: err.message
+								}));
+							if (res.statusCode != 302) {
+								// Don't redirect if we already are, multiple errors
+								res.redirect('/circle/edit/' + id);
+							}
+							next();
+							} else {
+								calipso.e.post_emit('CIRCLE_UPDATE', c, function (c) {
+								res.redirect('/circle/show/' + id);
+								next();
+							});
+						}
+					});
+					});
+				} else {
+					 req.flash('error', req.t('Could not locate that circle.'));
+					 res.redirect('/circle');
+					 next();
+				}
+			});
+		}
+	});
 }
 
 /**

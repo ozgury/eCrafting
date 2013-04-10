@@ -42,9 +42,9 @@ var routes = [
 		// Media Calls
 		{ path:'GET /api/media', fn:listMedia },
 		{ path:'GET /api/media/:id', fn:listMedia },
-		{ path: 'POST /api/media', fn: createMedia, permit: calipso.permission.Helper.hasPermission("admin:media:create") },
-		{ path: 'POST /api/media/:id', fn: updateMedia, permit: calipso.permission.Helper.hasPermission("admin:media:update") },
-		{ path: 'DELETE /api/media/:id', fn: deleteMedia, permit: calipso.permission.Helper.hasPermission("admin:media:delete") }
+		{ path: 'POST /api/media', fn: createMedia },
+		{ path: 'POST /api/media/:id', fn: updateMedia },
+		{ path: 'DELETE /api/media/:id', fn: deleteMedia }
 ]
 
 /**
@@ -428,7 +428,7 @@ function listMedia(req, res, template, block, next) {
 
 	if (id) {
 		Media.findById(id, function (err, m) {
-			if (err) {
+			if (err || !m) {
 				return responseError(res, 404, err);
 			}
 			var data = fs.readFile(m.path, function (err, data) {
@@ -465,13 +465,18 @@ function updateMedia(req, res, template, block, next) {
 		} else {
 			author = 'Unknown';
 		}
-		fs.unlink(m.path, function (err) {
-		  calipso.error('Error deleting file ', m.path, err);
-		});
+		if (m && m.path) {
+			fs.unlink(m.path, function (err) {
+				calipso.error('Error deleting file ', m.path, err);
+			});			
+		}
 		media.processUploadedFiles(req, res, function(err, file, next) {
 			if (err) {
 				returnError();
 				return responseError(res, 400, err);
+			}
+			if (m === null) {
+				m = new Media();
 			}
 			m.fileName = file.file.name;
 			m.mediaType = file.file.type;
@@ -504,7 +509,7 @@ function deleteMedia(req, res, template, block, next) {
 		return responseError(res, 404);
 	}
 	Media.findById(id, function (err, m) {
-		if (err) {
+		if (err || m === null) {
 			return responseError(res, 404, err);
 		}
 		calipso.e.pre_emit('MEDIA_DELETE', m);

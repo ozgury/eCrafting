@@ -1,25 +1,73 @@
 <div class='circle'>
-    <h1><%- item.name %></h1>
+    <h1><%- circle.name %></h1>
     <table>
         <tr>
             <th><%- t('Name') %></th>
-            <td><%- item.name %></td>
+            <td><%- circle.name %></td>
         </tr>
         <tr>
             <th><%- t('Image') %></th>
-            <td><img src="/api/media/<%- item.image %>" /></td>
+            <td><img src="/api/media/<%- circle.image %>" /></td>
         </tr>
         <tr>
             <th><%- t('Description') %></th>
-            <td><%- item.description %></td>
+            <td><%- circle.description %></td>
         </tr>
         <tr>
             <th><%- t('Tags') %></th>
-            <td><%- item.tags %></td>
+            <td><%- circle.tags %></td>
         </tr>
         <tr>
             <th><%- t('Location') %></th>
-            <td><%- item.location %></td>
+            <td><%- circle.location %></td>
         </tr>
     </table>
+
+    <h2>Calls and Projects</h1>
+    <%
+    if (circle.calls.length == 0) {
+        t('No calls defined.')
+    } else {
+    %>
+      <table class="table table-bordered table-hover">
+        <%
+        circle.calls.forEach(function(call) {
+        %>
+        <tr>
+            <td><a href='/circle/<%- circle._id %>/call/edit/<%- call._id %>'><%- call.name %></a></td>
+            <td><%- call.date %></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+            <%
+            if (call.projects.length == 0) {
+                t('No project defined.')
+            } else {
+            %>
+            <table class="table table-bordered table-hover">
+            <%
+            call.projects.forEach(function(project) {
+            %>
+            <tr>
+                <td><a href='/circle/<%- circle._id %>/call/<%- call._id %>/project/edit/<%- project._id %>'><%- project.name %></a></td>
+            </tr>
+            <%
+            });
+            %>
+            </table>
+            <%
+            }
+            %>
+            </td>
+        </tr>
+        <%
+        });
+        %>
+      </table>
+    <%
+    }
+    %>
+
+
 </div>

@@ -54,6 +54,8 @@ function init(module, app, next) {
 			media: [Media]
 		});
 
+		calipso.db.model('Project', Project);
+
 		var Call = new calipso.lib.mongoose.Schema({
 			image: {
 				type: calipso.lib.mongoose.Schema.ObjectId,
@@ -74,6 +76,8 @@ function init(module, app, next) {
 			},
 			projects: [Project]
 		});
+
+		calipso.db.model('Call', Call);
 
 		var Circle = new calipso.lib.mongoose.Schema({
 			owner: {

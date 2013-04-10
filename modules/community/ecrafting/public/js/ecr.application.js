@@ -121,13 +121,11 @@ ecr.Application = function () {
 	};
 
 	this.userMessage = function (message, type) {
-		// Hide the guides first. Guides and messages are either/or
-		$(('[data-ecr-guide]')).hide();
 		$('#status').hide().fadeIn('slow');
 		if ($('#status').length == 0) {
 			var statusHtml = "<div id='status-panel' class='alert-message default fade in' data-alert='alert' style='display: none'><a class='close' href='#'>&times;</a><div id='status'>" +
 							message + "</div></div>";
-			$('#status-holder').html(statusHtml);
+			$('#messages').html(statusHtml);
 			$('#status').hide().fadeIn('slow');
 		} else {
 			$('#status').html(message);

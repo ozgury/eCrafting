@@ -29,19 +29,19 @@ ecr.page.ApiTest = function () {
 		}
 
 		function setFileUpload() {
-	    $(':file').fileupload({
-			    url: '/api/media/' + $('#imageid').html(),
-			    sequentialUploads: true,
-			    singleFileUploads: false,
-	        dataType: 'json',
-			    progressall: function (e, data) {
-			        var progress = parseInt(data.loaded / data.total * 100, 10);
-			        $('#progress .bar').css(
-			            'width',
-			            progress + '%'
-			        );
-			    },
-	    }).bind('fileuploadalways', function (e, data) {
+	   	$(':file').fileupload({
+			   url: '/api/media/' + $('#imageid').html(),
+			   sequentialUploads: true,
+			   singleFileUploads: false,
+	      	dataType: 'json',
+			   progressall: function (e, data) {
+			      var progress = parseInt(data.loaded / data.total * 100, 10);
+			      $('#progress .bar').css(
+			         'width',
+			         progress + '%'
+			      );
+			   },
+	   	}).bind('fileuploadalways', function (e, data) {
 	    	if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
 		    	//showResponse((JSON.parse(data.xhr().response))[0], data.xhr());
 		    	$('.fileupload').removeClass('fileupload-new').addClass('fileupload-exists');
@@ -50,9 +50,31 @@ ecr.page.ApiTest = function () {
 					$('#imageid').html((JSON.parse(data.xhr().response))[0]._id);
 		    	setFileUpload();
 	    	}
-	    }).bind('fileuploadadd', function (e, data) {
-	    }).bind('fileuploadsubmit', function (e, data) {
-	    });			
+			}).bind('fileuploadadd', function (e, data) {
+			}).bind('fileuploadsubmit', function (e, data) {
+			});
+	   	$("#remove").click(function(event){
+				var command = 'media/' + $('#imageid').html();
+
+				apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
+					showResponse(response, jqXhr);
+				  $('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
+		    	$('.fileupload').find('span.fileupload-preview').html('');
+					$('#imageid').html('');
+					setFileUpload();
+				}, showError);
+			});
+	   	$("#remove2").click(function(event){
+				var command = 'media/' + $('#imageid').html();
+
+				apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
+					showResponse(response, jqXhr);
+				  $('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
+		    	$('.fileupload').find('span.fileupload-preview').html('');
+					$('#imageid').html('');
+					setFileUpload();
+				}, showError);
+			});
 		}
 
 		this.initialize = function () {
@@ -236,18 +258,6 @@ ecr.page.ApiTest = function () {
 
 			apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
 				showResponse(response, jqXhr, 3);
-			}, showError);
-		};
-
-		this.deleteMedia = function () {
-			var command = 'media/' + $('#id').html();
-
-			apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
-				showResponse(response, jqXhr);
-			  $('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
-	    	$('.fileupload').find('span.fileupload-preview').html('');
-				$('#imageid').html('');
-				setFileUpload();
 			}, showError);
 		};
 };
