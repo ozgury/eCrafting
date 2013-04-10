@@ -54,9 +54,10 @@ var routes = [{
 }, {
 	 path: 'GET /circle/edit/:id',
 	 fn: editCircleForm,
-	 admin: true,
+	 admin: false,
 	 permit: calipso.permission.Helper.hasPermission("admin:circle:update"),
-	 block: 'content.circle.edit'
+	 block: 'content.circle.edit',
+	 template: 'circle.edit'
 }, {
 	 path: 'GET /circle/delete/:id',
 	 fn: deleteCircle,
@@ -75,6 +76,10 @@ var routes = [{
 	 template: 'call.circle.form',
 	 block: 'content.circle.show'
 }]
+
+function allPages(req, res, template, block, next) {
+  calipso.theme.renderItem(req, res, template, block, {}, next);
+};
 
 /**
  * Router - not async
@@ -97,6 +102,16 @@ var routes = [{
 		* Initialization
 		*/
 	 function init(module, app, next) {
+			module.router.addRoute(/.*/, allPages, {
+				end:false,
+				template:'ecrafting.script',
+				block:'scripts.aloha'
+			}, next);
+			module.router.addRoute(/.*/, allPages, {
+				end:false,
+				template:'ecrafting.style',
+				block:'styles.aloha'
+			}, next);
 			calipso.lib.async.map(routes, function (options, next) {
 				 module.router.addRoute(options, next)
 			},
@@ -124,6 +139,11 @@ var circleForm = {
 				 type: 'text',
 				 description: 'Enter the name of the circle, it must be unique.'
 			}, {
+				 label: 'Image',
+				 name: 'circle[image]',
+				 type: 'file',
+				 description: 'Enter an image for circle.'
+			}, {
 				 label: 'Description',
 				 name: 'circle[description]',
 				 type: 'textarea',
@@ -133,6 +153,16 @@ var circleForm = {
 				 name: 'circle[location]',
 				 type: 'text',
 				 description: 'Enter the circle location.'
+			}, {
+			label:'Members', 
+			name:'circle[members]', 
+			type:'text', 
+			description:'Enter circle members delimited by comma.'
+			}, {
+			label:'Links', 
+			name:'circle[links]', 
+			type:'text', 
+			description:'Enter circle links delimited by comma.'
 			}, {
 			label:'Tags', 
 			name:'circle[tags]', 
@@ -182,6 +212,8 @@ function createCircle(req, res, template, block, next) {
 				 var saved;
 				 
 				 c.owner = req.session.user.username;
+				 c.members = form.circle.members ? form.circle.members.split(",") : [];
+				 c.links = form.circle.links ? form.circle.links.split(",") : [];
 				 c.tags = form.circle.tags ? form.circle.tags.split(",") : [];
 
 				 calipso.e.pre_emit('CIRCLE_CREATE', c, function (c) {
@@ -266,8 +298,13 @@ function editCircleForm(req, res, template, block, next) {
 						circle: c
 				 }
 				 calipso.form.render(circleForm, values, req, function (form) {
-						calipso.theme.renderItem(req, res, form, block, {}, next);
+						calipso.theme.renderItem(req, res, template, block, { item: c }, next);
 				 });
+				 /*
+				 calipso.theme.renderItem(req, res, template, block, {
+						item: c
+				 }, next);
+				*/
 			}
 	 });
 }

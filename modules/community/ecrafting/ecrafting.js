@@ -40,6 +40,18 @@ function init(module, app, next) {
 			module.router.addRoute('GET /locations', showMain, {template:'locations', block:'admin.show'}, this.parallel());
 			module.router.addRoute('GET /timeline', showMain, {template:'timeline', block:'admin.show'}, this.parallel());
 			module.router.addRoute('GET /current', showMain, {template:'current', block:'admin.show'}, this.parallel());
+
+	      module.router.addRoute(/.*/, allPages, {
+	        end:false,
+	        template:'ecrafting.script',
+	        block:'scripts.ecrafting'
+	      }, this.parallel());
+	      module.router.addRoute(/.*/, allPages, {
+	        end:false,
+	        template:'ecrafting.style',
+	        block:'styles.ecrafting'
+	      }, this.parallel());
+
 		},
 		function done() {
 			domain.init(module, app, next);

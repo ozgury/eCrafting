@@ -1,0 +1,100 @@
+
+<form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="/circle/update/<%- item.id %>" class="form-horizontal">
+ <input type="hidden" value="FORM" name="form[id]" /><legend>Edit Circle</legend>
+
+ <fieldset class="form-fields tab-content">
+   <h3>Circle</h3>
+
+   <div class="control-group field-type-text" id="circle_name-wrapper">
+     <label class="control-label" for="circle[name]">Name:</label>
+     <div class="controls">
+       <input type="text" class="text" name="circle[name]" id="circle[name]" value="<%- item.name %>" />
+       <p class="help-block">Enter the name of the circle, it must be unique.</p>
+     </div>
+   </div>
+
+   <div class="control-group field-type-file" id="circle_image-wrapper">
+     <label class="control-label" for="fileupload">Image:</label>
+     <div class="controls">
+        <input type="hidden" id="circle[image]" name="circle[image]" value="<%- item.image %>" />
+
+        <div class="fileupload fileupload-new" data-provides="fileupload">
+        <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+        <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+          <span class="btn btn-file">
+            <span class="fileupload-new">Select image</span>
+            <span class="fileupload-exists">Change</span>
+            <input id="fileupload" name="files[]" type="file" />
+          </span>
+        <a href="#" onclick="ecr.page.deleteMedia()" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+        </div>
+       <p class="help-block">Enter an image for circle.</p>
+     </div>
+   </div>
+
+   <div class="control-group field-type-textarea" id="circle_description-wrapper">
+     <label class="control-label" for="circle[description]">Description:</label>
+     <div class="controls">
+       <textarea class="textarea" rows="10" name="circle[description]" id="circle[description]"><%- item.description %></textarea>
+
+       <p class="help-block">Enter a description.</p>
+     </div>
+   </div>
+
+   <div class="control-group field-type-text" id="circle_location-wrapper">
+     <label class="control-label" for="circle[location]">Location:</label>
+
+     <div class="controls">
+       <input type="text" class="text" name="circle[location]" id="circle[location]" value="<%- item.location %>" />
+
+       <p class="help-block">Enter the circle location.</p>
+     </div>
+   </div>
+
+   <div class="control-group field-type-text" id="circle_members-wrapper">
+     <label class="control-label" for="circle[members]">Members:</label>
+
+     <div class="controls">
+       <input type="text" class="text" name="circle[members]" id="circle[members]" value="<%- item.members %>" />
+
+       <p class="help-block">Enter circle members delimited by comma.</p>
+     </div>
+   </div>
+
+   <div class="control-group field-type-text" id="circle_links-wrapper">
+     <label class="control-label" for="circle[links]">Links:</label>
+
+     <div class="controls">
+       <input type="text" class="text" name="circle[links]" id="circle[links]" value="<%- item.links %>" />
+
+       <p class="help-block">Enter circle links delimited by comma.</p>
+     </div>
+   </div>
+
+   <div class="control-group field-type-text" id="circle_tags-wrapper">
+     <label class="control-label" for="circle[tags]">Tags:</label>
+
+     <div class="controls">
+       <input type="text" class="text" name="circle[tags]" id="circle[tags]" value="<%- item.tags %>" />
+
+       <p class="help-block">Enter comma delimited tags for this circle.</p>
+     </div>
+   </div>
+
+   <div class="form-actions">
+     <input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Circle" /> <input type="button" class="button btn" name="cancel"
+     onclick='window.location="/circle"' id="cancel" value="Cancel" />
+   </div>
+ </fieldset>
+</form>
+
+<script src="/js/ecr.page.circle.edit.js"></script>
+<script type="text/javascript">
+  //<![CDATA[
+  ecr.load();
+  $(document).ready(function () {
+    ecr.page = new ecr.page.ApiTest();
+    ecr.page.initialize();
+  });
+  //]]>
+</script>

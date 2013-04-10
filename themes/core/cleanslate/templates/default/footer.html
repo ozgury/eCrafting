@@ -6,24 +6,9 @@
     &copy; <%= (new Date()).getFullYear() %> This material is based upon work supported by the National Science Foundation under Grant No. 1238172. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
 </div>
 
-<script src="/js/ecr.application.js"></script>
-<script src="/js/ecr.utilities.js"></script>
-<script src="/js/ecr.apiwrapper.js"></script>
-<script src="/js/ecr.page.apitest.js"></script>
 <script src="/bootstrap/js/bootstrap.js"></script>
 <script src="/jasny-bootstrap/js/jasny-bootstrap.js"></script>
 <script src="https://raw.github.com/douglascrockford/JSON-js/master/json2.js"></script>
 <script src="/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js"></script>
 <script src="/lib/jqueryfileupload/js/jquery.iframe-transport.js"></script>
 <script src="/lib/jqueryfileupload/js/jquery.fileupload.js"></script>
-
-
-<script type="text/javascript">
-	//<![CDATA[
-	ecr.load();
-	$(document).ready(function () {
-		ecr.page = new ecr.page.ApiTest();
-		ecr.page.initialize();
-	});
-	//]]>
-</script>
