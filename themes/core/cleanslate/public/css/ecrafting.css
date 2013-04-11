@@ -136,3 +136,29 @@ body, form, input, select {
 .carousel-caption .btn {
   margin-top: 10px;
 }
+/* SLIDE BUTTONS */
+#slide-left,
+#slide-right {
+    width: 31px;
+    height: 37px;
+    display: block;
+    position: absolute;
+    top: 200px;
+    left: 0;
+    background: url(/images/gfx/leftright-arrows.png) no-repeat;
+    opacity: .5;
+    -webkit-transition: opacity .1s linear;
+    -moz-transition: opacity .1s linear;
+    transition: opacity .1s linear;
+    /*display: none;*/
+    z-index: 200;
+}
+#slide-right {
+    left: auto;
+    right: 0;
+    background-position: -31px 0;
+}
+#slide-left:hover,
+#slide-right:hover {
+    opacity: 1;
+}
