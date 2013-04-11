@@ -1,9 +1,9 @@
-<div span="12 alert">
-<button type="button" class="close" data-dismiss="alert">&times;</button>
 <% var msgs = flashMessages(); %>
 
 <% for (var type in msgs) {  %>
-<ul class="<%- type %>">
+<ul class="<%- type %> alert alert-block">
+	<button type="button" class="close" data-dismiss="alert">&times;</button>
+
     <% var msgSet = msgs[type]; %>
     <% for (var i=0,l=msgSet.length; i
     <l
@@ -14,4 +14,3 @@
     <% } %>
 </ul>
 <% } %>
-</div>

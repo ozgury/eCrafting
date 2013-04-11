@@ -1,28 +1,26 @@
 <div class="template-module">
     <h2><%- t('Circles') %></h2>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th><%- t('Name:') %></th>
-                <th><%- t('Description:') %></th>
-            </tr>
-        </thead>
 
-        <%
+    <ul class="browse-list">
+       <%
         items.forEach(function(item) {
         %>
-        <tr>
-            <td><a href='/circle/show/<%- item._id %>'><%- item.name %></a></td>
-            <td> <%- item.description %></td>
-        </tr>
+
+        <li class="span3">
+            <div class="browse-img pull-left"><img src="/api/media/<%- item.image %>" class="img-circle"></div>
+            <div class="browse-name"><a href='/circle/show/<%- item._id %>'><%- item.name %></a></div>
+            <div class="browse-text"> <%- item.description %></div>
+        </li>
         <%
         });
 
         if(!items) {
         %>
-        <td colspan='4'><%- t('No circles defined.') %></td>
+        <li><%- t('No circles defined.') %></td>
         <%
         }
         %>
-    </table>
+         
+    </ul>
 </div>
+

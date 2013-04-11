@@ -22,5 +22,4 @@ exports = module.exports = function (req, options, callback) {
       callback(err, {about:about, tagcloud:tagcloud, side:side});
     }
   );
-
 };
