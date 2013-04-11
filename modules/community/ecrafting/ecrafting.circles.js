@@ -22,14 +22,14 @@ module.exports = {
 var routes = [{
 	path: 'GET /circle',
 	fn: listCircle,
-	admin: true,
+	admin: false,
 	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
 	template: 'circle.list',
 	block: 'content.circle.show'
 }, {
 	path: 'GET /circle/list.:format?',
 	fn: listCircle,
-	admin: true,
+	admin: false,
 	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
 	template: 'circle.list',
 	block: 'content.circle.list'
