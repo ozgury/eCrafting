@@ -105,8 +105,6 @@ ecr.Utilities = function () {
 			$idInput.val((JSON.parse(data.xhr().response))[0]._id);
 			that.setFileUpload($fileUpload, $idInput, $removeButton);
 		}
-	}).bind('fileuploadadd', function (e, data) {
-	}).bind('fileuploadsubmit', function (e, data) {
 	});
 	$removeButton.click(function(event){
 		var command = 'media/' + $idInput.val();

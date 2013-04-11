@@ -220,7 +220,6 @@ function readCircleFromForm(req, form, existingCircle) {
 function readCallFromForm(req, form, existingCall) {
 	var call = existingCall;
 
-	console.log("Existing Call: ", existingCall);
 	if (form.call.image === '') {
 		form.call.image = null;
 	}
@@ -228,9 +227,22 @@ function readCallFromForm(req, form, existingCall) {
 		calipso.form.mapFields(form.call, existingCall);
 	} else {
 		call = form.call;
-		console.log("Form: ", form.call);
 	}
 	return call;
+}
+
+function readProjectFromForm(req, form, existingProject) {
+	var p = existingProject;
+
+	if (p) {
+		console.log(form.project);
+		calipso.form.mapFields(form.project, existingProject);
+	} else {
+		console.log(form.project);
+		p = form.project;
+		p.owner = req.session.user.username;
+	}
+	return p;
 }
 
 /**
@@ -320,7 +332,7 @@ function editCircleForm(req, res, template, block, next) {
 			} else {
 				var values = {
 					circle: c,
-					action: '/circle/edit/' + c._id
+					action: '/circle/edit/' + c.id
 				}
 				calipso.form.render(circleForm, values, req, function (form) {
 					calipso.theme.renderItem(req, res, template, block, values, next);
@@ -534,7 +546,7 @@ function editCircleCallForm(req, res, template, block, next) {
 				var values = {
 					circle: c, 
 					call: c.calls.id(cId), 
-					action: '/circle/' + c._id + '/call/edit/' + (cId ? cId : "")
+					action: '/circle/' + c.id + '/call/edit/' + (cId ? cId : "")
 				}
 
 				if (values.call == null) {
@@ -612,20 +624,21 @@ function editCallProjectForm(req, res, template, block, next) {
 
 	if (id) {
 		Circle.findById(id, function (err, c) {
-			if (err || c === null) {
+			if (err || c === null || c.calls.id(cId) === null) {
 				res.statusCode = 404;
 				next();
 			} else {
 				var values = {
 					circle: c, 
-					call: c.calls.id(cId), 
-					action: '/circle/' + c._id + '/call/' + cId + '/edit/' + pId
+					call: c.calls.id(cId),
+					project: c.calls.id(cId).projects.id(pId),
+					action: '/circle/' + c.id + '/call/' + cId + '/project/edit/' + (pId ? pId : "")
 				}
 
-				if (values.call == null) {
-					var Call = calipso.db.model('Call');
-					var c = new Call();
-					values.call = c;
+				if (values.project == null) {
+					var Project = calipso.db.model('Project');
+					var p = new Project();
+					values.project = p;
 				}
 				calipso.form.render(circleForm, values, req, function (form) {
 					calipso.theme.renderItem(req, res, template, block, values, next);
@@ -644,6 +657,7 @@ function updateCallProject(req, res, template, block, next) {
 			var Circle = calipso.db.model('Circle');
 			var id = req.moduleParams.id;
 			var cId = req.moduleParams.cid;
+			var pId = req.moduleParams.pid;
 
 			Circle.findById(id, function (err, c) {
 				if (!err && c) {
@@ -655,27 +669,37 @@ function updateCallProject(req, res, template, block, next) {
 						next();
 						return;
 					}
+					var p = call.projects.id(pId);
 
-					call = readCallFromForm(req, form, call)
-					calipso.e.pre_emit('CALL_UPDATE', call, function (call) {
-						c.calls.id(cId) = call;
+					if (pId && !p) {
+						req.flash('error', req.t('Could not locate that project.'));
+						res.redirect('/circle');
+						next();
+						return;
+					}
+					p = readProjectFromForm(req, form, p)
+					if (!pId) {
+						call.projects.push(p);
+					}
+					calipso.e.pre_emit('PROJECT_UPDATE', p, function (p) {
 						c.save(function (err) {
 							if (err) {
-								req.flash('error', req.t('Could not update call because {msg}.', {
+								console.log('Error: ', err);
+								req.flash('error', req.t('Could not update project because {msg}.' + err, {
 									msg: err.message
 								}));
 								if (res.statusCode != 302) {
-							// Don't redirect if we already are, multiple errors
-							res.redirect('/circle/edit/' + id);
-						}
-						next();
-					} else {
-						calipso.e.post_emit('CIRCLE_UPDATE', c, function (c) {
-							res.redirect('/circle/show/' + id);
-							next();
-						});
-					}
-				});
+									// Don't redirect if we already are, multiple errors
+									res.redirect('/circle/edit/' + id);
+								}
+								next();
+							} else {
+								calipso.e.post_emit('PROJECT_UPDATE', c, function (c) {
+									res.redirect('/circle/show/' + id);
+									next();
+								});
+							}
+					});
 					});
 				} else {
 					req.flash('error', req.t('Could not locate that circle.'));
