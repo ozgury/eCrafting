@@ -158,8 +158,7 @@
 2013-04-08T16:22:54+00:00 heroku[router]: at=info method=GET path=/images/facebook.ico host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=5ms status=200 bytes=318
 2013-04-08T16:25:18+00:00 heroku[router]: at=info method=GET path=/content/type host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=15ms status=302 bytes=58
 2013-04-08T16:25:18+00:00 heroku[router]: at=info method=GET path=/ host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=3ms service=31ms status=200 bytes=4743
-2013-04-08T16:25:18+00:00 heroku[router]: at=info method=GET path=/lib/aloha.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 co
-nnect=1ms service=12ms status=304 bytes=0
+2013-04-08T16:25:18+00:00 heroku[router]: at=info method=GET path=/lib/aloha.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=12ms status=304 bytes=0
 2013-04-08T16:25:18+00:00 heroku[router]: at=info method=GET path=/js/markitup/jquery.markitup.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=4ms service=14ms status=304 bytes=0
 2013-04-08T16:25:18+00:00 heroku[router]: at=info method=GET path=/lib/require.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=26ms service=20ms status=304 bytes=0
 2013-04-08T16:25:18+00:00 heroku[router]: at=info method=GET path=/js/markitup/sets/default/set.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=11ms service=14ms status=304 bytes=0
@@ -264,8 +263,7 @@ nnect=1ms service=12ms status=304 bytes=0
 2013-04-11T15:25:58.954064+00:00 app[web.1]: [1m[35m               |_|                 [39m[22m
 2013-04-11T15:25:58.954064+00:00 app[web.1]: 
 2013-04-11T15:25:58.954064+00:00 app[web.1]: [1m[32m / __|/ _` | | | '_ \/ __|/ _ \  [39m[22m
-2013-04-11T15:25:58.954064+00:00 app[web.1]: [1m[33m         
-   _ _                    [39m[22m
+2013-04-11T15:25:58.954064+00:00 app[web.1]: [1m[33m            _ _                    [39m[22m
 2013-04-11T15:25:58.954064+00:00 app[web.1]: [1m[33m  ___  __ _| (_)_ __  ___  ___     [39m[22m
 2013-04-11T15:25:58.954064+00:00 app[web.1]: [1m[35m \___|\__,_|_|_| .__/|___/\___/ [39m[22m
 2013-04-11T15:25:59.217506+00:00 app[web.1]: 11 Apr 15:25:59 - [31merror[39m: Module ecrafting has been disabled because Cannot find module 'mongoose-types'
@@ -369,8 +367,7 @@ nnect=1ms service=12ms status=304 bytes=0
 2013-04-11T15:26:19.080561+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.fileupload.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=22ms status=404 bytes=67
 2013-04-11T15:26:19.078654+00:00 app[web.1]: 11 Apr 15:26:19 - [34mdebug[39m: Handling static asset
 2013-04-11T15:26:19.077420+00:00 app[web.1]: 11 Apr 15:26:19 - [34mdebug[39m: Handling static asset
-2013-04-11T15:26:19.076255+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js host=ecraft
-ingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=23ms status=404 bytes=73
+2013-04-11T15:26:19.076255+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=23ms status=404 bytes=73
 2013-04-11T15:26:19.051673+00:00 heroku[router]: at=info method=GET path=/js/ecr.application.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=22ms status=404 bytes=44
 2013-04-11T15:26:15.723886+00:00 heroku[router]: at=info method=GET path=/js/ecr.apiwrapper.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=84ms status=404 bytes=43
 2013-04-11T15:26:21.011937+00:00 heroku[router]: at=info method=GET path=/circle/list host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=24ms status=404 bytes=6475
@@ -445,3 +442,62 @@ ingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=23ms sta
 2013-04-11T16:30:07.218736+00:00 heroku[web.1]: Stopping all processes with SIGTERM
 2013-04-11T16:30:09.732841+00:00 heroku[web.1]: State changed from up to down
 2013-04-11T16:30:09.701257+00:00 heroku[web.1]: Process exited with status 1
+2013-04-11T18:49:28.083430+00:00 heroku[slugc]: Slug compilation started
+2013-04-11T18:51:27.616752+00:00 heroku[api]: Release v22 created by oyogurtcu@gmail.com
+2013-04-11T18:51:27.673861+00:00 heroku[api]: Deploy 261a819 by oyogurtcu@gmail.com
+2013-04-11T18:51:27.765498+00:00 heroku[web.1]: State changed from down to starting
+2013-04-11T18:51:28.845513+00:00 heroku[slugc]: Slug compilation finished
+2013-04-11T18:51:31.094411+00:00 heroku[web.1]: Starting process with command `node app.js`
+2013-04-11T18:51:33.239400+00:00 app[web.1]: [1m[33m            _ _                    [39m[22m
+2013-04-11T18:51:33.239400+00:00 app[web.1]: [1m[35m \___|\__,_|_|_| .__/|___/\___/ [39m[22m
+2013-04-11T18:51:33.239400+00:00 app[web.1]: 
+2013-04-11T18:51:33.239400+00:00 app[web.1]: [1m[35m               |_|                 [39m[22m
+2013-04-11T18:51:33.239400+00:00 app[web.1]: [1m[34m| (__| (_| | | | |_) \__ \ (_) | [39m[22m
+2013-04-11T18:51:33.239400+00:00 app[web.1]: [1m[33m  ___  __ _| (_)_ __  ___  ___     [39m[22m
+2013-04-11T18:51:33.239400+00:00 app[web.1]: [1m[32m / __|/ _` | | | '_ \/ __|/ _ \  [39m[22m
+2013-04-11T18:51:33.239400+00:00 app[web.1]: 
+2013-04-11T18:51:33.551941+00:00 app[web.1]: 11 Apr 18:51:33 - [31merror[39m: Module user has been disabled because Cannot find module 'mongoose-types'
+2013-04-11T18:51:33.589282+00:00 app[web.1]: 11 Apr 18:51:33 - [31merror[39m: Module ecrafting has been disabled because Cannot find module 'mongoose-types'
+2013-04-11T18:51:33.611048+00:00 app[web.1]: 11 Apr 18:51:33 - [31merror[39m: Module permissions depends on user, but it does not exist or is disabled - this module will not load.
+2013-04-11T18:51:33.626374+00:00 app[web.1]: 11 Apr 18:51:33 - [34mdebug[39m: Binding events for mail handler ...
+2013-04-11T18:51:33.651550+00:00 app[web.1]: [32mCalipso server listening on port: [39m56403
+2013-04-11T18:51:33.651436+00:00 app[web.1]: [32mCalipso configured for: [39mdevelopment[32m environment.[39m
+2013-04-11T18:51:33.651209+00:00 app[web.1]: [32mCalipso version: [39m0.3.17
+2013-04-11T18:51:33.651735+00:00 app[web.1]: [31mCalipso server listening on port: [39m56403
+2013-04-11T18:51:38.575585+00:00 heroku[web.1]: State changed from starting to up
+2013-04-11T18:51:39.511469+00:00 heroku[router]: at=info method=GET path=/user/login host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=45ms status=404 bytes=6475
+2013-04-11T18:51:39.698665+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=86ms status=404 bytes=73
+2013-04-11T18:51:39.687209+00:00 heroku[router]: at=info method=GET path=/js/ecr.apiwrapper.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=80ms status=404 bytes=43
+2013-04-11T18:51:39.694058+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.fileupload.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=82ms status=404 bytes=67
+2013-04-11T18:51:39.686024+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.iframe-transport.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=76ms status=404 bytes=73
+2013-04-11T18:51:39.685534+00:00 app[web.1]: 11 Apr 18:51:39 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:39.688878+00:00 app[web.1]: 11 Apr 18:51:39 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:39.692467+00:00 app[web.1]: 11 Apr 18:51:39 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:39.683482+00:00 app[web.1]: 11 Apr 18:51:39 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:39.691352+00:00 app[web.1]: 11 Apr 18:51:39 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:42.683190+00:00 app[web.1]: 11 Apr 18:51:42 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:49.478608+00:00 heroku[router]: at=info method=GET path=/ host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=94ms status=304 bytes=0
+2013-04-11T18:51:49.571144+00:00 heroku[router]: at=info method=GET path=/js/ecr.application.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=10ms status=404 bytes=44
+2013-04-11T18:51:49.592045+00:00 heroku[router]: at=info method=GET path=/js/ecr.apiwrapper.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=24ms status=404 bytes=43
+2013-04-11T18:51:49.571127+00:00 app[web.1]: 11 Apr 18:51:49 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:49.592470+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=25ms status=404 bytes=73
+2013-04-11T18:51:49.592956+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.iframe-transport.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=26ms status=404 bytes=73
+2013-04-11T18:51:49.601517+00:00 app[web.1]: 11 Apr 18:51:49 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:49.590148+00:00 app[web.1]: 11 Apr 18:51:49 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:49.592449+00:00 app[web.1]: 11 Apr 18:51:49 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:49.602886+00:00 app[web.1]: 11 Apr 18:51:49 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:49.602141+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.fileupload.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=31ms status=404 bytes=67
+2013-04-11T18:51:49.591541+00:00 app[web.1]: 11 Apr 18:51:49 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.259072+00:00 heroku[router]: at=info method=GET path=/user/login host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=24ms status=404 bytes=6475
+2013-04-11T18:51:51.331795+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.354252+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.360425+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.356462+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=31ms status=404 bytes=73
+2013-04-11T18:51:51.363442+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.fileupload.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=33ms status=404 bytes=67
+2013-04-11T18:51:51.359275+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.370934+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.361180+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.336764+00:00 heroku[router]: at=info method=GET path=/js/ecr.application.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=19ms status=404 bytes=44
+2013-04-11T18:51:51.363328+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.iframe-transport.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=34ms status=404 bytes=73
+2013-04-11T18:51:51.372396+00:00 heroku[router]: at=info method=GET path=/js/ecr.apiwrapper.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=34ms status=404 bytes=43
+2013-04-11T18:51:39.692262+00:00 heroku[router]: at=info method=GET path=/js/ecr.utilities.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=81ms status=404 bytes=42
