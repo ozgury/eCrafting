@@ -172,7 +172,8 @@ ited with status 1
 2013-04-08T16:25:28+00:00 heroku[router]: at=info method=GET path=/lib/aloha.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=4ms service=47ms status=304 bytes=0
 2013-04-08T16:25:28+00:00 heroku[router]: at=info method=GET path=/lib/require.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=8ms service=74ms status=304 bytes=0
 2013-04-08T16:25:28+00:00 heroku[router]: at=info method=GET path=/js/jquery-ui-1.8.10.custom.min.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=96ms status=304 bytes=0
-2013-04-08T16:25:28+00:00 heroku[router]: at=info method=GET path=/js/markitup/jquery.markitup.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=6ms service=36ms status=304 bytes=0
+2013-04-08T16:25:28+00:00 heroku[router]: at=info method=GET path=/js/markitup/jquery.markitup.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=6ms service=36ms 
+status=304 bytes=0
 2013-04-08T16:25:28+00:00 heroku[router]: at=info method=GET path=/js/store.min.js?_=1365438330005 host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=25ms status=200 bytes=7054
 2013-04-08T16:27:11+00:00 heroku[router]: at=info method=GET path=/ host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=7ms service=62ms status=200 bytes=4743
 2013-04-08T16:27:11+00:00 heroku[router]: at=info method=GET path=/lib/require.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=7ms status=304 bytes=0
@@ -283,7 +284,8 @@ ited with status 1
 2013-04-11T15:26:01.437660+00:00 heroku[router]: at=info method=GET path=/bootstrap/js/bootstrap.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=4ms service=65ms status=200 bytes=61764
 2013-04-11T15:26:01.427316+00:00 app[web.1]: 11 Apr 15:26:01 - [34mdebug[39m: Handling static asset
 2013-04-11T15:26:01.429822+00:00 heroku[router]: at=info method=GET path=/js/ecr.utilities.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=66ms status=404 bytes=42
-2013-04-11T15:26:01.441856+00:00 heroku[router]: at=info method=GET path=/js/ecr.apiwrapper.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=81ms status=404 bytes=43
+2013-04-11T15:26:01.441856+00:00 heroku[router]: at=info method=GET path=/js/ecr.apiwrapper.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 conn
+ect=0ms service=81ms status=404 bytes=43
 2013-04-11T15:26:01.473813+00:00 app[web.1]: 11 Apr 15:26:01 - [34mdebug[39m: Handling static asset
 2013-04-11T15:26:01.449129+00:00 app[web.1]: 11 Apr 15:26:01 - [34mdebug[39m: Handling static asset
 2013-04-11T15:26:01.518080+00:00 app[web.1]: 11 Apr 15:26:01 - [34mdebug[39m: Handling static asset
@@ -383,7 +385,8 @@ ited with status 1
 2013-04-11T15:26:21.275473+00:00 app[web.1]: 11 Apr 15:26:21 - [34mdebug[39m: Handling static asset
 2013-04-11T15:26:21.269192+00:00 app[web.1]: 11 Apr 15:26:21 - [34mdebug[39m: Handling static asset
 2013-04-11T15:26:21.281172+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=195ms status=404 bytes=73
-2013-04-11T15:26:21.276604+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.fileupload.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=182ms status=404 bytes=67
+2013-04-11T15:26:21.276604+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.fileupload.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms serv
+ice=182ms status=404 bytes=67
 2013-04-11T15:26:22.667704+00:00 heroku[router]: at=info method=GET path=/user/register host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=38ms status=404 bytes=6475
 2013-04-11T15:26:22.779262+00:00 app[web.1]: 11 Apr 15:26:22 - [34mdebug[39m: Handling static asset
 2013-04-11T15:26:22.781251+00:00 heroku[router]: at=info method=GET path=/js/ecr.application.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=46ms status=404 bytes=44
@@ -496,7 +499,8 @@ ited with status 1
 2013-04-11T18:51:51.356462+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/vendor/jquery.ui.widget.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=31ms status=404 bytes=73
 2013-04-11T18:51:51.363442+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.fileupload.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=1ms service=33ms status=404 bytes=67
 2013-04-11T18:51:51.359275+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
-2013-04-11T18:51:51.370934+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
+2013-04-11T18:51:51.370934+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handlin
+g static asset
 2013-04-11T18:51:51.361180+00:00 app[web.1]: 11 Apr 18:51:51 - [34mdebug[39m: Handling static asset
 2013-04-11T18:51:51.336764+00:00 heroku[router]: at=info method=GET path=/js/ecr.application.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=0ms service=19ms status=404 bytes=44
 2013-04-11T18:51:51.363328+00:00 heroku[router]: at=info method=GET path=/lib/jqueryfileupload/js/jquery.iframe-transport.js host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno=web.1 connect=2ms service=34ms status=404 bytes=73
@@ -568,3 +572,38 @@ ited with status 1
 2013-04-11T18:57:25.803944+00:00 app[web.1]: TypeError: Invalid value for schema path `email.type`
 2013-04-11T18:57:26.992335+00:00 heroku[web.1]: State changed from starting to crashed
 2013-04-11T18:57:26.976599+00:00 heroku[web.1]: Process exited with status 1
+2013-04-11T18:59:36.918898+00:00 heroku[slugc]: Slug compilation started
+2013-04-11T19:01:08.500802+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path=/user/login host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno= connect= service= status=503 bytes=
+2013-04-11T19:01:14.376403+00:00 heroku[api]: Release v24 created by oyogurtcu@gmail.com
+2013-04-11T19:01:14.447974+00:00 heroku[api]: Deploy 1be9df8 by oyogurtcu@gmail.com
+2013-04-11T19:01:14.535335+00:00 heroku[web.1]: State changed from crashed to starting
+2013-04-11T19:01:15.511093+00:00 heroku[slugc]: Slug compilation finished
+2013-04-11T19:01:17.972875+00:00 heroku[web.1]: Starting process with command `node app.js`
+2013-04-11T19:01:19.554809+00:00 app[web.1]: 
+2013-04-11T19:01:19.555670+00:00 app[web.1]: 
+2013-04-11T19:01:19.554878+00:00 app[web.1]: [1m[33m            _ _                    [39m[22m
+2013-04-11T19:01:19.555406+00:00 app[web.1]: [1m[35m \___|\__,_|_|_| .__/|___/\___/ [39m[22m
+2013-04-11T19:01:19.555534+00:00 app[web.1]: [1m[35m               |_|                 [39m[22m
+2013-04-11T19:01:19.554972+00:00 app[web.1]: [1m[33m  ___  __ _| (_)_ __  ___  ___     [39m[22m
+2013-04-11T19:01:19.555256+00:00 app[web.1]: [1m[34m| (__| (_| | | | |_) \__ \ (_) | [39m[22m
+2013-04-11T19:01:19.555124+00:00 app[web.1]: [1m[32m / __|/ _` | | | '_ \/ __|/ _ \  [39m[22m
+2013-04-11T19:01:19.865056+00:00 app[web.1]: 11 Apr 19:01:19 - [31merror[39m: Module ecrafting has been disabled because Cannot find module 'mkdirp'
+2013-04-11T19:01:20.021186+00:00 app[web.1]: 11 Apr 19:01:20 - [34mdebug[39m: Binding events for mail handler ...
+2013-04-11T19:01:20.035963+00:00 app[web.1]: 
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at new Schema (/app/node_modules/mongoose/lib/schema.js:38:10)
+2013-04-11T19:01:20.080030+00:00 app[web.1]: TypeError: Invalid value for schema path `email.type`
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at Schema.add (/app/node_modules/mongoose/lib/schema.js:108:13)
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at Schema.add (/app/node_modules/mongoose/lib/schema.js:113:14)
+2013-04-11T19:01:20.076664+00:00 app[web.1]:         throw arguments[0];
+2013-04-11T19:01:20.077138+00:00 app[web.1]:                        ^
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at Function.done (/app/modules/core/user/user.js:82:18)
+2013-04-11T19:01:20.076194+00:00 app[web.1]: /app/node_modules/step/lib/step.js:39
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at Object.init (/app/modules/core/user/user.js:55:15)
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at finish (/app/lib/core/Module.js:388:34)
+2013-04-11T19:01:20.080319+00:00 app[web.1]:     at initModule (/app/lib/core/Module.js:379:3)
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at next (/app/node_modules/step/lib/step.js:60:12)
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at Object.Step (/app/node_modules/step/lib/step.js:122:3)
+2013-04-11T19:01:20.080030+00:00 app[web.1]:     at next (/app/node_modules/step/lib/step.js:51:23)
+2013-04-11T19:01:21.522133+00:00 heroku[web.1]: Process exited with status 1
+2013-04-11T19:01:22.312390+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path=/user/login host=ecraftingdev.herokuapp.com fwd="24.193.80.144" dyno= connect= service= status=503 bytes=
+2013-04-11T19:01:21.536986+00:00 heroku[web.1]: State changed from starting to crashed
