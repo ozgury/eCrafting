@@ -36,6 +36,7 @@ ecr.page.ApiTest = function () {
 	      	dataType: 'json',
 			   progressall: function (e, data) {
 			      var progress = parseInt(data.loaded / data.total * 100, 10);
+			      $('#progress').removeClass('hidden');
 			      $('#progress .bar').css(
 			         'width',
 			         progress + '%'
@@ -44,6 +45,7 @@ ecr.page.ApiTest = function () {
 	   	}).bind('fileuploadalways', function (e, data) {
 	    	if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
 		    	//showResponse((JSON.parse(data.xhr().response))[0], data.xhr());
+		      $('#progress').addClass('hidden');
 		    	$('.fileupload').removeClass('fileupload-new').addClass('fileupload-exists');
 		    	$('.fileupload').find('.fileupload-preview img').attr('src', '/api/media/' + (JSON.parse(data.xhr().response))[0]._id);
 		    	$('.fileupload').find('span.fileupload-preview').html((JSON.parse(data.xhr().response))[0].fileName);
