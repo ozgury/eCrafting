@@ -18,7 +18,7 @@ body, form, input, select {
 }
 
 #mainContent {
-	margin-top: 80px;
+	margin-top: 100px;
 }
  
 #logo {
@@ -29,7 +29,7 @@ body, form, input, select {
 }
 
 #logo img {
-	height: 120px;
+	height: 100px;
 }
 
 .copyright {
@@ -52,6 +52,50 @@ body, form, input, select {
   background-repeat:no-repeat;
   background-position: center center;
   height:30px;
+}
+
+.box {
+  padding: 10px 20px 20px 20px;
+  border-radius: 4px;
+  border: none;
+  background: #f5f5f5;
+  box-shadow: 0 0 2px #bbb inset;
+}
+
+
+
+.btn-browse {
+    height: 44px;
+    /*padding: 0 20px;*/
+
+    font-size: 16px;
+    /*font-weight: bold;*/
+    color: #fff;
+    /*letter-spacing: 1px;*/
+    text-shadow: inherit;
+
+    background-color: #F87F0E;
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#F9A621), to(#F87F0E));
+    background-image: -webkit-linear-gradient(#F9A621, #F87F0E);
+    background-image: -moz-linear-gradient(#F9A621, #F87F0E);
+    background-image: -ms-linear-gradient(#F9A621, #F87F0E);
+    background-image: -o-linear-gradient(#F9A621, #F87F0E);
+    background-image: linear-gradient(#F9A621, #F87F0E);
+
+    -webkit-border-radius: 22px;
+            border-radius: 22px;
+}
+
+.btn-browse:hover,
+.btn-browse:focus {
+    color: #fff;
+    background-color: #F87F0E;
+    outline: none;
+}
+
+.btn-browse:active {
+    color: #fff;
+    background-color: #C56105;
 }
 
 
