@@ -17,3 +17,4 @@ conf/*
 *.sass-cache
 .idea
 uploads/
+logs/
