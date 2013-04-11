@@ -6,6 +6,7 @@ if (typeof (ecr) == 'undefined') {
 };
 
 ecr.Utilities = function () {
+	var that = this;
 
 	this.getElementText = function (e) {
 		if (e.text != undefined)
@@ -79,6 +80,45 @@ ecr.Utilities = function () {
 		return text.length > length ? text.substr(0, length - 1) + '…' : text;
 	};
 
+	this.setFileUpload = function ($fileUpload, $idInput, $removeButton) {
+		var apiWrapper = new ecr.ApiWrapper();
+
+		$fileUpload.fileupload({
+			url: '/api/media/' + $idInput.val(),
+			sequentialUploads: true,
+			singleFileUploads: false,
+			dataType: 'json',
+			progressall: function (e, data) {
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				$('#progress').removeClass('hidden');
+				$('#progress .bar').css(
+					'width',
+					progress + '%'
+					);
+			},
+		}).bind('fileuploadalways', function (e, data) {
+			if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
+			$('#progress').addClass('hidden');
+			$('.fileupload').removeClass('fileupload-new').addClass('fileupload-exists');
+			$('.fileupload').find('.fileupload-preview img').attr('src', '/api/media/' + (JSON.parse(data.xhr().response))[0]._id);
+			$('.fileupload').find('span.fileupload-preview').html((JSON.parse(data.xhr().response))[0].fileName);
+			$idInput.val((JSON.parse(data.xhr().response))[0]._id);
+			that.setFileUpload($fileUpload, $idInput, $removeButton);
+		}
+	}).bind('fileuploadadd', function (e, data) {
+	}).bind('fileuploadsubmit', function (e, data) {
+	});
+	$removeButton.click(function(event){
+		var command = 'media/' + $idInput.val();
+
+		apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
+			$('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
+			$('.fileupload').find('span.fileupload-preview').html('');
+			$idInput.val('');
+			that.setFileUpload($fileUpload, $idInput, $removeButton);
+		}, ecr.app.userMessage('Problem deleting file.'));
+	});
+}
 };
 
 /*
@@ -97,14 +137,14 @@ ecr.Utilities = function () {
 
 var dateFormat = function () {
 	var token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
-		timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
-		timezoneClip = /[^-+\dA-Z]/g,
-		pad = function (val, len) {
-			val = String(val);
-			len = len || 2;
-			while (val.length < len) val = "0" + val;
-			return val;
-		};
+	timezone = /\b(?:[PMCEA][SDP]T|(?:Pacific|Mountain|Central|Eastern|Atlantic) (?:Standard|Daylight|Prevailing) Time|(?:GMT|UTC)(?:[-+]\d{4})?)\b/g,
+	timezoneClip = /[^-+\dA-Z]/g,
+	pad = function (val, len) {
+		val = String(val);
+		len = len || 2;
+		while (val.length < len) val = "0" + val;
+		return val;
+	};
 
 	// Regexes and supporting functions are cached through closure
 	return function (date, mask, utc) {
@@ -129,44 +169,44 @@ var dateFormat = function () {
 		}
 
 		var _ = utc ? "getUTC" : "get",
-			d = date[_ + "Date"](),
-			D = date[_ + "Day"](),
-			m = date[_ + "Month"](),
-			y = date[_ + "FullYear"](),
-			H = date[_ + "Hours"](),
-			M = date[_ + "Minutes"](),
-			s = date[_ + "Seconds"](),
-			L = date[_ + "Milliseconds"](),
-			o = utc ? 0 : date.getTimezoneOffset(),
-			flags = {
-				d: d,
-				dd: pad(d),
-				ddd: dF.i18n.dayNames[D],
-				dddd: dF.i18n.dayNames[D + 7],
-				m: m + 1,
-				mm: pad(m + 1),
-				mmm: dF.i18n.monthNames[m],
-				mmmm: dF.i18n.monthNames[m + 12],
-				yy: String(y).slice(2),
-				yyyy: y,
-				h: H % 12 || 12,
-				hh: pad(H % 12 || 12),
-				H: H,
-				HH: pad(H),
-				M: M,
-				MM: pad(M),
-				s: s,
-				ss: pad(s),
-				l: pad(L, 3),
-				L: pad(L > 99 ? Math.round(L / 10) : L),
-				t: H < 12 ? "a" : "p",
-				tt: H < 12 ? "am" : "pm",
-				T: H < 12 ? "A" : "P",
-				TT: H < 12 ? "AM" : "PM",
-				Z: utc ? "UTC" : (String(date).match(timezone) || [""]).pop().replace(timezoneClip, ""),
-				o: (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
-				S: ["th", "st", "nd", "rd"][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10]
-			};
+		d = date[_ + "Date"](),
+		D = date[_ + "Day"](),
+		m = date[_ + "Month"](),
+		y = date[_ + "FullYear"](),
+		H = date[_ + "Hours"](),
+		M = date[_ + "Minutes"](),
+		s = date[_ + "Seconds"](),
+		L = date[_ + "Milliseconds"](),
+		o = utc ? 0 : date.getTimezoneOffset(),
+		flags = {
+			d: d,
+			dd: pad(d),
+			ddd: dF.i18n.dayNames[D],
+			dddd: dF.i18n.dayNames[D + 7],
+			m: m + 1,
+			mm: pad(m + 1),
+			mmm: dF.i18n.monthNames[m],
+			mmmm: dF.i18n.monthNames[m + 12],
+			yy: String(y).slice(2),
+			yyyy: y,
+			h: H % 12 || 12,
+			hh: pad(H % 12 || 12),
+			H: H,
+			HH: pad(H),
+			M: M,
+			MM: pad(M),
+			s: s,
+			ss: pad(s),
+			l: pad(L, 3),
+			L: pad(L > 99 ? Math.round(L / 10) : L),
+			t: H < 12 ? "a" : "p",
+			tt: H < 12 ? "am" : "pm",
+			T: H < 12 ? "A" : "P",
+			TT: H < 12 ? "AM" : "PM",
+			Z: utc ? "UTC" : (String(date).match(timezone) || [""]).pop().replace(timezoneClip, ""),
+			o: (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
+			S: ["th", "st", "nd", "rd"][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10]
+		};
 
 		return mask.replace(token, function ($0) {
 			return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
@@ -193,12 +233,12 @@ dateFormat.masks = {
 // Internationalization strings
 dateFormat.i18n = {
 	dayNames: [
-		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
-		"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+	"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
+	"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 	],
 	monthNames: [
-		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-		"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+	"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+	"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 	]
 };
 

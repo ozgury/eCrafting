@@ -1,32 +1,40 @@
 
 <form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="<%- action %>" class="form-horizontal">
- <input type="hidden" value="FORM" name="form[id]" /><legend>Edit Circle</legend>
+ <input type="hidden" value="FORM" name="form[id]" /><legend>Edit Call Project</legend>
 
  <fieldset class="form-fields tab-content">
-   <h3>Circle</h3>
+   <h3>Project</h3>
 
-   <div class="control-group field-type-text" id="circle_name-wrapper">
-     <label class="control-label" for="circle[name]">Name:</label>
+   <div class="control-group field-type-text" id="call_name-wrapper">
+     <label class="control-label">Call Name:</label>
      <div class="controls">
-       <input type="text" class="text" name="circle[name]" id="circle[name]" value="<%- item.name %>" /> <a href="/circle/<%- item._id %>/call/new">Create Call</a>
-       <p class="help-block">Enter the name of the circle, it must be unique.</p>
+        <span class="input-xlarge uneditable-input"><%- call.name %></span>
      </div>
    </div>
 
-   <div class="control-group field-type-file" id="circle_image-wrapper">
+
+   <div class="control-group field-type-text" id="project_name-wrapper">
+     <label class="control-label" for="project[name]">Name:</label>
+     <div class="controls">
+       <input type="text" class="text" name="project[name]" id="project[name]" value="<%- project.name %>" />
+       <p class="help-block">Enter the name of the project, it must be unique.</p>
+     </div>
+   </div>
+
+   <div class="control-group field-type-file" id="project_image-wrapper">
      <label class="control-label" for="fileupload">Image:</label>
      <div class="controls">
-        <input type="hidden" id="circle[image]" name="circle[image]" value="<%- item.image %>" />
+        <input type="hidden" id="project[image]" name="project[image]" value="<%- project.image %>" />
 
-        <% if(item.image) { %>
+        <% if(project.image) { %>
         <div class="fileupload fileupload-exists" data-provides="fileupload">
         <% } else { %>
         <div class="fileupload fileupload-new" data-provides="fileupload">
         <% } %>
         <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
         <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;">
-        <% if(item.image) { %>
-          <img src="/api/media/<%- item.image %>" />
+        <% if(project.image) { %>
+          <img src="/api/media/<%- project.image %>" />
         <% } else { %>
           <img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" />
         <% } %>
@@ -36,74 +44,53 @@
             <span class="fileupload-exists">Change</span>
             <input id="fileupload" name="files[]" type="file" />
           </span>
-        <a href="#" onclick="ecr.page.deleteMedia()" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+        <a href="javascript:void()" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
         </div>
-       <p class="help-block">Enter an image for circle.</p>
+        <div id="progress" class="progress progress-striped active hidden">
+          <div class="bar" style="width: 0;"></div>
+        </div>
+        
+       <p class="help-block">Enter an image for project.</p>
      </div>
    </div>
 
-   <div class="control-group field-type-textarea" id="circle_description-wrapper">
-     <label class="control-label" for="circle[description]">Description:</label>
+   <div class="control-group field-type-textarea" id="project_description-wrapper">
+     <label class="control-label" for="project[description]">Description:</label>
      <div class="controls">
-       <textarea class="textarea" rows="10" name="circle[description]" id="circle[description]"><%- item.description %></textarea>
+       <textarea class="textarea" rows="10" name="project[description]" id="project[description]"><%- project.description %></textarea>
 
        <p class="help-block">Enter a description.</p>
      </div>
    </div>
 
-   <div class="control-group field-type-text" id="circle_location-wrapper">
-     <label class="control-label" for="circle[location]">Location:</label>
+   <div class="control-group field-type-text" id="project_location-wrapper">
+     <label class="control-label" for="project[location]">Location:</label>
 
      <div class="controls">
-       <input type="text" class="text" name="circle[location]" id="circle[location]" value="<%- item.location %>" />
+       <input type="text" class="text" name="project[location]" id="project[location]" value="<%- project.location %>" />
 
-       <p class="help-block">Enter the circle location.</p>
+       <p class="help-block">Enter the project location.</p>
      </div>
    </div>
 
-   <div class="control-group field-type-text" id="circle_members-wrapper">
-     <label class="control-label" for="circle[members]">Members:</label>
-
-     <div class="controls">
-       <input type="text" class="text" name="circle[members]" id="circle[members]" value="<%- item.members %>" />
-
-       <p class="help-block">Enter circle members delimited by comma.</p>
-     </div>
-   </div>
-
-   <div class="control-group field-type-text" id="circle_links-wrapper">
-     <label class="control-label" for="circle[links]">Links:</label>
-
-     <div class="controls">
-       <input type="text" class="text" name="circle[links]" id="circle[links]" value="<%- item.links %>" />
-
-       <p class="help-block">Enter circle links delimited by comma.</p>
-     </div>
-   </div>
-
-   <div class="control-group field-type-text" id="circle_tags-wrapper">
-     <label class="control-label" for="circle[tags]">Tags:</label>
-
-     <div class="controls">
-       <input type="text" class="text" name="circle[tags]" id="circle[tags]" value="<%- item.tags %>" />
-
-       <p class="help-block">Enter comma delimited tags for this circle.</p>
-     </div>
-   </div>
+    <label class="checkbox" for="project[approved]">
+      <input type="checkbox"> Approved?
+      <p class="help-block">Project is approved.</p>
+    </label>
 
    <div class="form-actions">
-     <input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Circle" /> <input type="button" class="button btn" name="cancel"
+     <input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Call" /> <input type="button" class="button btn" name="cancel"
      onclick='window.location="/circle"' id="cancel" value="Cancel" />
    </div>
  </fieldset>
 </form>
 
-<script src="/js/ecr.page.circle.edit.js"></script>
+<script src="/js/ecr.page.project.edit.js"></script>
 <script type="text/javascript">
   //<![CDATA[
   ecr.load();
   $(document).ready(function () {
-    ecr.page = new ecr.page.ApiTest();
+    ecr.page = new ecr.page.Page();
     ecr.page.initialize();
   });
   //]]>

@@ -13,15 +13,15 @@
    </div>
 
 
-   <div class="control-group field-type-text" id="circle_name-wrapper">
+   <div class="control-group field-type-text" id="call_name-wrapper">
      <label class="control-label" for="call[name]">Name:</label>
      <div class="controls">
-       <input type="text" class="text" name="call[name]" id="call[name]" value="<%- call.name %>" /> <a href="/circle/<%- call._id %>/call/new">Create Call</a>
+       <input type="text" class="text" name="call[name]" id="call[name]" value="<%- call.name %>" />
        <p class="help-block">Enter the name of the circle, it must be unique.</p>
      </div>
    </div>
 
-   <div class="control-group field-type-file" id="circle_image-wrapper">
+   <div class="control-group field-type-file" id="call_image-wrapper">
      <label class="control-label" for="fileupload">Image:</label>
      <div class="controls">
         <input type="hidden" id="call[image]" name="call[image]" value="<%- call.image %>" />
@@ -44,13 +44,17 @@
             <span class="fileupload-exists">Change</span>
             <input id="fileupload" name="files[]" type="file" />
           </span>
-        <a href="#" onclick="ecr.page.deleteMedia()" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+        <a href="javascript:void()" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
         </div>
+        <div id="progress" class="progress progress-striped active hidden">
+          <div class="bar" style="width: 0;"></div>
+        </div>
+        
        <p class="help-block">Enter an image for call.</p>
      </div>
    </div>
 
-   <div class="control-group field-type-textarea" id="circle_description-wrapper">
+   <div class="control-group field-type-textarea" id="call_description-wrapper">
      <label class="control-label" for="call[description]">Description:</label>
      <div class="controls">
        <textarea class="textarea" rows="10" name="call[description]" id="call[description]"><%- call.description %></textarea>
@@ -59,7 +63,7 @@
      </div>
    </div>
 
-   <div class="control-group field-type-text" id="circle_location-wrapper">
+   <div class="control-group field-type-text" id="call_location-wrapper">
      <label class="control-label" for="call[location]">Location:</label>
 
      <div class="controls">
@@ -69,11 +73,11 @@
      </div>
    </div>
 
-   <div class="control-group field-type-text" id="circle_location-wrapper">
-     <label class="control-label" for="call[location]">Date:</label>
+   <div class="control-group field-type-text" id="call_date-wrapper">
+     <label class="control-label" for="call[date]">Date:</label>
 
      <div class="controls">
-       <input type="text" class="text" name="call[date]" id="call[date]" value="<%- call.date %>" />
+       <input type="text" class="text" name="call[date]" id="call[date]" value="<%- (call && call.date) ? call.date : Date.now() %>" />
 
        <p class="help-block">Enter the call date.</p>
      </div>
