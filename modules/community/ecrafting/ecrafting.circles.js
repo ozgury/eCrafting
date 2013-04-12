@@ -241,6 +241,7 @@ function readCallFromForm(req, form, existingCall) {
 		calipso.form.mapFields(form.call, existingCall);
 	} else {
 		call = form.call;
+		call.owner = req.session.user.username;
 	}
 	return call;
 }

@@ -44,7 +44,10 @@ var routes = [
 		{ path:'GET /api/media/:id', fn:listMedia },
 		{ path: 'POST /api/media', fn: createMedia },
 		{ path: 'POST /api/media/:id', fn: updateMedia },
-		{ path: 'DELETE /api/media/:id', fn: deleteMedia }
+		{ path: 'DELETE /api/media/:id', fn: deleteMedia },
+
+		// Activities
+		{ path:'GET /api/activities', fn:listActivities }
 ]
 
 /**
@@ -528,6 +531,23 @@ function deleteMedia(req, res, template, block, next) {
 			calipso.e.post_emit('MEDIA_DELETE', m);
 			return responseOk(res, m);
 		});
+	});
+}
+
+function listActivities(req, res, template, block, next) {
+	var Activity = calipso.db.model('Activity');
+
+	Activity.find({}, {}, {
+	   skip:0, // Starting Row
+	   limit:20, // Ending Row
+	   sort:{
+	      created: -1 //Sort by Date Added DESC
+	   }
+	},function (err, activities) {
+		if (err) {
+			return responseError(res, 404, err);
+		}
+		return responseOk(res, activities);
 	});
 }
 

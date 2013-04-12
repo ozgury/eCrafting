@@ -195,4 +195,13 @@ ecr.page.ApiTest = function () {
 			showResponse(response, jqXhr, 3);
 		}, showError);
 	};
+
+	this.listActivity = function () {
+		var command = 'activities/';
+		var parameters = null;
+
+		apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
+			showResponse(response, jqXhr);
+		}, showError);
+	};
 };

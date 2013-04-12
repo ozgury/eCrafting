@@ -51,9 +51,45 @@ function registerEventListeners () {
 }
 
 function addActivity(event, data, next) {
-	//console.log("Event: ", event);
-	//console.log("Data: ", data);
-	return next();
+	console.log("Event: ", event);
+	console.log("Data: ", data);
+	var Activity = calipso.db.model('Activity');
+	var activity = new Activity({
+		description: null,
+		link: null,
+		image: null
+	});
+
+	switch(event)
+	{
+		case 'POST_CIRCLE_CREATE':
+		case 'POST_CIRCLE_UPDATE':
+			activity.description = data.owner + ' just created the circle \'' + data.name + '\'';
+			activity.link = '/circle/show/' + data.id;
+			activity.image = data.image;
+			break;
+
+		case 'POST_USER_CREATE':
+			activity.description = data.fullname + ' just registered.';
+			activity.link = '/user/profile/' + data.id;
+			break;
+
+		case 'POST_USER_LOGIN':
+			activity.description = data.fullname + ' logged on to eCrafting.';
+			activity.link = '/user/profile/' + data.id;
+			break;
+
+		default:
+			calipso.error("Unexpected Event: " + event);
+			return next();
+	}
+
+	activity.save(function (err) {
+		if (err) {
+			calipso.debug("Err: " + err);
+		}
+		next();
+	});
 }
 
 

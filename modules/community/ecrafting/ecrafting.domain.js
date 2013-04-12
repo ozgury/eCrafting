@@ -60,6 +60,10 @@ function init(module, app, next) {
 		calipso.db.model('Project', Project);
 
 		var Call = new calipso.lib.mongoose.Schema({
+			owner: {
+				type: calipso.lib.mongoose.SchemaTypes.Email,
+				required: true
+			},
 			image: {
 				type: calipso.lib.mongoose.Schema.ObjectId,
 				ref: 'Media'
@@ -124,9 +128,12 @@ function init(module, app, next) {
 		calipso.db.model('Circle', Circle);
 
 		var Activity = new calipso.lib.mongoose.Schema({
-			event: {type: String, required: true},
-			description: {type: String, required: true},
-			owner: {type: String, required: true}
+			description: String,
+			link: String,
+			image: {
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Media'
+			},
 		});
 
 		Activity.plugin(extensions, { index: true });
