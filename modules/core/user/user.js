@@ -756,6 +756,10 @@ function loginUser(req, res, template, block, next) {
             next();
             return;
           });
+        } else {
+          req.flash('error', req.t('You may have entered an incorrect username or password, please try again.  If you still cant login after a number of tries your account may be locked, please contact the site administrator.'));
+          next();
+          return;
         }
       });
 

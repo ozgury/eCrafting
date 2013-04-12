@@ -30,62 +30,76 @@ var routes = [{
 	path: 'GET /circle/list.:format?',
 	fn: listCircle,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
+//	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
 	template: 'circle.list',
 	block: 'content.circle.list'
 }, {
 	path: 'POST /circle/create',
 	fn: createCircle,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:circle:create")
+//		permit: calipso.permission.Helper.hasPermission("admin:circle:create")
 }, {
 	path: 'GET /circle/show/:id.:format?',
 	fn: showCircle,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
+//		permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
 	template: 'circle.show',
 	block: 'content.circle.show'
 }, {
 	path: 'GET /circle/edit/:id?',
 	fn: editCircleForm,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:circle:update"),
+//		permit: calipso.permission.Helper.hasPermission("admin:circle:update"),
 	block: 'content.circle.edit',
 	template: 'circle.edit'
 }, {
 	path: 'GET /circle/delete/:id',
 	fn: deleteCircle,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:circle:delete")
+//		permit: calipso.permission.Helper.hasPermission("admin:circle:delete")
 }, {
 	path: 'POST /circle/edit/:id',
 	fn: updateCircle,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:circle:update")
+//		permit: calipso.permission.Helper.hasPermission("admin:circle:update")
 }, {
 	path: 'GET /circle/:id/call/edit/:cid?',
 	fn: editCircleCallForm,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:call:edit"),
+//		permit: calipso.permission.Helper.hasPermission("admin:call:edit"),
 	template: 'call.edit',
 	block: 'content.call.edit'
 }, {
 	path: 'POST /circle/:id/call/edit/:cid?',
 	fn: updateCircleCall,
-	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:call:update")
+	admin: false
+//		permit: calipso.permission.Helper.hasPermission("admin:call:update")
 }, {
 	path: 'GET /circle/:id/call/:cid/project/edit/:pid?',
 	fn: editCallProjectForm,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:project:edit"),
+//		permit: calipso.permission.Helper.hasPermission("admin:project:edit"),
 	template: 'project.edit',
 	block: 'content.project.edit'
 }, {
 	path: 'POST /circle/:id/call/:cid/project/edit/:pid?',
 	fn: updateCallProject,
+	admin: false
+//		permit: calipso.permission.Helper.hasPermission("admin:project:update")
+}, {
+	path: 'GET /call/list.:format?',
+	fn: listCall,
 	admin: false,
-	permit: calipso.permission.Helper.hasPermission("admin:project:update")
+//	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
+	template: 'call.list',
+	block: 'content.call.list'
+}, {
+	path: 'GET /project/list.:format?',
+	fn: listProject,
+	admin: false,
+//	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
+	template: 'project.list',
+	block: 'content.project.list'
 }]
 
 function allPages(req, res, template, block, next) {
@@ -284,7 +298,7 @@ function createCircle(req, res, template, block, next) {
 						}));
 						calipso.debug("Err: " + err);
 						if (res.statusCode != 302) {
-							res.redirect('/circle/new');
+							res.redirect('/circle/edit');
 						}
 						next();
 					} else {
@@ -637,6 +651,36 @@ function updateCircleCall(req, res, template, block, next) {
 	});
 }
 
+function listCall(req, res, template, block, next) {
+	// Re-retrieve our object
+	var Circle = calipso.db.model('Circle');
+	var format = req.moduleParams.format || 'html';
+	var query = new Query();
+
+	// Initialise the block based on our content
+	Circle.count(query, function (err, count) {
+		var total = count;
+
+		Circle.find(query)
+		.sort('circle', 1)
+		.find(function (err, circles) {
+			// Render the item into the response
+			if (format === 'html') {
+				calipso.theme.renderItem(req, res, template, block, {
+					items: circles
+				}, next);
+			}
+			if (format === 'json') {
+				res.format = format;
+				res.send(circles.map(function (u) {
+					return u.toObject();
+				}));
+				next();
+			}
+		});
+	});
+}
+
 function editCallProjectForm(req, res, template, block, next) {
 	var Circle = calipso.db.model('Circle');
 	var id = req.moduleParams.id;
@@ -734,6 +778,9 @@ function updateCallProject(req, res, template, block, next) {
 			});
 		}
 	});
+}
+
+function listProject(req, res, template, block, next) {
 }
 
 /**
