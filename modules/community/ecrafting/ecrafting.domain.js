@@ -9,7 +9,7 @@ var rootpath = process.cwd() + '/',
 	mongooseValidate = require('mongoose-validate'),
 	extensions = require('./lib/schema.extensions');
 	eCrafting = {},
-	eCrafting.domain = module.exports = {
+	calipso.domain = module.exports = {
 		init: init,
 		install: install,
 		route: route
@@ -51,7 +51,10 @@ function init(module, app, next) {
 			approved: {
 				 type:Boolean
 			},
-			media: [Media]
+			media: [{
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Media'
+			}]
 		});
 
 		calipso.db.model('Project', Project);
@@ -120,9 +123,9 @@ function init(module, app, next) {
 
 		calipso.db.model('Circle', Circle);
 
-		eCrafting.domain.project = Project;
-		eCrafting.domain.call = Call;
-		eCrafting.domain.circle = Circle;
+		calipso.domain.project = Project;
+		calipso.domain.call = Call;
+		calipso.domain.circle = Circle;
 	}
 
 	function initCalipsoBindings () {
@@ -146,12 +149,12 @@ function init(module, app, next) {
 }
 
 function route(req, res, module, app) {
-	eCrafting.domain.circle.pre("validate", function (next) {
+	calipso.domain.circle.pre("validate", function (next) {
 		 //console.log("Circle pre validate");
 		 next();
 	});
 
-	eCrafting.domain.circle.pre('save', function (next) {
+	calipso.domain.circle.pre('save', function (next) {
 		//console.log("Circle pre save");
 		next();
 	});

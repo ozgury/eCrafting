@@ -42,16 +42,17 @@
        <p class="help-block">Enter an image for project.</p>
      </div>
    </div>
+
    <ul class="thumbnails">
       <%
       project.media.forEach(function(m, index) {
       %>
-        <li class="span4">
-          <a href="#" class="thumbnail">
-            <img src="/api/media/<%- m._id %>" style="width: 300px; height: 200px" alt="">
+        <li id="media[<%- index %>]" class="span4">
+          <a href="javascript:void(0)" class="thumbnail">
+            <img src="/api/media/<%- m %>" style="width: 300px; height: 200px" alt="">
           </a>
-          <input type="hidden" id="project[media][<%- index %>]" name="project[media][<%- index %>]" value="<%- m.id %>" />
-          <a href="#" class="thumbnail">Delete
+          <input type="hidden" id="media[<%- index %>]" name="media[<%- index %>]" value="<%- m %>" />
+          <a href="javascript:void(0)" onclick="ecr.page.deleteMedia(<%- index %>, '<%- m %>')" class="thumbnail">Delete
           </a>
         </li>
       <%

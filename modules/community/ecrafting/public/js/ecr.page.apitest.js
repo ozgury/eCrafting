@@ -10,7 +10,7 @@ if (typeof (ecr.page) == 'undefined') {
 };
 
 ecr.page.ApiTest = function () {
-	var hostname = "http://localhost:3000";
+	var apiWrapper = new ecr.ApiWrapper();
 
 	this.initialize = function () {
 		ecr.util.setFileUpload($(':file'), $('#imageid'), $('.removebutton'));

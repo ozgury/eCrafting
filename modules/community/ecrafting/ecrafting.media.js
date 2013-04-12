@@ -106,7 +106,7 @@ function processUploadedFiles(req, res, each, next) {
 	for(var upload in req.files) {
 		var upload = req.files[upload];
 
-		upload.forEach(function(files) {        
+		upload.forEach(function(files) {
 				if (files instanceof Array) {
 					files.forEach(function(file) {        
 						if (file.size > 0) {

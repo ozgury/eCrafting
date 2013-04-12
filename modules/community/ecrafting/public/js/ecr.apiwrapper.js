@@ -10,8 +10,8 @@ ecr.ApiWrapper = function () {
 	var apiRootPath = "/api/";
 	var that = this;
 
-	this.apiCall = function (command, parameters, type, successFunction) {
-		return this.call(apiRootPath + command + '?apikey=webclient', parameters, type, successFunction);
+	this.apiCall = function (command, parameters, type, successFunction, errorFunction) {
+		return this.call(apiRootPath + command + '?apikey=webclient', parameters, type, successFunction, errorFunction);
 	};
 
 	this.ajaxifyFormSubmission = function ($form, successFunction, errorFunction) {

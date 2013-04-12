@@ -235,13 +235,34 @@ function readProjectFromForm(req, form, existingProject) {
 	var p = existingProject;
 
 	if (p) {
-		console.log(form.project);
+		console.log('Form: ', form);
 		calipso.form.mapFields(form.project, existingProject);
 	} else {
-		console.log(form.project);
+		console.log('Form: ', form);
 		p = form.project;
 		p.owner = req.session.user.username;
 	}
+	var media = form.media;
+	var toDelete = [];
+	
+	p.media.forEach(function(savedMedia) {
+		if (media === undefined || media.indexOf(savedMedia) == 0) {
+			toDelete.push(savedMedia);
+		}
+	});
+	p.media = [];
+	if (media != undefined) {
+		media.forEach(function(m) {
+			p.media.push(m);
+		});
+	}
+	/*
+	toDelete.forEach(function(m) 
+		p.media.push(m);
+	});
+	*/
+	console.log('Project: ', p);
+	console.log('ToDelete: ', toDelete);
 	return p;
 }
 
@@ -634,7 +655,11 @@ function editCallProjectForm(req, res, template, block, next) {
 					project: c.calls.id(cId).projects.id(pId),
 					action: '/circle/' + c.id + '/call/' + cId + '/project/edit/' + (pId ? pId : "")
 				}
-
+				/*
+				values.project.media.forEach(function(m) {
+					m.populate();
+				});
+				*/
 				if (values.project == null) {
 					var Project = calipso.db.model('Project');
 					var p = new Project();
