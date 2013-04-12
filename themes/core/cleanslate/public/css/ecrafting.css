@@ -11,10 +11,21 @@
 
 body, form, input, select {
 	font-family: 'Open Sans', sans-serif;
+  color: #333;
 }
+
+a {
+  color: #F9A621;
+}
+
+a:hover {
+  color: #000;
+}
+
 
 #top-nav {
 	padding: 20px 0 5px;
+  font-weight: bold;
 }
 
 #mainContent {
@@ -62,6 +73,15 @@ body, form, input, select {
   box-shadow: 0 0 2px #bbb inset;
 }
 
+.browse-box {
+  height: 200px;
+  overflow: hidden;
+}
+
+.img-circle {
+  /*width: 300px;*/
+}
+
 
 
 .btn-browse {
@@ -82,8 +102,8 @@ body, form, input, select {
     background-image: -o-linear-gradient(#F9A621, #F87F0E);
     background-image: linear-gradient(#F9A621, #F87F0E);
 
-    -webkit-border-radius: 22px;
-            border-radius: 22px;
+    /*-webkit-border-radius: 22px;*/
+            /*border-radius: 22px;*/
 }
 
 .btn-browse:hover,
