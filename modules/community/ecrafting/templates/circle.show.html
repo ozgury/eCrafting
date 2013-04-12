@@ -1,6 +1,6 @@
 <div class='circle'>
-	<h1><%- circle.name %></h1>
-	<table>
+	<legend><%- circle.name %></legend>
+	<table class="table table-striped">
 		<tr>
 			<th><%- t('Name') %></th>
 			<td><%- circle.name %></td>
@@ -29,7 +29,7 @@
 		</tr>
 	</table>
 
-	<h2>Calls and Projects</h1>
+	<legend>Calls and Projects</legend>
 		<%
 		if (circle.calls.length == 0) {
 			t('No calls defined.')

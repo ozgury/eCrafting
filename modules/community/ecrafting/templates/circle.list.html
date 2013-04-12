@@ -1,15 +1,15 @@
-<div class="template-module">
-    <h2><%- t('Circles') %></h2>
-
+<div class="container">
+    <legend><%- t('Circles') %></legend>
     <ul class="browse-list">
        <%
         items.forEach(function(item) {
         %>
 
-        <li class="span3">
-            <div class="browse-img pull-left"><img src="/api/media/<%- item.image %>" class="img-circle"></div>
-            <div class="browse-name"><a href='/circle/show/<%- item._id %>'><%- item.name %></a></div>
+        <li class="span3 box browse-box pagination-centered">
+            <div class="browse-img img-circle"><img src="/api/media/<%- item.image %>" class="img-circle"></div>
+            <div class="browse-name"><h6><a href='/circle/show/<%- item._id %>'><%- item.name %></a></h6></div>
             <div class="browse-text"> <%- item.description %></div>
+            <div class="browse-tags label"><%- item.tags %></div>
         </li>
         <%
         });
