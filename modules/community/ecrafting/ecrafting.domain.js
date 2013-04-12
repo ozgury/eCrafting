@@ -123,9 +123,21 @@ function init(module, app, next) {
 
 		calipso.db.model('Circle', Circle);
 
+		var Activity = new calipso.lib.mongoose.Schema({
+			event: {type: String, required: true},
+			description: {type: String, required: true},
+			owner: {type: String, required: true}
+		});
+
+		Activity.plugin(extensions, { index: true });
+
+		calipso.db.model('Activity', Activity);
+
 		calipso.domain.project = Project;
 		calipso.domain.call = Call;
 		calipso.domain.circle = Circle;
+		calipso.domain.media = Media;
+		calipso.domain.activity = Activity;
 	}
 
 	function initCalipsoBindings () {

@@ -866,6 +866,7 @@ function contentLink(req, content) {
  * From a theme
  */
 function getContentList(query, out, next) {
+  console.log("Query: ", query);
 
   var Content = calipso.db.model('Content');
   var pager = out.hasOwnProperty('pager') ? out.pager : true;
@@ -901,10 +902,11 @@ function getContentList(query, out, next) {
 
         // Render the item into the response
         if (out.format === 'html') {
+          console.log("Render: ", contents);
 
-          calipso.theme.renderItem(out.req, out.res, out.template, out.block, {contents:contents, pager:pagerHtml}, next);
+          //calipso.theme.renderItem(out.req, out.res, out.template, out.block, {contents:contents, pager:pagerHtml}, next);
           // calipso.theme.renderItem(out.req,out.res,tableHtml,out.block,null,next);
-
+          return next();
         }
 
         if (out.format === 'json') {

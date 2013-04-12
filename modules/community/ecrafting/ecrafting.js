@@ -14,7 +14,8 @@
 	exports = module.exports = {
 		init:init,
 		route:route,
-		last:true
+		last:true,
+		depends:['user']
 	};
 
 // Override default Calipso form.
@@ -45,36 +46,14 @@ function registerEventListeners () {
 	calipso.e.post('PROJECT_UPDATE', module.name, addActivity);
 	calipso.e.post('PROJECT_DELETE', module.name, addActivity);
 
-//	calipso.e.post('USER_CREATE', "User", addActivity);
-//	calipso.e.post('USER_LOGIN', "User", addActivity);
+	calipso.e.post('USER_CREATE', module.name, addActivity);
+	calipso.e.post('USER_LOGIN', module.name, addActivity);
 }
 
 function addActivity(event, data, next) {
+	//console.log("Event: ", event);
+	//console.log("Data: ", data);
 	return next();
-	console.log("Event: ", event);
-	console.log("Data: ", data);
-	return next();
-	var Role = calipso.db.model('Role');
-
-  delete calipso.data.roleArray;
-  delete calipso.data.roles;
-  calipso.data.roleArray = [];
-  calipso.data.roles = {};
-
-  Role.find({}).sort('name', 1).find(function (err, roles) {
-
-    if (err || !roles) {
-      // Don't throw error, just pass back failure.
-      calipso.error(err);
-    }
-
-    // Create a role array and object cache
-    roles.forEach(function (role) {
-      calipso.data.roleArray.push(role.name);
-      calipso.data.roles[role.name] = {description:role.description, isAdmin:role.isAdmin};
-    });
-    next();
-  });
 }
 
 

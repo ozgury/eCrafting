@@ -665,9 +665,17 @@ function listCall(req, res, template, block, next) {
 		.sort('circle', 1)
 		.find(function (err, circles) {
 			// Render the item into the response
+			var calls = [];
+
+			circles.forEach (function(c) {
+				c.calls.forEach (function(call) {
+					calls.push(call);
+				});
+			});
+
 			if (format === 'html') {
 				calipso.theme.renderItem(req, res, template, block, {
-					items: circles
+					items: calls
 				}, next);
 			}
 			if (format === 'json') {
