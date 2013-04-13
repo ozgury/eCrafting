@@ -21,10 +21,12 @@
                 <ul class="nav">
                     <%- admin %>
                 </ul>
+                <ul class="nav pull-right">
+                    <%- getMenu('adminToolbar') %>
+                </ul>
             </div>
         </div>
     </div>
-
     <div id="mainContent" class="container">
         <section id="messages" class="row-fluid">           
             <%- messages %>
