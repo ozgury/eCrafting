@@ -902,9 +902,8 @@ function getContentList(query, out, next) {
 
         // Render the item into the response
         if (out.format === 'html') {
-          console.log("Render: ", contents);
 
-          //calipso.theme.renderItem(out.req, out.res, out.template, out.block, {contents:contents, pager:pagerHtml}, next);
+          calipso.theme.renderItem(out.req, out.res, out.template, out.block, {contents:contents, pager:pagerHtml}, next);
           // calipso.theme.renderItem(out.req,out.res,tableHtml,out.block,null,next);
           return next();
         }
