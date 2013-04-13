@@ -88,7 +88,7 @@
       "enabled": true
     },
     "devtools": {
-      "enabled": true
+      "enabled": false
     },
     "ecrafting": {
       "enabled": true

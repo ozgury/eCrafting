@@ -1,15 +1,36 @@
-<div class="container">
+<div class="c">
     <legend><%- t('Circles') %></legend>
     <ul class="browse-list">
        <%
         items.forEach(function(item) {
         %>
 
-        <li class="span3 box browse-box pagination-centered">
-            <div class="browse-img img-circle"><img src="/api/media/<%- item.image %>" class="img-circle"></div>
+        <li class="span4 box browse-box pagination-centered">
+
+            <div class="browse-img img-circle">
+                <%
+                if (item.image) {
+                    %>                                          
+                        <img src="/api/media/<%- item.image %>" class="img-circle">                    
+                    <%
+                }
+                else {
+                %>
+                    <img src="http://placehold.it/250x250/95A5A6/fff/&text=/" class="img-circle">
+                <%
+                }
+                %>
+
+            </div>
             <div class="browse-name"><h6><a href='/circle/show/<%- item._id %>'><%- item.name %></a></h6></div>
             <div class="browse-text"> <%- item.description %></div>
-            <div class="browse-tags label"><%- item.tags %></div>
+            <%
+            item.tags.forEach(function(tag) {
+            %>
+                <div class="browse-tags label"><%- tag %></div>
+            <% 
+            }); 
+            %>            
         </li>
         <%
         });
