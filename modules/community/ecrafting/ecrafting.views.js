@@ -292,24 +292,32 @@ function editCircleCallForm(req, res, template, block, next) {
 
 	if (id) {
 		Circle.findById(id, function (err, c) {
-			if (err || c === null && (cId && c.calls.id(cId) === null)) {
-				res.statusCode = 404;
-				next();
-			} else {
-				var values = {
-					circle: c, 
-//					call: c.calls.id(cId), 
-					call: c.calls, 
-					action: '/api/circles/' + c.id + '/calls/' + (cId ? cId : "")
-				}
+			var call = null;
 
-				if (values.call == null) {
-					var Call = calipso.db.model('Call');
-					var c = new Call();
-					values.call = c;
-				}
-				calipso.theme.renderItem(req, res, template, block, values, next);
+			if (err || c === null) {
+				res.statusCode = 404;
+				return next();
 			}
+			c.calls.forEach(function (c) {
+				if (c.id === cId) {
+					call = c;
+				}
+			});
+			if (cId && call === null) {
+				res.statusCode = 404;
+				return next();
+			}
+			if (call == null) {
+				var Call = calipso.db.model('Call');
+
+				call  = new Call();
+			}
+			var values = {
+				circle: c,
+				call: call,	
+				action: '/api/circles/' + c.id + '/calls/' + (cId ? cId : "")
+			}
+			calipso.theme.renderItem(req, res, template, block, values, next);
 		}).populate('calls').exec();
 	} else {
 		res.statusCode = 404;

@@ -314,6 +314,7 @@ function listCircleCalls(req, res, template, block, next) {
 
 function updateCircleCall(req, res, template, block, next) {
 	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
 	var id = req.moduleParams.id;
 	var cId = req.moduleParams.cid;
 
@@ -343,31 +344,28 @@ function updateCircleCall(req, res, template, block, next) {
 		});
 		return next();
 	}
-	Circle.findById(id, function (err, circle) {
+	Circle.findOne({ '_id': id, 'calls': cId }, function (err, circle) {
 		if (!circle) {
 			return responseError(res, 404, err);
 		}
-		var call = circle.calls.id(cId);
-
-		if (!circle.indexOf(cId)) {
-			return responseError(res, 404, err);
-		}
-		Call.findById(cId, function (err, call) {
-			if (!utilities.isAdminOrDataOwner(req, call)) {
-				return responseError(res, 401);			
-			}
-			calipso.e.pre_emit('CALL_UPDATE', call);
-			call = readCallFromBody(req, req.body, call);
-			call.save(function (err) {
-				if (err) {
-					calipso.error("Error updating call", err);
-					return responseError(res, 400, err);
+		circle.calls.forEach(function (call) {
+			if (call.id == cId) {
+				if (!utilities.isAdminOrDataOwner(req, call)) {
+					return responseError(res, 401);			
 				}
-				calipso.e.post_emit('CALL_UPDATE', call);
-				return responseOk(res, call);
-			});
+				calipso.e.pre_emit('CALL_UPDATE', call);
+				call = readCallFromBody(req, req.body, call);
+				call.save(function (err) {
+					if (err) {
+						calipso.error("Error updating call", err);
+						return responseError(res, 400, err);
+					}
+					calipso.e.post_emit('CALL_UPDATE', call);
+					return responseOk(res, call);
+				});
+			}
 		});
-	});
+	}).populate('calls').exec();
 }
 
 function deleteCircleCall(req, res, template, block, next) {
