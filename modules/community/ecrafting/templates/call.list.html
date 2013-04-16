@@ -1,12 +1,12 @@
-<div class="template-module">
-    <h2><%- t('Calls') %></h2>
+<div class="container">
+    <legend><%- t('Calls') %></legend>
 
     <ul class="browse-list">
        <%
         items.forEach(function(item) {
         %>
 
-        <li class="span3">
+        <li class="span3 box browse-box pagination-centered">
             <div class="browse-name"><a href='/circle/show/<%- item._id %>'><%- item.name %></a></div>
             <div class="browse-text"> <%- item.description %></div>
         </li>

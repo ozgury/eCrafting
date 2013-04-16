@@ -12,6 +12,7 @@
 body, form, input, select {
 	font-family: 'Open Sans', sans-serif;
   color: #333;
+  background: #fdfdfd url("/images/body_bg.jpg");
 }
 
 a {
@@ -45,7 +46,7 @@ a:hover {
 
 .copyright {
 	margin: 50px 0;
-	border-top: 1px solid #eee;
+	border-top: 1px solid #ccc;
 	font-size: 10px;
   line-height: 13px;
 	padding: 10px 80px 10px 0; 
@@ -73,6 +74,15 @@ a:hover {
   box-shadow: 0 0 2px #bbb inset;
 }
 
+.featurebox { 
+  padding:35px; 
+  background:#fff; 
+  border-radius: 4px;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2); 
+  position:relative;
+}
+
+
 .browse-box {
   height: 200px;
   overflow: hidden;
@@ -85,7 +95,7 @@ a:hover {
 
 
 .btn-browse {
-    height: 44px;
+    /*height: 44px;*/
     /*padding: 0 20px;*/
 
     font-size: 16px;
