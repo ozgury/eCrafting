@@ -13,26 +13,39 @@
 		processUploadedFiles : processUploadedFiles
 	};
 
-function createThumbnail(media, next) {
-/*
-	var metadata = media.get('metadata');
+function createThumbnail(file, next) {
 	var im = require('imagemagick');
-	var isPortrait = (metadata.width < metadata.height);
-	
-	var thumbPortrait = '100' //calipso.config.moduleConfig('media','thumbnails:portrait') || '150x';
-	var thumbLandscape = '225' //calipso.config.moduleConfig('media','thumbnails:landscape') || 'x150';
-	var thumbSharpen = '0.2' //calipso.config.moduleConfig('media','thumbnails:sharpen') || '0.2';
-	var thumbQuality = '90' //calipso.config.moduleConfig('media','thumbnails:quality') || '80';
 
-	var thumbSize = isPortrait ? thumbPortrait : thumbLandscape;
+	console.log("Im: ", im);
+	console.log("File: ", file);
 
-	im.convert([path.join(rootpath,"media", media.path), '-resize', thumbSize,'-filter','lagrange','-sharpen',thumbSharpen,'-quality',thumbQuality, path.join(rootpath,"media", media.thumb)], function(err, stdout, stderr) {
-		next(err,media);
+	im.identify(file, function(err, ident_metadata){
+		console.log("Err: ", err);
+		console.log("Meta1: ", ident_metadata);
+
+		im.readMetadata(file, function(err, exif_metadata) {
+
+			console.log("Err: ", err);
+			console.log("Meta2: ", exif_metadata);
+			var metadata = calipso.lib._.extend(ident_metadata, exif_metadata);
+		//	var metadata = media.get('metadata');
+			var isPortrait = (metadata.width < metadata.height);
+			
+			var thumbPortrait = '100' //calipso.config.moduleConfig('media','thumbnails:portrait') || '150x';
+			var thumbLandscape = '225' //calipso.config.moduleConfig('media','thumbnails:landscape') || 'x150';
+			var thumbSharpen = '0.2' //calipso.config.moduleConfig('media','thumbnails:sharpen') || '0.2';
+			var thumbQuality = '90' //calipso.config.moduleConfig('media','thumbnails:quality') || '80';
+
+			var thumbSize = isPortrait ? thumbPortrait : thumbLandscape;
+
+			im.convert([file, '-resize', thumbSize,'-filter','lagrange','-sharpen',thumbSharpen,'-quality',thumbQuality, file + "t1"], function(err, stdout, stderr) {
+				next(err,media);
+			});
+		});
 	});
-*/
 }
 
-function moveFile(from, to, next) {
+function copyAndCreateThumbnails(from, to, next) {
 
 	mkdirp(path.dirname(to), 0755, function (err) {
 		if (err) {
@@ -42,8 +55,12 @@ function moveFile(from, to, next) {
 			var os = fs.createWriteStream(to);
 
 			util.pump(is, os, function(err) {
-				fs.unlinkSync(from);
-				next(err);
+				console.log("File Copied: ", to);
+//				createThumbnail(to, function(err) {
+					fs.unlinkSync(from);
+					console.log("File Deleted: ", from);
+					next(err);
+//				});
 			});
 		}
 	});
@@ -96,8 +113,13 @@ function mediaPath(filePath) {
 
 function processUploadedFiles(req, res, each, next) {
 	function processOne(file, next) {
-		moveFile(file.file.path, file.to, function(err) {
+		copyAndCreateThumbnails(file.file.path, file.to, function(err) {
 			each(err, file, next);
+/*
+				m.save(function(err) {
+					next(err, m._id);
+				});
+*/
 		});
 	}
 	var basePath = "uploads";

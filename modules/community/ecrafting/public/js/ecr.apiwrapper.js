@@ -6,6 +6,23 @@ if (typeof (ecr) == 'undefined') {
 	ecr = {};
 }
 
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
 ecr.ApiWrapper = function () {
 	var apiRootPath = "/api/";
 	var that = this;
@@ -14,13 +31,59 @@ ecr.ApiWrapper = function () {
 		return this.call(apiRootPath + command + '?apikey=webclient', parameters, type, successFunction, errorFunction);
 	};
 
+	function serializeObject ($form)
+	{
+		var o = {};
+		var a = $form.serializeArray();
+		var t = $form;
+
+		$.each(a, function() {
+			var data = t.find('#' + this.name).attr('data-object');
+			var subObject = o;
+
+			if (data) {
+				if (!o[data]) {
+					o[data] = {};
+				}
+				subObject = o[data];
+			}
+			if (subObject[this.name] !== undefined) {
+				if (!subObject[this.name].push) {
+					subObject[this.name] = [subObject[this.name]];
+				}
+				subObject[this.name].push(this.value || '');
+			} else {
+				subObject[this.name] = this.value || '';
+			}
+		});
+		return o;
+	};
+
+	this.ajaxifyFormSubmissionAsJson = function ($form, rootObject, successFunction, errorFunction) {
+		$form.submit(function () {
+			$('html, body').animate({ scrollTop: 0 }, 'slow');
+
+			var formJson = serializeObject($(this));
+
+			that.call($(this).attr('action') + '?apikey=webclient', JSON.stringify((rootObject) ? formJson[rootObject] : formJson), 'POST', successFunction, (errorFunction != null) ? errorFunction : function (result, other, exception) {
+				if (result.status === 400) {
+					var modelState = eval($.parseJSON(result.responseText));
+
+					ecr.app.userError('Form post error: ' + result.responseText);
+				}
+			});
+			return false;
+		});
+	}
+
 	this.ajaxifyFormSubmission = function ($form, successFunction, errorFunction) {
 		$form.submit(function () {
 			$('html, body').animate({ scrollTop: 0 }, 'slow');
-			new that.postForm(this, this.action, successFunction, (errorFunction != null) ? errorFunction : function (result, other, exception) {
-				if (result.status == 400) {
-					// We have some error here
-					ecr.app.userError('Form post ' + result.status);
+			that.postForm(this, this.action, successFunction, (errorFunction != null) ? errorFunction : function (result, other, exception) {
+				if (result.status === 400) {
+					var modelState = eval($.parseJSON(result.responseText));
+
+					ecr.app.userError('Form post error: ' + modelState);
 				}
 			});
 			return false;
@@ -43,6 +106,7 @@ ecr.ApiWrapper = function () {
 				ajaxCall.complete();
 				ajaxCall = null;
 				var responseProcess = ecr.app.longProcessStart('Process data ' + url);
+
 				successFunction(data, jqXhr);
 				responseProcess.complete();
 			},

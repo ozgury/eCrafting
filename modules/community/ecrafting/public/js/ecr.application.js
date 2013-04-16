@@ -181,25 +181,6 @@ ecr.Application = function () {
 		this.userMessage(message + stateErrors, 'error');
 	};
 
-	this.ajaxifyFormSubmission = function ($form, successFunction, errorFunction) {
-		$form.submit(function () {
-			$('html, body').animate({ scrollTop: 0 }, 'slow');
-			new ecr.ApiWrapper().postForm(this, this.action, successFunction, (errorFunction != null) ? errorFunction : function (result, other, exception) {
-				if (result.status == 400) {
-					var modelState = eval($.parseJSON(result.responseText));
-
-					if (!ecr.app.guideUser(modelState)) {
-						ecr.app.userError(null, modelState);
-						ecr.app.formFieldError(modelState);
-					}
-				} else {
-					ecr.app.userError("An unexpected error occured. Please try again.");
-				}
-			});
-			return false;
-		});
-	};
-
 	this.initializePage = function () {
 		// Set the twipsies
 		if ($().twipsy) {

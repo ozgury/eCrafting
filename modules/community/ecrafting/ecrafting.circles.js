@@ -34,11 +34,6 @@ var routes = [{
 	template: 'circle.list',
 	block: 'content.circle.list'
 }, {
-	path: 'POST /circle/create',
-	fn: createCircle,
-	admin: false,
-//		permit: calipso.permission.Helper.hasPermission("admin:circle:create")
-}, {
 	path: 'GET /circle/show/:id.:format?',
 	fn: showCircle,
 	admin: false,
@@ -57,11 +52,6 @@ var routes = [{
 	fn: deleteCircle,
 	admin: false,
 //		permit: calipso.permission.Helper.hasPermission("admin:circle:delete")
-}, {
-	path: 'POST /circle/edit/:id',
-	fn: updateCircle,
-	admin: false,
-//		permit: calipso.permission.Helper.hasPermission("admin:circle:update")
 }, {
 	path: 'GET /circle/:id/call/edit/:cid?',
 	fn: editCircleCallForm,
@@ -282,39 +272,6 @@ function readProjectFromForm(req, form, existingProject) {
 }
 
 /**
-* Create new circle
-*/
-function createCircle(req, res, template, block, next) {
-
-	calipso.form.process(req, function (form) {
-
-		if (form) {
-			var c = readCircleFromForm(req, form);
-
-			calipso.e.pre_emit('CIRCLE_CREATE', c, function (c) {
-				c.save(function (err) {
-					if (err) {
-						req.flash('error', req.t('Could not save circle because {msg}.', {
-							msg: err.message
-						}));
-						calipso.debug("Err: " + err);
-						if (res.statusCode != 302) {
-							res.redirect('/circle/edit');
-						}
-						next();
-					} else {
-						calipso.e.post_emit('CIRCLE_CREATE', c, function (c) {
-							res.redirect('/circle');
-							next();
-						});
-					}
-				});
-			});
-		}
-	});
-}
-
-/**
 * Edit circle
 */
 function editCircleForm(req, res, template, block, next) {
@@ -368,23 +325,23 @@ function editCircleForm(req, res, template, block, next) {
 			} else {
 				var values = {
 					circle: c,
-					action: '/circle/edit/' + c.id
+					action: '/api/circles/' + c.id
 				}
 				calipso.form.render(circleForm, values, req, function (form) {
 					calipso.theme.renderItem(req, res, template, block, values, next);
 				});
-			 /*
-			 calipso.theme.renderItem(req, res, template, block, {
+				/*
+				calipso.theme.renderItem(req, res, template, block, {
 					item: c
-			 }, next);
-		*/
+				}, next);
+				*/
 	}
 });
 	} else {
 		var Circle = calipso.db.model('Circle');
 		var c = new Circle();
 
-		calipso.theme.renderItem(req, res, template, block, { circle: c, action: "/circle/create" }, next);
+		calipso.theme.renderItem(req, res, template, block, { circle: c, action: "/api/circles/" }, next);
 	}
 }
 

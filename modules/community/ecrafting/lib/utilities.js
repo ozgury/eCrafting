@@ -16,6 +16,9 @@ var me = Utilities.prototype;
 module.exports = utilities;
 
 me.commaSeparatedtoArray = function (valueList, defaultValue) {
+	if (defaultValue === null) {
+		defaultValue = [];
+	}
 	if (!valueList) {
 		return defaultValue;
 	}

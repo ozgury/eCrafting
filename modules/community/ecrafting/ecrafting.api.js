@@ -5,7 +5,8 @@ var rootpath = process.cwd() + '/',
 	path = require('path'),
 	Query = require("mongoose").Query,
 	calipso = require(path.join(rootpath, 'lib/calipso')),
-	media = require('./ecrafting.media');
+	media = require('./ecrafting.media'),
+	utilities = require('./lib/utilities');
 
 module.exports = {
 	init:init,
@@ -21,22 +22,19 @@ var routes = [
 		// Circles
 		{ path:'GET /api/circles', fn:listCircles },
 		{ path:'GET /api/circles/:id', fn:listCircles },
-		{ path: 'POST /api/circles', fn: createCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:create") },
-		{ path: 'POST /api/circles/:id', fn: updateCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:update") },
-		{ path: 'DELETE /api/circles/:id', fn: deleteCircle, permit: calipso.permission.Helper.hasPermission("admin:circle:delete") },
+		{ path: 'POST /api/circles/:id?', fn: updateCircle },
+		{ path: 'DELETE /api/circles/:id', fn: deleteCircle },
 
 		// Circle Calls
 		{ path:'GET /api/circles/:id/calls', fn:listCircleCalls },
 		{ path:'GET /api/circles/:id/calls/:cid', fn:listCircleCalls },
-		{ path: 'POST /api/circles/:id/calls', fn: createCircleCall },
-		{ path: 'POST /api/circles/:id/calls/:cid', fn: updateCircleCall },
+		{ path: 'POST /api/circles/:id/calls/:cid?', fn: updateCircleCall },
 		{ path: 'DELETE /api/circles/:id/calls/:cid', fn: deleteCircleCall },
 
 		// Project Calls
 		{ path:'GET /api/circles/:id/calls/:cid/projects', fn:listCallProjects },
 		{ path:'GET /api/circles/:id/calls/:cid/projects/:pid', fn:listCallProjects },
-		{ path: 'POST /api/circles/:id/calls/:cid/projects', fn: createCallProject },
-		{ path: 'POST /api/circles/:id/calls/:cid/projects/:pid', fn: updateCallProject },
+		{ path: 'POST /api/circles/:id/calls/:cid/projects/:pid?', fn: updateCallProject },
 		{ path: 'DELETE /api/circles/:id/calls/:cid/projects/:pid', fn: deleteCallProject },
 
 		// Media Calls
@@ -70,22 +68,86 @@ function responseError(res, code, error) {
 }
 
 /**
+ * Simple object mapper, used to copy over form values to schemas
+ */
+function mapFields (fields, record) {
+  var props = Object.getOwnPropertyNames(fields);
+
+  props.forEach(function (name) {
+    // If not private (e.g. _id), then copy
+    if (!name.match(/^_.*/)) {
+      record.set(name, fields[name]);
+    }
+  });
+};
+
+function readCircleFromBody(req, body, existingCircle) {
+	if (!existingCircle.owner) {
+		existingCircle.owner = req.session.user.username;
+	}
+	mapFields(body, existingCircle);
+	if ((body.image != null) && (body.image == '')) {
+		existingCircle.image = '';
+	}
+	existingCircle.members = body.members instanceof Array ? body.members : utilities.commaSeparatedtoArray(body.members, existingCircle.members);
+	existingCircle.links = body.links instanceof Array ? body.links : utilities.commaSeparatedtoArray(body.links, existingCircle.links);
+	existingCircle.tags = body.tags instanceof Array ? body.tags : utilities.commaSeparatedtoArray(body.tags, existingCircle.tags);
+	return existingCircle;
+}
+
+function readCallFromForm(req, form, existingCall) {
+	var call = existingCall;
+
+	if (form.call.image === '') {
+		form.call.image = null;
+	}
+	if (call) {
+		calipso.form.mapFields(form.call, existingCall);
+	} else {
+		call = form.call;
+		call.owner = req.session.user.username;
+	}
+	return call;
+}
+
+function readProjectFromForm(req, form, existingProject) {
+	var p = existingProject;
+
+	if (p) {
+		console.log('Form: ', form);
+		calipso.form.mapFields(form.project, existingProject);
+	} else {
+		console.log('Form: ', form);
+		p = form.project;
+		p.owner = req.session.user.username;
+	}
+	var media = form.media;
+	var toDelete = [];
+	
+	p.media.forEach(function(savedMedia) {
+		if (media === undefined || media.indexOf(savedMedia) == 0) {
+			toDelete.push(savedMedia);
+		}
+	});
+	p.media = [];
+	if (media != undefined) {
+		media.forEach(function(m) {
+			p.media.push(m);
+		});
+	}
+	/*
+	toDelete.forEach(function(m) 
+		p.media.push(m);
+	});
+	*/
+	console.log('Project: ', p);
+	console.log('ToDelete: ', toDelete);
+	return p;
+}
+
+/**
  * Circles
  */
-function createCircle(req, res, template, block, next) {
-	var Circle = calipso.db.model('Circle');
-	var newCircle = new Circle(req.body);
-
-	newCircle.owner = req.session.user.username;
-	calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
-	newCircle.save(function (err) {
-		if (err) {
-			return responseError(res, 400, err);
-		}
-		calipso.e.post_emit('CIRCLE_CREATE', newCircle);
-		return responseOk(res, newCircle);
-	});
-}
 
 function listCircles(req, res, template, block, next) {
 	var Circle = calipso.db.model('Circle');
@@ -112,11 +174,26 @@ function updateCircle(req, res, template, block, next) {
 	var Circle = calipso.db.model('Circle');
 	var id = req.moduleParams.id;
 
+	console.log("Body ", req.body);
+	if (!id) {
+		var newCircle = readCircleFromBody(req, req.body, new Circle(req.body));
+		//var newCircle = new Circle(req.body);
+
+		calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
+		newCircle.save(function (err) {
+			if (err) {
+				return responseError(res, 400, err);
+			}
+			calipso.e.post_emit('CIRCLE_CREATE', newCircle);
+			return responseOk(res, newCircle);
+		});
+		return next();
+	}
 	Circle.findById(id, function (err, oldCircle) {
 		if (!oldCircle) {
 			return responseError(res, 404, err);
 		} else {
-			calipso.form.mapFields(req.body, oldCircle);
+			oldCircle = readCircleFromBody(req, req.body, oldCircle);
 			calipso.e.pre_emit('CIRCLE_UPDATE', oldCircle);
 			oldCircle.save(function (err) {
 				if (err) {

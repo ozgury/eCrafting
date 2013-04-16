@@ -13,6 +13,9 @@ ecr.page.Page = function () {
 		var apiWrapper = new ecr.ApiWrapper();
 
 		this.initialize = function () {
-			ecr.util.setFileUpload($(':file'), $('#circle\\[image\\]'), $('.removebutton'));
+			ecr.util.setFileUpload($(':file'), $('#image'), $('.removebutton'));
+			apiWrapper.ajaxifyFormSubmissionAsJson($('#FORM'), 'circle', function (response, jqXHR) {
+				alert('Done');
+			});
 		}
 };

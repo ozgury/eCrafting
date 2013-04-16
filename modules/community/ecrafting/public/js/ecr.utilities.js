@@ -106,15 +106,18 @@ ecr.Utilities = function () {
 			that.setFileUpload($fileUpload, $idInput, $removeButton);
 		}
 	});
+
+	function fileDeleted(response, jqXhr) {
+		$('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
+		$('.fileupload').find('span.fileupload-preview').html('');
+		$idInput.val('');
+		that.setFileUpload($fileUpload, $idInput, $removeButton);
+	}
+				
 	$removeButton.click(function(event){
 		var command = 'media/' + $idInput.val();
 
-		apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
-			$('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
-			$('.fileupload').find('span.fileupload-preview').html('');
-			$idInput.val('');
-			that.setFileUpload($fileUpload, $idInput, $removeButton);
-		}, ecr.app.userMessage('Problem deleting file.'));
+		apiWrapper.apiCall(command, null, 'DELETE', fileDeleted, fileDeleted);
 	});
 }
 };
