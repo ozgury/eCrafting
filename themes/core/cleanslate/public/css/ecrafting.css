@@ -12,7 +12,7 @@
 body, form, input, select {
 	font-family: 'Open Sans', sans-serif;
   color: #333;
-  background: #fdfdfd url("/images/body_bg.jpg");
+  /*background: #fdfdfd url("/images/body_bg.jpg");*/
 }
 
 a {

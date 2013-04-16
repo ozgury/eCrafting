@@ -1,9 +1,15 @@
 
 <form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="<%- action %>" class="form-horizontal">
-	<legend>Edit Circle</legend>
+	<legend>
+		<% if(circle.name) { %>
+		Edit Circle
+		<% } else { %>
+		Create a new Circle
+		<% } %>
+	</legend>
 
 	<fieldset class="form-fields tab-content">
-		<h3>Circle</h3>
+		<!-- <h3>Circle</h3> -->
 
 		<div class="control-group field-type-text" id="circle_name-wrapper">
 			<label class="control-label" for="name">Name:</label>
@@ -65,7 +71,39 @@
 				</div>
 			</div>
 
-			<% if(circle.id) { %>
+			
+
+					<div class="control-group field-type-text" id="circle_members-wrapper">
+						<label class="control-label" for="members">Members:</label>
+
+						<div class="controls">
+							<input type="text" class="text" name="members" id="members" value="<%- circle.members %>" data-object="circle"  data-provide="tokenizer" />
+
+							<p class="help-block">Enter circle members delimited by comma.</p>
+						</div>
+					</div>
+
+					<div class="control-group field-type-text" id="circle_links-wrapper">
+						<label class="control-label" for="links">Links:</label>
+
+						<div class="controls">
+							<input type="text" class="text" name="links" id="links" value="<%- circle.links %>" data-object="circle"  data-provide="tokenizer" />
+
+							<p class="help-block">Enter circle links delimited by comma.</p>
+						</div>
+					</div>
+
+					<div class="control-group field-type-text" id="circle_tags-wrapper">
+						<label class="control-label" for="tags">Tags:</label>
+
+						<div class="controls">
+							<input type="text" class="text" name="tags" id="tags" value="<%- circle.tags %>" data-object="circle" data-provide="tokenizer" />
+
+							<p class="help-block">Enter comma delimited tags for this circle.</p>
+						</div>
+					</div>
+
+					<% if(circle.id) { %>
 			<a href="/circle/<%- circle._id %>/call/edit">Create Call</a>
 			<% } %>
 			<%
@@ -90,36 +128,6 @@
 						<%
 					}
 					%>
-
-					<div class="control-group field-type-text" id="circle_members-wrapper">
-						<label class="control-label" for="members">Members:</label>
-
-						<div class="controls">
-							<input type="text" class="text" name="members" id="members" value="<%- circle.members %>" data-object="circle" />
-
-							<p class="help-block">Enter circle members delimited by comma.</p>
-						</div>
-					</div>
-
-					<div class="control-group field-type-text" id="circle_links-wrapper">
-						<label class="control-label" for="links">Links:</label>
-
-						<div class="controls">
-							<input type="text" class="text" name="links" id="links" value="<%- circle.links %>" data-object="circle" />
-
-							<p class="help-block">Enter circle links delimited by comma.</p>
-						</div>
-					</div>
-
-					<div class="control-group field-type-text" id="circle_tags-wrapper">
-						<label class="control-label" for="tags">Tags:</label>
-
-						<div class="controls">
-							<input type="text" class="text" name="tags" id="tags" value="<%- circle.tags %>" data-object="circle" />
-
-							<p class="help-block">Enter comma delimited tags for this circle.</p>
-						</div>
-					</div>
 
 					<div class="form-actions">
 						<input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Circle" /> <input type="button" class="button btn" name="cancel"

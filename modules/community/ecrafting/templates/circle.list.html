@@ -1,5 +1,9 @@
 <div class="c">
-    <legend><%- t('Circles') %></legend>
+    <legend><%- t('Circles') %>
+        <div class="pull-right">
+            <a href="/circle/edit" class="btn"><i class="icon-edit"></i> <strong>Create a Circle</strong></a>
+        </div>
+    </legend>
     <ul class="browse-list">
        <%
         items.forEach(function(item) {
