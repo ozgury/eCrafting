@@ -48,6 +48,9 @@ ecr.page.Page = function () {
 
 	this.initialize = function () {
 		setFileUpload();
+		apiWrapper.ajaxifyFormSubmissionAsJson($('#FORM'), 'project', function (response, jqXHR) {
+			ecr.app.userSuccess('Done');
+		});		
 	}
 
 	this.doDeleteMedia = function (index, mId) {

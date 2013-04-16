@@ -70,6 +70,8 @@ ecr.ApiWrapper = function () {
 					var modelState = eval($.parseJSON(result.responseText));
 
 					ecr.app.userError('Form post error: ' + result.responseText);
+				} else if (result.status === 401) {
+					ecr.app.userError('Unauthorized.');
 				}
 			});
 			return false;

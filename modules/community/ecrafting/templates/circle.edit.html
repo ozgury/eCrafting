@@ -1,7 +1,8 @@
 
-<form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="<%- action %>" class="form-horizontal">
+<form id="FORM" name="FORM" method="post" action="<%- action %>" class="form-horizontal">
+	<input type="hidden" id="id" name="id" value="<%- circle.id %>" />
 	<legend>
-		<% if(circle.name) { %>
+		<% if(circle.id) { %>
 		Edit Circle
 		<% } else { %>
 		Create a new Circle
@@ -15,7 +16,7 @@
 			<label class="control-label" for="name">Name:</label>
 			<div class="controls">
 				<input type="text" class="text" name="name" id="name" value="<%- circle.name %>" data-object="circle" /> 
-				<p class="help-block">Enter the name of the circle, it must be unique.</p>
+				<p class="help-block">Enter the name of the circle.</p>
 			</div>
 		</div>
 
@@ -104,7 +105,7 @@
 					</div>
 
 					<% if(circle.id) { %>
-			<a href="/circle/<%- circle._id %>/call/edit">Create Call</a>
+			<a href="/circles/<%- circle._id %>/calls/edit">Create Call</a>
 			<% } %>
 			<%
 			if (circle.calls.length == 0) {
@@ -118,7 +119,7 @@
 						circle.calls.forEach(function(call) {
 							%>
 							<tr>
-								<td><a href='/circle/<%- circle._id %>/call/edit/<%- call._id %>'><%- call.name %></a></td>
+								<td><a href='/circles/<%- circle._id %>/calls/edit/<%- call._id %>'><%- call.name %></a></td>
 								<td><%- call.date %></td>
 							</tr>
 							<%

@@ -1,7 +1,7 @@
 <div class="c">
     <legend><%- t('Circles') %>
         <div class="pull-right">
-            <a href="/circle/edit" class="btn"><i class="icon-edit"></i> <strong>Create a Circle</strong></a>
+            <a href="/circles/edit" class="btn"><i class="icon-edit"></i> <strong>Create a Circle</strong></a>
         </div>
     </legend>
     <ul class="browse-list">
@@ -26,7 +26,7 @@
                 %>
 
             </div>
-            <div class="browse-name"><h6><a href='/circle/show/<%- item._id %>'><%- item.name %></a></h6></div>
+            <div class="browse-name"><h6><a href='/circles/show/<%- item._id %>'><%- item.name %></a></h6></div>
             <div class="browse-text"> <%- item.description %></div>
             <%
             item.tags.forEach(function(tag) {

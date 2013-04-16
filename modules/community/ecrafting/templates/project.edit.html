@@ -1,105 +1,112 @@
 
 <form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="<%- action %>" class="form-horizontal">
- <input type="hidden" value="FORM" name="form[id]" /><legend>Edit Call Project</legend>
+	<input type="hidden" id="id" name="id" value="<%- circle.id %>"  />
+	<legend>
+		<% if(project.id) { %>
+		Edit Call Project
+		<% } else { %>
+		Create a new Project
+		<% } %>
+	</legend>
 
- <fieldset class="form-fields tab-content">
-   <h3>Project</h3>
+	<fieldset class="form-fields tab-content">
+		<h3>Project</h3>
 
-   <div class="control-group field-type-text" id="call_name-wrapper">
-     <label class="control-label">Call Name:</label>
-     <div class="controls">
-        <span class="input-xlarge uneditable-input"><%- call.name %></span>
-     </div>
-   </div>
+		<div class="control-group field-type-text" id="call_name-wrapper">
+			<label class="control-label">Call Name:</label>
+			<div class="controls">
+				<span class="input-xlarge uneditable-input"><%- call.name %></span>
+			</div>
+		</div>
 
 
-   <div class="control-group field-type-text" id="project_name-wrapper">
-     <label class="control-label" for="project[name]">Name:</label>
-     <div class="controls">
-       <input type="text" class="text" name="project[name]" id="project[name]" value="<%- project.name %>" />
-       <p class="help-block">Enter the name of the project, it must be unique.</p>
-     </div>
-   </div>
+		<div class="control-group field-type-text" id="project_name-wrapper">
+			<label class="control-label" for="name">Name:</label>
+			<div class="controls">
+				<input type="text" class="text" name="name" id="name" value="<%- project.name %>" data-object="project" />
+				<p class="help-block">Enter the name of the project, it must be unique.</p>
+			</div>
+		</div>
 
-   <div class="control-group field-type-file" id="project_image-wrapper">
-     <label class="control-label" for="fileupload">Image:</label>
-     <div class="controls">
-        <div class="fileupload fileupload-new" data-provides="fileupload">
-          <div class="input-append">
-            <div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i>Select or Drop Files Here<span class="fileupload-preview"></span></div>
-            <span class="btn btn-file">
-              <span class="fileupload-new">Select</span>
-              <input id="fileupload" type="file" name="files[]" multiple="true" />
-            </span>
-            <a href="javascript:void(0)" id="remove" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
-          </div>
-        </div>
+		<div class="control-group field-type-file" id="project_image-wrapper">
+			<label class="control-label" for="fileupload">Image:</label>
+			<div class="controls">
+				<div class="fileupload fileupload-new" data-provides="fileupload">
+					<div class="input-append">
+						<div class="uneditable-input span3"><i class="icon-file fileupload-exists"></i>Select or Drop Files Here<span class="fileupload-preview"></span></div>
+						<span class="btn btn-file">
+							<span class="fileupload-new">Select</span>
+							<input id="fileupload" type="file" name="files[]" multiple="true" />
+						</span>
+						<a href="javascript:void(0)" id="remove" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+					</div>
+				</div>
 
-        <div id="progress" class="progress progress-striped active hidden">
-          <div class="bar" style="width: 0;"></div>
-        </div>
-        
-       <p class="help-block">Enter an image for project.</p>
-     </div>
-   </div>
+				<div id="progress" class="progress progress-striped active hidden">
+					<div class="bar" style="width: 0;"></div>
+				</div>
+				
+				<p class="help-block">Enter an image for project.</p>
+			</div>
+		</div>
 
-   <ul class="thumbnails">
-      <%
-      project.media.forEach(function(m, index) {
-      %>
-        <li id="media[<%- index %>]" class="span4">
-          <a href="javascript:void(0)" class="thumbnail">
-            <img src="/api/media/<%- m %>" style="width: 300px; height: 200px" alt="">
-          </a>
-          <input type="hidden" id="media[<%- index %>]" name="media[<%- index %>]" value="<%- m %>" />
-          <a href="javascript:void(0)" onclick="ecr.page.deleteMedia(<%- index %>, '<%- m %>')" class="thumbnail">Delete
-          </a>
-        </li>
-      <%
-      });
-      %>
-  </ul>
+		<ul class="thumbnails">
+			<%
+			project.media.forEach(function(m, index) {
+				%>
+				<li id="media[<%- index %>]" class="span4">
+					<a href="javascript:void(0)" class="thumbnail">
+						<img src="/api/media/<%- m %>" style="width: 300px; height: 200px" alt="">
+					</a>
+					<input type="hidden" id="media[<%- index %>]" name="media[<%- index %>]" value="<%- m %>" />
+					<a href="javascript:void(0)" onclick="ecr.page.deleteMedia(<%- index %>, '<%- m %>')" class="thumbnail">Delete
+					</a>
+				</li>
+				<%
+				});
+				%>
+			</ul>
 
-   <div class="control-group field-type-textarea" id="project_description-wrapper">
-     <label class="control-label" for="project[description]">Description:</label>
-     <div class="controls">
-       <textarea class="textarea" rows="10" name="project[description]" id="project[description]"><%- project.description %></textarea>
+			<div class="control-group field-type-textarea" id="project_description-wrapper">
+				<label class="control-label" for="description">Description:</label>
+				<div class="controls">
+					<textarea class="textarea" rows="10" name="description" id="description" data-object="project"><%- project.description %></textarea>
 
-       <p class="help-block">Enter a description.</p>
-     </div>
-   </div>
+					<p class="help-block">Enter a description.</p>
+				</div>
+			</div>
 
-   <div class="control-group field-type-text" id="project_location-wrapper">
-     <label class="control-label" for="project[location]">Location:</label>
+			<div class="control-group field-type-text" id="project_location-wrapper">
+				<label class="control-label" for="location">Location:</label>
 
-     <div class="controls">
-       <input type="text" class="text" name="project[location]" id="project[location]" value="<%- project.location %>" />
+				<div class="controls">
+					<input type="text" class="text" name="location" id="location" value="<%- project.location %>"  data-object="project"/>
 
-       <p class="help-block">Enter the project location.</p>
-     </div>
-   </div>
+					<p class="help-block">Enter the project location.</p>
+				</div>
+			</div>
 
-   <div class="control-group field-type-text" id="project_approved-wrapper">
-    <label class="checkbox" for="project[approved]">
-      <input type="checkbox" name="project[approved]" id="project[approved]" <%- project.approved ? "checked" : "" %>> Approved?
-      <p class="help-block">Project is approved.</p>
-    </label>
-   </div>
+			<div class="control-group field-type-text" id="project_approved-wrapper">
+				<label class="checkbox" for="approved">
+					<input type="checkbox" name="approved" id="approved" <%- project.approved ? "checked" : "" %>  data-object="project" /> Approved?
+					<p class="help-block">Project is approved.</p>
+				</label>
+			</div>
 
-   <div class="form-actions">
-     <input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Project" /> <input type="button" class="button btn" name="cancel"
-     onclick='window.location="/circle"' id="cancel" value="Cancel" />
-   </div>
- </fieldset>
-</form>
+			<div class="form-actions">
+				<input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Project" /> <input type="button" class="button btn" name="cancel"
+				onclick='window.location="/circle"' id="cancel" value="Cancel" />
+			</div>
+		</fieldset>
+	</form>
 
-<script src="/js/ecr.page.project.edit.js"></script>
-<script type="text/javascript">
-  //<![CDATA[
-  ecr.load();
-  $(document).ready(function () {
-    ecr.page = new ecr.page.Page();
-    ecr.page.initialize();
-  });
-  //]]>
-</script>
+	<script src="/js/ecr.page.project.edit.js"></script>
+	<script type="text/javascript">
+	//<![CDATA[
+	ecr.load();
+	$(document).ready(function () {
+		ecr.page = new ecr.page.Page();
+		ecr.page.initialize();
+	});
+	//]]>
+	</script>
