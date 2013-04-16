@@ -322,12 +322,9 @@ function updateCircleCall(req, res, template, block, next) {
 			if (!circle) {
 				return responseError(res, 404, err);
 			}
-
 			var newCall = readCallFromBody(req, req.body);
 
 			calipso.e.pre_emit('CALL_CREATE', newCall);
-			circle.calls.push(newCall);
-
 			newCall.save(function (err) {
 				if (err) {
 					calipso.error("Error creating call", err);
@@ -352,20 +349,23 @@ function updateCircleCall(req, res, template, block, next) {
 		}
 		var call = circle.calls.id(cId);
 
-		if (!call) {
+		if (!circle.indexOf(cId)) {
 			return responseError(res, 404, err);
-		} else if (!utilities.isAdminOrDataOwner(req, call)) {
-			return responseError(res, 401);			
 		}
-		calipso.e.pre_emit('CALL_UPDATE', call);
-		call = readCallFromBody(req, req.body, call);
-		circle.save(function (err) {
-			if (err) {
-				calipso.error("Error updating call", err);
-				return responseError(res, 400, err);
+		Call.findById(cId, function (err, call) {
+			if (!utilities.isAdminOrDataOwner(req, call)) {
+				return responseError(res, 401);			
 			}
-			calipso.e.post_emit('CALL_UPDATE', call);
-			return responseOk(res, call);
+			calipso.e.pre_emit('CALL_UPDATE', call);
+			call = readCallFromBody(req, req.body, call);
+			call.save(function (err) {
+				if (err) {
+					calipso.error("Error updating call", err);
+					return responseError(res, 400, err);
+				}
+				calipso.e.post_emit('CALL_UPDATE', call);
+				return responseOk(res, call);
+			});
 		});
 	});
 }

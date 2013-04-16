@@ -233,7 +233,7 @@ function showCircle(req, res, template, block, next) {
 			res.send(circle.toObject());
 			next();
 		}
-	});
+	}).populate('calls').populate('calls.projects').exec();
 
 }
 
@@ -299,7 +299,7 @@ function editCircleCallForm(req, res, template, block, next) {
 				var values = {
 					circle: c, 
 //					call: c.calls.id(cId), 
-					call: cId, 
+					call: c.calls, 
 					action: '/api/circles/' + c.id + '/calls/' + (cId ? cId : "")
 				}
 
