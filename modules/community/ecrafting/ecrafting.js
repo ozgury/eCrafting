@@ -7,8 +7,8 @@
 	Query = require("mongoose").Query,
 	everyauth = require("everyauth")
 	domain = require('./ecrafting.domain'),
-	circles = require('./ecrafting.circles'),
 	api = require('./ecrafting.api'),
+	views = require('./ecrafting.views'),
 	ui = require('./lib/ui.extensions'),
 	module.name = "eCrafting",
 	exports = module.exports = {
@@ -22,14 +22,14 @@
 calipso.form = require('./lib/form');
 	
 function route(req, res, module, app, next) {
-	var aPerm = calipso.permission.Helper.hasPermission("admin:user");
+	var aPerm = calipso.permission.Helper.hasPermission("admin:ecrafting");
 
 	// Menu
 	res.menu.admin.addMenuItem(req, {name:'eCrafting', path:'ecrafting', weight:5, url:'/ecrafting', description:'eCrafting Management ...', permit:aPerm });
 	module.router.route(req, res, next);
 
 	domain.route(req, res, next);
-	circles.route(req, res, next);
+	views.route(req, res, next);
 	api.route(req, res, next);
 }
 
@@ -64,9 +64,29 @@ function addActivity(event, data, next) {
 	{
 		case 'POST_CIRCLE_CREATE':
 		case 'POST_CIRCLE_UPDATE':
-			activity.description = data.owner + ' just created the circle \'' + data.name + '\'';
+			var verb = (event === 'POST_CIRCLE_CREATE') ? 'created': 'updated';
+
+			activity.description = data.owner + ' just ' + verb + ' the circle \'' + data.name + '\'';
 			activity.link = '/circle/show/' + data.id;
 			activity.image = data.image;
+			break;
+
+		case 'POST_CALL_CREATE':
+		case 'POST_CALL_UPDATE':
+			var verb = (event === 'POST_CALL_CREATE') ? 'created': 'updated';
+
+			activity.description = data.owner + ' just ' + verb + ' the call \'' + data.name + '\'';
+			activity.link = '/circle/show/' + data.id;
+			activity.image = data.image;
+			break;
+
+		case 'POST_PROJECT_CREATE':
+		case 'POST_PROJECT_UPDATE':
+			var verb = (event === 'POST_CALL_CREATE') ? 'created': 'updated';
+
+			activity.description = data.owner + ' just ' + verb + ' the project \'' + data.name + '\'';
+			activity.link = '/circle/show/' + data.id;
+			activity.image = (data.media && data.media[0]) ? data.media[0] : null;
 			break;
 
 		case 'POST_USER_CREATE':
@@ -94,13 +114,30 @@ function addActivity(event, data, next) {
 
 
 function init(module, app, next) {
+	calipso.e.addEvent('CIRCLE_CREATE');
+	calipso.e.addEvent('CIRCLE_UPDATE');
+	calipso.e.addEvent('CIRCLE_DELETE');
+	calipso.e.addEvent('CALL_CREATE');
+	calipso.e.addEvent('CALL_UPDATE');
+	calipso.e.addEvent('CALL_DELETE');
+	calipso.e.addEvent('PROJECT_CREATE');
+	calipso.e.addEvent('PROJECT_UPDATE');
+	calipso.e.addEvent('PROJECT_DELETE');
+
+	calipso.permission.Helper.addPermission("ecrafting:circle", "eCrafting", true);
+	calipso.permission.Helper.addPermission("ecrafting:call", "eCrafting", true);
+	calipso.permission.Helper.addPermission("ecrafting:project", "eCrafting", true);
+	calipso.permission.Helper.addPermission("admin:ecrafting:circle", "eCrafting Admin", true);
+	calipso.permission.Helper.addPermission("admin:ecrafting:call", "eCrafting Admin", true);
+	calipso.permission.Helper.addPermission("admin:ecrafting:project", "eCrafting Admin", true);
+
 	calipso.lib.step(
 		function defineRoutes() {
-			module.router.addRoute('GET /ecrafting', showMain, {template:'ecrafting', block:'admin.show'}, this.parallel());
-			module.router.addRoute('GET /about', showMain, {template:'about', block:'admin.show'}, this.parallel());
-			module.router.addRoute('GET /locations', showMain, {template:'locations', block:'admin.show'}, this.parallel());
-			module.router.addRoute('GET /timeline', showMain, {template:'timeline', block:'admin.show'}, this.parallel());
-			module.router.addRoute('GET /current', showMain, {template:'current', block:'admin.show'}, this.parallel());
+			module.router.addRoute('GET /ecrafting', showMain, {template:'ecrafting', admin:true, block:'admin.show'}, this.parallel());
+			module.router.addRoute('GET /about', showMain, {template:'about', block:'content.show'}, this.parallel());
+			module.router.addRoute('GET /locations', showMain, {template:'locations', block:'content.show'}, this.parallel());
+			module.router.addRoute('GET /timeline', showMain, {template:'timeline', block:'content.show'}, this.parallel());
+			module.router.addRoute('GET /current', showMain, {template:'current', block:'content.show'}, this.parallel());
 
 	      module.router.addRoute(/.*/, allPages, {
 	        end:false,
@@ -116,7 +153,7 @@ function init(module, app, next) {
 		},
 		function done() {
 			domain.init(module, app, next);
-			circles.init(module, app, next);
+			views.init(module, app, next);
 			api.init(module, app, next);
 			registerEventListeners();
 			next();

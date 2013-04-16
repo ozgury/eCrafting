@@ -81,7 +81,10 @@ function init(module, app, next) {
 			location: {
 					type:String
 			},
-			projects: [Project]
+			projects: [{
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Project'
+			}]
 		});
 
 		calipso.db.model('Call', Call);
@@ -108,8 +111,13 @@ function init(module, app, next) {
 			location: {
 				type:String
 			},
-			calls: [Call]
+			calls: [{
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Call'
+			}]
 		});
+
+		calipso.db.model('Circle', Circle);
 
 		Circle.path('name').validate(function (v) {
 			return v && v.length > 4 && v.length < 40;
@@ -124,8 +132,6 @@ function init(module, app, next) {
 		Project.plugin(extensions, { index: true });
 		Call.plugin(extensions, { index: true });
 		Circle.plugin(extensions, { index: true });
-
-		calipso.db.model('Circle', Circle);
 
 		var Activity = new calipso.lib.mongoose.Schema({
 			description: String,

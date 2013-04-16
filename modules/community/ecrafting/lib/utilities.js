@@ -29,3 +29,7 @@ me.commaSeparatedtoArray = function (valueList, defaultValue) {
 	});
 	return list;
 }
+
+me.isAdminOrDataOwner = function (req, data) {
+	return (req.session.user && req.session.user.isAdmin) || (req.session.user && data && (req.session.user.username === data.owner));
+}

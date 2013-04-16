@@ -1,128 +1,135 @@
 
-<form id="FORM" name="FORM" method="post" enctype="multipart/form-data" action="<%- action %>" class="form-horizontal">
- <input type="hidden" value="FORM" name="form[id]" /><legend>Edit Circle Call</legend>
+<form id="FORM" name="FORM" method="post" action="<%- action %>" class="form-horizontal">
+	<input type="hidden" id="id" name="id" value="<%- circle.id %>"  />
+	<legend>
+		<% if(call.id) { %>
+		Edit Circle Call
+		<% } else { %>
+		Create a new Call
+		<% } %>
+	</legend>
 
- <fieldset class="form-fields tab-content">
-   <h3>Call</h3>
+	<fieldset class="form-fields tab-content">
+		<h3>Call</h3>
 
-   <div class="control-group field-type-text" id="circle_name-wrapper">
-     <label class="control-label">Circle Name:</label>
-     <div class="controls">
-        <span class="input-xlarge uneditable-input"><%- circle.name %></span>
-     </div>
-   </div>
+		<div class="control-group field-type-text" id="circle_name-wrapper">
+			<label class="control-label">Circle Name:</label>
+			<div class="controls">
+				<span class="input-xlarge uneditable-input"><%- circle.name %></span>
+			</div>
+		</div>
 
 
-   <div class="control-group field-type-text" id="call_name-wrapper">
-     <label class="control-label" for="call[name]">Name:</label>
-     <div class="controls">
-       <input type="text" class="text" name="call[name]" id="call[name]" value="<%- call.name %>" />
-       <p class="help-block">Enter the name of the circle, it must be unique.</p>
-     </div>
-   </div>
+		<div class="control-group field-type-text" id="call_name-wrapper">
+			<label class="control-label" for="name">Name:</label>
+			<div class="controls">
+				<input type="text" class="text" name="name" id="name" value="<%- call.name %>" data-object="call" />
+				<p class="help-block">Enter the name of the call.</p>
+			</div>
+		</div>
 
-   <div class="control-group field-type-file" id="call_image-wrapper">
-     <label class="control-label" for="fileupload">Image:</label>
-     <div class="controls">
-        <input type="hidden" id="call[image]" name="call[image]" value="<%- call.image %>" />
+		<div class="control-group field-type-file" id="call_image-wrapper">
+			<label class="control-label" for="fileupload">Image:</label>
+			<div class="controls">
+				<input type="hidden" id="image" name="image" value="<%- call.image %>" data-object="call" />
 
-        <% if(call.image) { %>
-        <div class="fileupload fileupload-exists" data-provides="fileupload">
-        <% } else { %>
-        <div class="fileupload fileupload-new" data-provides="fileupload">
-        <% } %>
-        <div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
-        <div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;">
-        <% if(call.image) { %>
-          <img src="/api/media/<%- call.image %>" />
-        <% } else { %>
-          <img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" />
-        <% } %>
-        </div>
-          <span class="btn btn-file">
-            <span class="fileupload-new">Select image</span>
-            <span class="fileupload-exists">Change</span>
-            <input id="fileupload" name="files[]" type="file" />
-          </span>
-        <a href="javascript:void()" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
-        </div>
-        <div id="progress" class="progress progress-striped active hidden">
-          <div class="bar" style="width: 0;"></div>
-        </div>
-        
-       <p class="help-block">Enter an image for call.</p>
-     </div>
-   </div>
+				<% if(call.image) { %>
+				<div class="fileupload fileupload-exists" data-provides="fileupload">
+					<% } else { %>
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+						<% } %>
+						<div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+						<div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;">
+							<% if(call.image) { %>
+							<img src="/api/media/<%- call.image %>" />
+							<% } else { %>
+							<img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" />
+							<% } %>
+						</div>
+						<span class="btn btn-file">
+							<span class="fileupload-new">Select image</span>
+							<span class="fileupload-exists">Change</span>
+							<input id="fileupload" name="files[]" type="file" />
+						</span>
+						<a href="javascript:void()" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+					</div>
+					<div id="progress" class="progress progress-striped active hidden">
+						<div class="bar" style="width: 0;"></div>
+					</div>
 
-   <div class="control-group field-type-textarea" id="call_description-wrapper">
-     <label class="control-label" for="call[description]">Description:</label>
-     <div class="controls">
-       <textarea class="textarea" rows="10" name="call[description]" id="call[description]"><%- call.description %></textarea>
+					<p class="help-block">Enter an image for call.</p>
+				</div>
+			</div>
 
-       <p class="help-block">Enter a description.</p>
-     </div>
-   </div>
+			<div class="control-group field-type-textarea" id="call_description-wrapper">
+				<label class="control-label" for="description">Description:</label>
+				<div class="controls">
+					<textarea class="textarea" rows="10" name="description" id="description" data-object="call"><%- call.description %></textarea>
 
-   <div class="control-group field-type-text" id="call_location-wrapper">
-     <label class="control-label" for="call[location]">Location:</label>
+					<p class="help-block">Enter a description.</p>
+				</div>
+			</div>
 
-     <div class="controls">
-       <input type="text" class="text" name="call[location]" id="call[location]" value="<%- call.location %>" />
+			<div class="control-group field-type-text" id="call_location-wrapper">
+				<label class="control-label" for="location">Location:</label>
 
-       <p class="help-block">Enter the call location.</p>
-     </div>
-   </div>
+				<div class="controls">
+					<input type="text" class="text" name="location" id="location" value="<%- call.location %>" data-object="call" />
 
-   <div class="control-group field-type-text" id="call_date-wrapper">
-     <label class="control-label" for="call[date]">Date:</label>
+					<p class="help-block">Enter the call location.</p>
+				</div>
+			</div>
 
-     <div class="controls">
-       <input type="text" class="text" name="call[date]" id="call[date]" value="<%- (call && call.date) ? call.date : Date.now() %>" />
+			<div class="control-group field-type-text" id="call_date-wrapper">
+				<label class="control-label" for="date">Date:</label>
 
-       <p class="help-block">Enter the call date.</p>
-     </div>
-   </div>
+				<div class="controls">
+					<input type="text" class="text" name="date" id="date" value="<%- (call && call.date) ? call.date : Date.now() %>" data-object="call" />
 
-    <% if(call.id) { %>
-      <a href="/circle/<%- circle._id %>/call/<%- call._id %>/project/edit">Create Project</a>
-    <% } %>
-    <%
-    if (call.projects.length == 0) {
-    %>
-      <%- t('No projects defined.') %>
-    <%
-    } else {
-    %>
-      <table class="table table-bordered table-hover">
-        <%
-        call.projects.forEach(function(project) {
-        %>
-        <tr>
-            <td><a href='/circle/<%- circle._id %>/call/<%- call._id %>/project/edit/<%- project._id %>'><%- project.name %></a></td>
-            <td><%- project.date %></td>
-        </tr>
-        <%
-        });
-        %>
-      </table>
-    <%
-    }
-    %>   
+					<p class="help-block">Enter the call date.</p>
+				</div>
+			</div>
 
-   <div class="form-actions">
-     <input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Call" /> <input type="button" class="button btn" name="cancel"
-     onclick='window.location="/circle"' id="cancel" value="Cancel" />
-   </div>
- </fieldset>
-</form>
+			<% if(call.id) { %>
+			<a href="/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit">Create Project</a>
+			<% } %>
+			<%
+			if (call.projects.length == 0) {
+				%>
+				<%- t('No projects defined.') %>
+				<%
+				} else {
+					%>
+					<table class="table table-bordered table-hover">
+						<%
+						call.projects.forEach(function(project) {
+							%>
+							<tr>
+								<td><a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>'><%- project.name %></a></td>
+								<td><%- project.date %></td>
+							</tr>
+							<%
+							});
+							%>
+						</table>
+						<%
+					}
+					%>   
 
-<script src="/js/ecr.page.call.edit.js"></script>
-<script type="text/javascript">
-  //<![CDATA[
-  ecr.load();
-  $(document).ready(function () {
-    ecr.page = new ecr.page.Page();
-    ecr.page.initialize();
-  });
-  //]]>
-</script>
+					<div class="form-actions">
+						<input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Call" /> <input type="button" class="button btn" name="cancel"
+						onclick='window.location="/circle"' id="cancel" value="Cancel" />
+					</div>
+				</fieldset>
+			</form>
+
+			<script src="/js/ecr.page.call.edit.js"></script>
+			<script type="text/javascript">
+	//<![CDATA[
+	ecr.load();
+	$(document).ready(function () {
+		ecr.page = new ecr.page.Page();
+		ecr.page.initialize();
+	});
+	//]]>
+	</script>

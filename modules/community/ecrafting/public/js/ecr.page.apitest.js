@@ -51,7 +51,8 @@ ecr.page.ApiTest = function () {
 			location: "Philadelphia, 19103",
 			tags: ["some", "circle"],
 			members: ["ke@fi.edu", "otelhan@gmail.com"],
-			links: ["www.fi.edu"]
+			links: ["www.fi.edu"],
+			image: null
 		};
 		apiWrapper.apiCall(command, JSON.stringify(parameters), 'POST', showResponse, showError);
 	};
