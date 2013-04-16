@@ -1,0 +1,55 @@
+<div class="c">
+    <legend><%- t('Circles') %>
+        <div class="pull-right">
+            <a href="/circles/edit" class="btn"><i class="icon-edit"></i> <strong>Create a Circle</strong></a>
+        </div>
+    </legend>
+    <ul class="browse-list row-fluid">
+       <%
+        items.forEach(function(item, index) {
+        %>
+
+        <li class="span4 box browse-box pagination-centered">
+
+            <div class="browse-img img-circle">
+                <%
+                if (item.image) {
+                    %>                                          
+                        <img src="/api/media/<%- item.image %>" class="img-circle">                    
+                    <%
+                }
+                else {
+                %>
+                    <img src="http://placehold.it/250x250/95A5A6/fff/&text=/" class="img-circle">
+                <%
+                }
+                %>
+
+            </div>
+<<<<<<< HEAD
+            <div class="browse-name"><h4><i class="icon-edit"></i><a href='/circle/show/<%- item._id %>'><%- item.name %></a></h4></div>
+=======
+            <div class="browse-name"><h6><a href='/circles/show/<%- item._id %>'><%- item.name %></a></h6></div>
+>>>>>>> de925f57c7e9a1e3f55defc3c08fef08d926f5bd
+            <div class="browse-text"> <%- item.description %></div>
+            <%
+            item.tags.forEach(function(tag) {
+            %>
+                <div class="browse-tags label"><%- tag %></div>
+            <% 
+            }); 
+            %>            
+        </li>
+        <%
+        });
+
+        if(!items) {
+        %>
+        <li><%- t('No circles defined.') %></td>
+        <%
+        }
+        %>
+         
+    </ul>
+</div>
+
