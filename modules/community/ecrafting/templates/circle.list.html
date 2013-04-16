@@ -4,9 +4,9 @@
             <a href="/circle/edit" class="btn"><i class="icon-edit"></i> <strong>Create a Circle</strong></a>
         </div>
     </legend>
-    <ul class="browse-list">
+    <ul class="browse-list row-fluid">
        <%
-        items.forEach(function(item) {
+        items.forEach(function(item, index) {
         %>
 
         <li class="span4 box browse-box pagination-centered">
@@ -26,7 +26,7 @@
                 %>
 
             </div>
-            <div class="browse-name"><h6><a href='/circle/show/<%- item._id %>'><%- item.name %></a></h6></div>
+            <div class="browse-name"><h4><i class="icon-edit"></i><a href='/circle/show/<%- item._id %>'><%- item.name %></a></h4></div>
             <div class="browse-text"> <%- item.description %></div>
             <%
             item.tags.forEach(function(tag) {
