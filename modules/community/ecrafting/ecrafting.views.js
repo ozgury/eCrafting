@@ -54,6 +54,12 @@ var routes = [{
 	block: 'content.circle.edit',
 	template: 'circle.edit'
 }, {
+	path: 'GET /calls',
+	fn: listCircle,
+//	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
+	template: 'call.list',
+	block: 'content.circle.show'
+}, {
 	path: 'GET /circles/:id/calls/edit/:cid?',
 	fn: editCircleCallForm,
 	admin: false,
