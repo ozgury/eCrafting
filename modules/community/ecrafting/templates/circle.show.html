@@ -7,7 +7,10 @@
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 		</div>
 	</legend>
-	<table class="table table-striped">
+
+	<div class="row-fluid">
+		<div class="span8">
+			<table class="table table-striped">
 		<tr>
 			<th><%- t('Name') %></th>
 			<td><%- circle.name %></td>
@@ -35,8 +38,10 @@
 			<td><%- circle.location %></td>
 		</tr>
 	</table>
-
-	<legend>Calls and Projects</legend>
+		</div>
+		<div class="span4 well">
+<h4>Calls and Projects</h4>
+	<a href='/circles/<%- circle._id %>/calls/edit/' class="btn"><i class="icon-bullhorn"></i> <strong>Create a New Call</strong></a>
 		<%
 		if (circle.calls.length == 0) {
 			t('No calls defined.')
@@ -81,6 +86,12 @@
 							<%
 						}
 						%>
+		</div>
+	</div>
+	
+
+
+	
 
 
 					</div>

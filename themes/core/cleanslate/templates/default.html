@@ -46,8 +46,14 @@
 				    <% } else { %>
 
 				    <% if(user) { %>
-				    <li><a href="/user"><%- user.username %></a></li>
-				    <li><a href="/user/logout">Logout</a>
+				    <li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"><%- user.name %></i><b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="/user"><%- user.username %></a></li>
+						    <li><a href="/user/logout">Logout</a></li>
+						</ul>	
+					</li>
+				    
 				    <% } %>
 
 				    <% } %>						
