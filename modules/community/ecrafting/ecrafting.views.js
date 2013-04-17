@@ -133,7 +133,6 @@ function editCircleForm(req, res, template, block, next) {
 
 	var Circle = calipso.db.model('Circle');
 	var id = req.moduleParams.id;
-	var item;
 /*
 	res.menu.adminToolbar.addMenuItem(req, {
 		name: 'List',
@@ -187,9 +186,6 @@ function editCircleForm(req, res, template, block, next) {
 * Show circle
 */
 function showCircle(req, res, template, block, next) {
-
-	var item;
-
 	var Circle = calipso.db.model('Circle');
 	var id = req.moduleParams.id;
 	format = req.moduleParams.format || 'html';
@@ -286,9 +282,9 @@ Circle.count(query, function (err, count) {
 */
 function editCircleCallForm(req, res, template, block, next) {
 	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
 	var id = req.moduleParams.id;
 	var cId = req.moduleParams.cid;
-	var item;
 
 	if (id) {
 		Circle.findById(id, function (err, c) {
@@ -297,6 +293,14 @@ function editCircleCallForm(req, res, template, block, next) {
 			if (err || c === null) {
 				res.statusCode = 404;
 				return next();
+			}
+			if (!cId) {
+				var values = {
+					circle: c,
+					call: new Call(),	
+					action: '/api/circles/' + c.id + '/calls/' + (cId ? cId : "")
+				}
+				calipso.theme.renderItem(req, res, template, block, values, next);
 			}
 			c.calls.forEach(function (c) {
 				if (c.id === cId) {
@@ -307,17 +311,14 @@ function editCircleCallForm(req, res, template, block, next) {
 				res.statusCode = 404;
 				return next();
 			}
-			if (call == null) {
-				var Call = calipso.db.model('Call');
-
-				call  = new Call();
-			}
-			var values = {
-				circle: c,
-				call: call,	
-				action: '/api/circles/' + c.id + '/calls/' + (cId ? cId : "")
-			}
-			calipso.theme.renderItem(req, res, template, block, values, next);
+			Call.findById(cId, function (err, call) {
+				var values = {
+					circle: c,
+					call: call,	
+					action: '/api/circles/' + c.id + '/calls/' + (cId ? cId : "")
+				}
+				calipso.theme.renderItem(req, res, template, block, values, next);
+			}).populate('projects').exec();
 		}).populate('calls').exec();
 	} else {
 		res.statusCode = 404;
@@ -364,36 +365,36 @@ function listCall(req, res, template, block, next) {
 }
 
 function editCallProjectForm(req, res, template, block, next) {
-	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
 	var id = req.moduleParams.id;
 	var cId = req.moduleParams.cid;
 	var pId = req.moduleParams.pid;
 
-	if (id) {
-		Circle.findById(id, function (err, c) {
-			if (err || c === null || c.calls.id(cId) === null) {
+	if (cId) {
+		Call.findById(cId, function (err, call) {
+			if (err || call === null) {
 				res.statusCode = 404;
-				next();
-			} else {
-				var values = {
-					circle: c, 
-					call: c.calls.id(cId),
-					project: c.calls.id(cId).projects.id(pId),
-					action: '/api/circles/' + c.id + '/calls/' + cId + '/projects/' + (pId ? pId : "")
-				}
-				/*
-				values.project.media.forEach(function(m) {
-					m.populate();
-				});
-				*/
-				if (values.project == null) {
-					var Project = calipso.db.model('Project');
-					var p = new Project();
-					values.project = p;
-				}
-				calipso.theme.renderItem(req, res, template, block, values, next);
+				return next();
 			}
-		});
+			var project = null;
+
+			call.projects.forEach(function (p) {
+				if (p.id === pId) {
+					project = p;
+				}
+			});
+			if (project == null) {
+				var Project = calipso.db.model('Project');
+
+				project  = new Project();
+			}
+			var values = {
+				call: call,
+				project: project,	
+				action: '/api/circles/' + id + '/calls/' + cId + '/projects/' + (pId ? pId : "")
+			}
+			calipso.theme.renderItem(req, res, template, block, values, next);
+		}).populate('projects').exec();
 	} else {
 		res.statusCode = 404;
 		next();

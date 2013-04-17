@@ -111,7 +111,10 @@ function readCallFromBody(req, body, existingCall) {
 }
 
 function readProjectFromBody(req, body, existingProject) {
-	if (!existingProject.owner) {
+	if (!existingProject) {
+		var Project = calipso.db.model('Project');
+
+		existingProject = new Project(req.body);
 		existingProject.owner = req.session.user.username;
 	}
 	mapFields(body, existingProject);
@@ -155,8 +158,8 @@ function listCircles(req, res, template, block, next) {
 				return responseError(res, 404, err);
 			}
 			return responseOk(res, circle);
-		});
-		return next();
+		}).populate('calls').populate('calls.projects').exec();
+		return;
 	}
 	var order = req.moduleParams.order;
 	var skip = parseInt(req.moduleParams.skip);
@@ -198,26 +201,28 @@ function updateCircle(req, res, template, block, next) {
 			return responseOk(res, newCircle);
 		});
 		return next();
+	} else {
+		Circle.findById(id, function (err, oldCircle) {
+			if (!oldCircle) {
+				return responseError(res, 404, err);
+			} else if (!utilities.isAdminOrDataOwner(req, oldCircle)) {
+				return responseError(res, 401);
+			} else {
+				var newCircle = readCircleFromBody(req, req.body, oldCircle);
+				calipso.e.pre_emit('CIRCLE_UPDATE', newCircle);
+				console.log("newCircle: ", newCircle);
+				newCircle.save(function (err) {
+					if (err) {
+						calipso.error("Error updating circle", err);
+						return responseError(res, 400, err);
+					}
+					calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
+					return responseOk(res, oldCircle);
+				});
+			}
+		});
 	}
-	Circle.findById(id, function (err, oldCircle) {
-		if (!oldCircle) {
-			return responseError(res, 404, err);
-		} else if (!utilities.isAdminOrDataOwner(req, oldCircle)) {
-			return responseError(res, 401);
-		} else {
-			var newCircle = readCircleFromBody(req, req.body, oldCircle);
-			calipso.e.pre_emit('CIRCLE_UPDATE', newCircle);
-			console.log("newCircle: ", newCircle);
-			newCircle.save(function (err) {
-				if (err) {
-					calipso.error("Error updating circle", err);
-					return responseError(res, 400, err);
-				}
-				calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
-				return responseOk(res, oldCircle);
-			});
-		}
-	});
+	next();
 }
 
 function deleteCircle(req, res, template, block, next) {
@@ -245,7 +250,7 @@ function deleteCircle(req, res, template, block, next) {
 }
 
 function listCalls(req, res, template, block, next) {
-	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
 	var id = req.moduleParams.id;
 
 	if (id) {
@@ -272,19 +277,11 @@ function listCalls(req, res, template, block, next) {
 		options.sort = {};
 		options.sort[order] = 1;
 	}
-/*
-	Circle.find({ 'calls.date': { $lte: new Date() } }, {}, options, function (err, circles) {
+	Call.find({}, {}, options, function (err, calls) {
 		if (err) {
 			return responseError(res, 404, err);
 		}
-		return responseOk(res, circles);
-	});
-*/
-	Circle.find({ 'calls': {$not: {$size: 0}} }, {}, options, function (err, circles) {
-		if (err) {
-			return responseError(res, 404, err);
-		}
-		return responseOk(res, circles);
+		return responseOk(res, calls);
 	});
 }
 
@@ -343,29 +340,31 @@ function updateCircleCall(req, res, template, block, next) {
 			});
 		});
 		return next();
-	}
-	Circle.findOne({ '_id': id, 'calls': cId }, function (err, circle) {
-		if (!circle) {
-			return responseError(res, 404, err);
-		}
-		circle.calls.forEach(function (call) {
-			if (call.id == cId) {
-				if (!utilities.isAdminOrDataOwner(req, call)) {
-					return responseError(res, 401);			
-				}
-				calipso.e.pre_emit('CALL_UPDATE', call);
-				call = readCallFromBody(req, req.body, call);
-				call.save(function (err) {
-					if (err) {
-						calipso.error("Error updating call", err);
-						return responseError(res, 400, err);
-					}
-					calipso.e.post_emit('CALL_UPDATE', call);
-					return responseOk(res, call);
-				});
+	} else {
+		Circle.findOne({ '_id': id, 'calls': cId }, function (err, circle) {
+			if (!circle) {
+				return responseError(res, 404, err);
 			}
-		});
-	}).populate('calls').exec();
+			circle.calls.forEach(function (call) {
+				if (call.id == cId) {
+					if (!utilities.isAdminOrDataOwner(req, call)) {
+						return responseError(res, 401);			
+					}
+					calipso.e.pre_emit('CALL_UPDATE', call);
+					call = readCallFromBody(req, req.body, call);
+					call.save(function (err) {
+						if (err) {
+							calipso.error("Error updating call", err);
+							return responseError(res, 400, err);
+						}
+						calipso.e.post_emit('CALL_UPDATE', call);
+						return responseOk(res, call);
+					});
+				}
+			});
+		}).populate('calls').exec();
+	}
+	next():
 }
 
 function deleteCircleCall(req, res, template, block, next) {
@@ -431,63 +430,66 @@ function listCallProjects(req, res, template, block, next) {
 
 function updateCallProject(req, res, template, block, next) {
 	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
 	var id = req.moduleParams.id;
 	var cId = req.moduleParams.cid;
 	var pId = req.moduleParams.pid;
 
 	if (!pId) {
-		Circle.findById(id, function (err, circle) {
+		Circle.findOne({ '_id': id, 'calls': cId }, function (err, circle) {
 			if (!circle) {
 				return responseError(res, 404, err);
 			}
-			var call = circle.calls.id(cId);
-
-			if (!call) {
-				return responseError(res, 404, err);
-			}
-			var newProject = readProjectFromBody(req, req.body, req.body);
+			var newProject = readProjectFromBody(req, req.body);
 
 			calipso.e.pre_emit('PROJECT_CREATE', newProject);
-			call.projects.push(newProject);
-			circle.save(function (err) {
+			newProject.save(function (err) {
 				if (err) {
 					calipso.error("Error creating project", err);
 					return responseError(res, 400, err);
 				}
-				calipso.e.post_emit('PROJECT_CREATE', newProject);
-				return responseOk(res, newProject);
+				circle.calls.forEach(function (call) {
+					if (call.id == cId) {
+
+						call.projects.push(newProject.id);
+						call.save(function (err) {
+							if (err) {
+								calipso.error("Error creating project", err);
+								return responseError(res, 400, err);
+							}
+							calipso.e.post_emit('PROJECT_CREATE', newProject);
+							return responseOk(res, newProject);
+						});
+					}
+				});
 			});
-		});
-		return next();
-	}
-
-	Circle.findById(id, function (err, circle) {
-		if (!circle) {
-			return responseError(res, 404, err);
-		}
-		var call = circle.calls.id(cId);
-
-		if (!call) {
-			return responseError(res, 404, err);
-		}
-		var project = call.projects.id(pId);
-
-		if (!project) {
-			return responseError(res, 404, err);
-		} else if (!utilities.isAdminOrDataOwner(req, project)) {
-			return responseError(res, 401);			
-		}
-		calipso.e.pre_emit('PROJECT_UPDATE', project);
-		project = readProjectFromBody(req, req.body, project);
-		circle.save(function (err) {
-			if (err) {
-				calipso.error("Error updating project", err);
-				return responseError(res, 400, err);
+		}).populate('calls').exec();
+	} else {
+		Call.findOne({ '_id': cId, 'projects': pId }, function (err, call) {
+			if (!call) {
+				return responseError(res, 404, err);
 			}
-			calipso.e.post_emit('PROJECT_UPDATE', project);
-			return responseOk(res, project);
-		});
-	});
+			call.projects.forEach(function (project) {
+				if (project.id == pId) {
+					if (!utilities.isAdminOrDataOwner(req, project)) {
+						return responseError(res, 401);			
+					}
+					calipso.e.pre_emit('PROJECT_UPDATE', project);
+					project = readCallFromBody(req, req.body, project);
+					project.save(function (err) {
+						if (err) {
+							calipso.error("Error updating project", err);
+							return responseError(res, 400, err);
+						}
+						calipso.e.post_emit('PROJECT_UPDATE', project);
+						return responseOk(res, project);
+					});
+				}
+			});
+			return next();		
+		}).populate('projects').exec();
+	}
+	next();
 }
 
 function deleteCallProject(req, res, template, block, next) {
