@@ -51,9 +51,13 @@
 
 
 <textarea id="circleListItem" class="template">
-	<li id="{{id}}"><a href="" target="_new">
-		<img src="{{thumbnail}}" alt="" title="" data-egiq-path="{{url}}"/>{name}
-	</a></li>
+	<li class="span4 box browse-box pagination-centered">
+		<div class="browse-img img-circle">
+			<img src="/api/media/{{image}}" class="img-circle" />
+		</div>
+		<div class="browse-name"><h4><i class="icon-edit"></i><a href='/circle/show/{{id}}'>{{name}}</a></h4></div>
+		<div class="browse-text">{{description}}</div>
+	</li>
 </textarea>
 
 <script src="/js/ecr.page.circle.list.js"></script>
