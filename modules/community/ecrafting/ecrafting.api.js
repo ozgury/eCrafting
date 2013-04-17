@@ -364,7 +364,7 @@ function updateCircleCall(req, res, template, block, next) {
 			});
 		}).populate('calls').exec();
 	}
-	next():
+	next();
 }
 
 function deleteCircleCall(req, res, template, block, next) {

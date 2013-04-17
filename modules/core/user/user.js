@@ -519,7 +519,6 @@ function unlockUser(req, res, template, block, next) {
       }
       res.redirect('/user/profile/' + username);
     });
-
   });
 
 }

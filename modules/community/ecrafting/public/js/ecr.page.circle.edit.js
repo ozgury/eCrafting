@@ -6,7 +6,7 @@ if (typeof (ecr) == 'undefined') {
 };
 
 if (typeof (ecr.page) == 'undefined') {
-		ecr.page = {};
+	ecr.page = {};
 };
 
 ecr.page.Page = function () {
