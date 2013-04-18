@@ -6,23 +6,6 @@ if (typeof (ecr) == 'undefined') {
 	ecr = {};
 }
 
-$.fn.serializeObject = function()
-{
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function() {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
-};
-
 ecr.ApiWrapper = function () {
 	var apiRootPath = "/api/";
 	var that = this;
@@ -31,7 +14,7 @@ ecr.ApiWrapper = function () {
 		return this.call(apiRootPath + command + '?apikey=webclient', parameters, type, successFunction, errorFunction);
 	};
 
-	function serializeObject ($form)
+	this.serializeObject = function ($form)
 	{
 		var o = {};
 		var a = $form.serializeArray();
@@ -63,7 +46,7 @@ ecr.ApiWrapper = function () {
 		$form.submit(function () {
 			$('html, body').animate({ scrollTop: 0 }, 'slow');
 
-			var formJson = serializeObject($(this));
+			var formJson = that.serializeObject($(this));
 
 			that.call($(this).attr('action') + '?apikey=webclient', JSON.stringify((rootObject) ? formJson[rootObject] : formJson), 'POST', successFunction, (errorFunction != null) ? errorFunction : function (result, other, exception) {
 				if (result.status === 400) {

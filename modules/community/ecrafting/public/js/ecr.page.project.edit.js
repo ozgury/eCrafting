@@ -34,10 +34,10 @@ ecr.page.Page = function () {
 				var count = $('.thumbnails li.span4').length;
 
 				$.each(files, function(index, value) {
-					var html = '<li id="media[' + (count + index) + ']" class="span4">'+
+					var html = '<li id="media' + (count + index) + '" class="span4">'+
 											'<a href="javascript:void(0)" class="thumbnail">'+
 											'<img src="/api/media/' + value._id + '" style="width: 300px; height: 200px" alt=""></a>'+
-											'<input type="hidden" id="media[' + (count + index) + ']" name="media[' + (count + index) + ']" value="' + value._id + '" data-object="project"/>'+
+											'<input type="hidden" id="media' + (count + index) + '" name="media' + (count + index) + '" value="' + value._id + '" data-object="project"/>'+
 											'<a href="javascript:void(0)" onclick="ecr.page.deleteMedia(' + (count + index) + ', \'' + value._id + '\')" class="thumbnail">Delete</a></li>'
 
 					$('.thumbnails').append(html);			  
@@ -48,24 +48,47 @@ ecr.page.Page = function () {
 
 	this.initialize = function () {
 		setFileUpload();
-		apiWrapper.ajaxifyFormSubmissionAsJson($('#FORM'), 'project', function (response, jqXHR) {
-			ecr.app.userSuccess('Done');
-		});		
+		$('#FORM').submit(function () {
+			$('html, body').animate({ scrollTop: 0 }, 'slow');
+
+			var formJson = apiWrapper.serializeObject($(this));
+			var media = [];
+
+			$("input[id^='media']").each(function(index, input) {
+				media.push($(input).val());
+			});
+
+			formJson.project.media = media;
+
+			apiWrapper.call($(this).attr('action') + '?apikey=webclient', JSON.stringify(formJson.project), 'POST', function (response, jqXHR) {
+				ecr.app.userSuccess('Done');
+			}, function (result, other, exception) {
+				if (result.status === 400) {
+					var modelState = eval($.parseJSON(result.responseText));
+
+					ecr.app.userError(modelState.errors.name.type);
+					$('#' + modelState.errors.name.path).focus();
+				} else if (result.status === 401) {
+					ecr.app.userError('Unauthorized.');
+				}
+			});
+			return false;
+		});
 	}
 
 	this.doDeleteMedia = function (index, mId) {
 		var command = 'media/' + mId;
 
 		apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
-			$('.thumbnails > li#media\\[' + index + '\\]').remove();
+			$('.thumbnails > li#media' + index).remove();
 			ecr.app.userMessage('File deleted.');
 		}, function (response, jqXhr) {
-			$('.thumbnails > li#media\\[' + index + '\\]').remove();
+			$('.thumbnails > li#media' + index).remove();
 			ecr.app.userMessage('Problem deleting file.');
 		});
 	}
 
 	this.deleteMedia = function (index, mId) {
-		$('.thumbnails > li#media\\[' + index + '\\]').remove();
+		$('.thumbnails > li#media' + index).remove();
 	}
 };
