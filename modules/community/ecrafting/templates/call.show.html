@@ -1,0 +1,73 @@
+<div class='circle'>
+	<legend><%- call.name %> in <%- circle.name %> 
+		<div class="pull-right">
+			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
+			<a href='/circles/edit/<%- call._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+			<a href="#" class="btn"><i class="icon-trash"></i> <strong>Delete</strong></a>
+			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
+		</div>
+	</legend>
+
+	<div class="row-fluid">
+		<div class="span8">
+			<table class="table table-striped">
+				<tr>
+					<th><%- t('Name') %></th>
+					<td><%- call.name %></td>
+				</tr>
+				<%
+				if (call.image) {
+					%>
+					<tr>
+						<th><%- t('Image') %></th>
+						<td><img src="/api/media/<%- call.image %>" /></td>
+					</tr>
+					<%
+				}
+				%>
+				<tr>
+					<th><%- t('Description') %></th>
+					<td><%- call.description %></td>
+				</tr>
+				<tr>
+					<th><%- t('Tags') %></th>
+					<td><%- call.tags %></td>
+				</tr>
+				<tr>
+					<th><%- t('Location') %></th>
+					<td><%- call.location %></td>
+				</tr>
+			</table>
+		</div>
+		<div class="span4 well">
+			<h4>Calls and Projects</h4>
+			<a href='/circles/<%- call._id %>/calls/edit/' class="btn"><i class="icon-bullhorn"></i> <strong>Create a New Call</strong></a>
+			<%
+			if (call.projects.length == 0) {
+				t('No calls defined.')
+				} else {
+					%>
+					<table class="table table-bordered table-hover">
+						<%
+						call.projects.forEach(function(project) {
+							%>
+							<tr>
+								<td><a href='/circles/<%- call._id %>/calls/edit/<%- call._id %>'><%- project.name %></a></td>
+								<td><%- call.date %></td>
+							</tr>
+									<%
+									});
+									%>
+								</table>
+								<%
+							}
+							%>
+						</div>
+					</div>
+
+
+
+
+
+
+				</div>

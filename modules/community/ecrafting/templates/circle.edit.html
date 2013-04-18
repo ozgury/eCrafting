@@ -106,9 +106,8 @@
 
 					<% if(circle.id) { %>
 			<a href="/circles/<%- circle._id %>/calls/edit">Create Call</a>
-			<% } %>
 			<%
-			if (circle.calls.length == 0) {
+			if (!circle.calls || (circle.calls.length == 0)) {
 				%>
 				<%- t('No calls defined.') %>
 				<%
@@ -128,7 +127,7 @@
 						</table>
 						<%
 					}
-					%>
+				} %>
 
 					<div class="form-actions">
 						<input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Circle" /> <input type="button" class="button btn" name="cancel"

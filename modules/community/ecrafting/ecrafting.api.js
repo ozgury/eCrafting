@@ -43,7 +43,10 @@ var routes = [
 		{ path: 'DELETE /api/media/:id', fn: deleteMedia },
 
 		// Activities
-		{ path:'GET /api/activities', fn:listActivities }
+		{ path:'GET /api/activities', fn:listActivities },
+
+		// Users
+		{ path:'GET /api/users', fn:listUsers, permit: calipso.permission.Helper.hasPermission("ecrafting:circle:update") }
 ]
 
 /**
@@ -111,6 +114,8 @@ function readCallFromBody(req, body, existingCall) {
 }
 
 function readProjectFromBody(req, body, existingProject) {
+	console.log("Gak ");
+	console.log("Gak ", body);
 	if (!existingProject) {
 		var Project = calipso.db.model('Project');
 
@@ -118,6 +123,7 @@ function readProjectFromBody(req, body, existingProject) {
 		existingProject.owner = req.session.user.username;
 	}
 	mapFields(body, existingProject);
+	console.log("Form ", body);
 	return existingProject;
 
 	var media = form.media;
@@ -222,7 +228,6 @@ function updateCircle(req, res, template, block, next) {
 			}
 		});
 	}
-	next();
 }
 
 function deleteCircle(req, res, template, block, next) {
@@ -254,7 +259,7 @@ function listCalls(req, res, template, block, next) {
 	var id = req.moduleParams.id;
 
 	if (id) {
-		Circle.findById(id, function (err, circle) {
+		Call.findById(id, function (err, circle) {
 			if (err) {
 				return responseError(res, 404, err);
 			}
@@ -399,6 +404,39 @@ function deleteCircleCall(req, res, template, block, next) {
 }
 
 function listProjects(req, res, template, block, next) {
+	var Project = calipso.db.model('Project');
+	var id = req.moduleParams.id;
+
+	if (id) {
+		Project.findById(id, function (err, circle) {
+			if (err) {
+				return responseError(res, 404, err);
+			}
+			return responseOk(res, circle);
+		});
+		return next();
+	}
+	var order = req.moduleParams.order;
+	var skip = parseInt(req.moduleParams.skip);
+	var take = parseInt(req.moduleParams.take);
+	var options = {
+		skip: (skip === NaN) ? 0 : skip, // Starting Row
+		limit: (take === NaN) ? 50 : take, // Ending Row
+		sort: {
+			created: -1 //Sort by Date Added DESC
+		}
+	};
+
+	if (order) {
+		options.sort = {};
+		options.sort[order] = 1;
+	}
+	Project.find({}, {}, options, function (err, calls) {
+		if (err) {
+			return responseError(res, 404, err);
+		}
+		return responseOk(res, calls);
+	});
 }
 
 function listCallProjects(req, res, template, block, next) {
@@ -469,13 +507,15 @@ function updateCallProject(req, res, template, block, next) {
 			if (!call) {
 				return responseError(res, 404, err);
 			}
+			console.log("Here");
 			call.projects.forEach(function (project) {
 				if (project.id == pId) {
 					if (!utilities.isAdminOrDataOwner(req, project)) {
 						return responseError(res, 401);			
 					}
 					calipso.e.pre_emit('PROJECT_UPDATE', project);
-					project = readCallFromBody(req, req.body, project);
+			console.log("Also Here");
+					project = readProjectFromBody(req, req.body, project);
 					project.save(function (err) {
 						if (err) {
 							calipso.error("Error updating project", err);
@@ -489,7 +529,6 @@ function updateCallProject(req, res, template, block, next) {
 			return next();		
 		}).populate('projects').exec();
 	}
-	next();
 }
 
 function deleteCallProject(req, res, template, block, next) {
@@ -694,6 +733,51 @@ function listActivities(req, res, template, block, next) {
 			return responseError(res, 404, err);
 		}
 		return responseOk(res, activities);
+	});
+}
+
+/**
+ * Users
+ */
+
+function listUsers(req, res, template, block, next) {
+	var User = calipso.db.model('User');
+	var id = req.moduleParams.id;
+
+	if (id) {
+		User.findById(id, function (err, user) {
+			if (err) {
+				return responseError(res, 404, err);
+			}
+			return responseOk(res, user);
+		});
+		return;
+	}
+	var order = req.moduleParams.order;
+	var skip = parseInt(req.moduleParams.skip);
+	var take = parseInt(req.moduleParams.take);
+	var options = {
+		skip: (skip === NaN) ? 0 : skip, // Starting Row
+		limit: (take === NaN) ? 50 : take, // Ending Row
+		sort: {
+			created: -1 //Sort by Date Added DESC
+		}
+	};
+
+	if (order) {
+		options.sort = {};
+		options.sort[order] = 1;
+	}
+
+	User.find({}, {}, options, function (err, users) {
+		if (err) {
+			return responseError(res, 404, err);
+		}
+		var emails = [];
+		users.forEach(function(user) {
+			emails.push(user.username);
+		});
+		return responseOk(res, emails);
 	});
 }
 

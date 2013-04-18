@@ -2,7 +2,7 @@
 	<legend><%- circle.name %>
 		<div class="pull-right">
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
-			<a href='/circle/edit/<%- circle._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+			<a href='/circles/edit/<%- circle._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
 			<a href="#" class="btn"><i class="icon-trash"></i> <strong>Delete</strong></a>
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 		</div>
@@ -52,7 +52,7 @@
 					circle.calls.forEach(function(call) {
 						%>
 						<tr>
-							<td><a href='/circle/<%- circle._id %>/call/edit/<%- call._id %>'><%- call.name %></a></td>
+							<td><a href='/circles/<%- circle._id %>/calls/edit/<%- call._id %>'><%- call.name %></a></td>
 							<td><%- call.date %></td>
 						</tr>
 						<tr>
@@ -68,7 +68,7 @@
 											call.projects.forEach(function(project) {
 												%>
 												<tr>
-													<td><a href='/circle/<%- circle._id %>/call/<%- call._id %>/project/edit/<%- project._id %>'><%- project.name %></a></td>
+													<td><a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>'><%- project.name %></a></td>
 												</tr>
 												<%
 												});

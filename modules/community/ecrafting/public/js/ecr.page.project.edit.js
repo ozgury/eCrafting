@@ -37,7 +37,7 @@ ecr.page.Page = function () {
 					var html = '<li id="media[' + (count + index) + ']" class="span4">'+
 											'<a href="javascript:void(0)" class="thumbnail">'+
 											'<img src="/api/media/' + value._id + '" style="width: 300px; height: 200px" alt=""></a>'+
-											'<input type="hidden" id="media[' + (count + index) + ']" name="media[' + (count + index) + ']" value="' + value._id + '" />'+
+											'<input type="hidden" id="media[' + (count + index) + ']" name="media[' + (count + index) + ']" value="' + value._id + '" data-object="project"/>'+
 											'<a href="javascript:void(0)" onclick="ecr.page.deleteMedia(' + (count + index) + ', \'' + value._id + '\')" class="thumbnail">Delete</a></li>'
 
 					$('.thumbnails').append(html);			  

@@ -94,7 +94,7 @@
 			<a href="/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit">Create Project</a>
 			<% } %>
 			<%
-			if (call.projects.length == 0) {
+			if (!call.projects || (call.projects.length == 0)) {
 				%>
 				<%- t('No projects defined.') %>
 				<%
