@@ -28,7 +28,8 @@ a:hover {
 
 #top-nav {
 	padding: 20px 0 5px;
-  font-weight: bold;
+  /*font-weight: bold;*/
+  text-transform: uppercase;
 }
 
 #mainContent {
@@ -86,11 +87,7 @@ a:hover {
 }
 
 
-.browse-box {
-  height: 300px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
+
 
 .img-circle {
   /*width: 300px;*/
@@ -130,6 +127,37 @@ a:hover {
 .btn-browse:active {
     color: #fff;
     background-color: #C56105;
+}
+
+
+/* LAYOUT */
+
+.browse-list [class*="span"] {
+    margin-left:0px;
+    margin-right:10px;
+}
+
+.browse-box {
+  height: 300px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.browse-text {
+  text-align: left;
+  font-size: 12px;
+}
+
+.browse-tags {
+  text-align: left;
+  /*font-size: 12px;*/
+}
+
+.browse-img{
+  margin: 10px 0;
+  /*min-width: 250px;*/
+  /*min-height: 250px;*/
+  /*overflow: hidden;*/
 }
 
 

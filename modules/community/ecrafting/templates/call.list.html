@@ -1,17 +1,19 @@
-<div class="container">
+<div class="row-fluid">
     <legend><%- t('Calls') %></legend>
-
+        <!-- <div class="pull-right">
+            <a href="/circles/edit" class="btn"><i class="icon-edit"></i> <strong>Create a Circle</strong></a>
+        </div> -->
+    </legend>
     <ul id="callsList" class="browse-list">
-             
     </ul>
 </div>
 
 <textarea id="callsListItem" class="template">
-    <li class="span4 box browse-box pagination-centered">
+    <li class="span3 box browse-box pagination-centered">
+        <div class="browse-name"><a href='/calls/show/{{_id}}'>{{name}}</a></div>
         <div class="browse-img img-circle">
-            <img src="/api/media/{{image}}" class="img-circle" />
+            <a href='/circles/show/{{_id}}'><img src="/api/media/{{image}}" class="img-circle" /></a>
         </div>
-        <div class="browse-name"><h4><i class="icon-edit"></i><a href='/calls/show/{{_id}}'>{{name}}</a></h4></div>
         <div class="browse-text">{{description}}</div>
     </li>
 </textarea>
