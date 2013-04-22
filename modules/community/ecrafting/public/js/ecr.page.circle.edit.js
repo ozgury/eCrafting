@@ -14,6 +14,7 @@ ecr.page.Page = function () {
 
 	this.initialize = function () {
 		ecr.util.setFileUpload($(':file'), $('#image'), $('.removebutton'));
+		ecr.util.setLocationSearch($('#location'));
 		apiWrapper.ajaxifyFormSubmissionAsJson($('#FORM'), 'circle', function (response, jqXHR) {
 			window.location.href = '/circles/show/' + response._id;
 		});

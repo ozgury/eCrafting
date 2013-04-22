@@ -10,7 +10,8 @@
 	calipso = require(path.join(rootpath, 'lib/calipso')),
 	im = require('imagemagick'),
 	exports = module.exports = {
-		processUploadedFiles : processUploadedFiles
+		processUploadedFiles : processUploadedFiles,
+		deleteMedia : deleteMedia
 	};
 
 function createThumbnail(file, next) {
@@ -21,25 +22,27 @@ function createThumbnail(file, next) {
 
 	im.identify(file, function(err, ident_metadata){
 		console.log("Err: ", err);
-		console.log("Meta1: ", ident_metadata);
+//		console.log("Meta1: ", ident_metadata);
 
 		im.readMetadata(file, function(err, exif_metadata) {
 
 			console.log("Err: ", err);
-			console.log("Meta2: ", exif_metadata);
+//			console.log("Meta2: ", exif_metadata);
 			var metadata = calipso.lib._.extend(ident_metadata, exif_metadata);
 		//	var metadata = media.get('metadata');
 			var isPortrait = (metadata.width < metadata.height);
 			
-			var thumbPortrait = '100' //calipso.config.moduleConfig('media','thumbnails:portrait') || '150x';
-			var thumbLandscape = '225' //calipso.config.moduleConfig('media','thumbnails:landscape') || 'x150';
-			var thumbSharpen = '0.2' //calipso.config.moduleConfig('media','thumbnails:sharpen') || '0.2';
-			var thumbQuality = '90' //calipso.config.moduleConfig('media','thumbnails:quality') || '80';
+			var thumbSharpen = '0.2'
+			var thumbQuality = '90';
 
-			var thumbSize = isPortrait ? thumbPortrait : thumbLandscape;
-
-			im.convert([file, '-resize', thumbSize,'-filter','lagrange','-sharpen',thumbSharpen,'-quality',thumbQuality, file + "t1"], function(err, stdout, stderr) {
-				next(err,media);
+			im.convert([file, '-resize', '250x250^', '-gravity', 'Center',  '-crop', '250x250+0+0', '+repage', '-filter','lagrange','-sharpen',thumbSharpen,'-quality',thumbQuality, file + "small"], function(err, stdout, stderr) {
+				if (!err) {
+					im.convert([file, '-resize', '50x50^', '-gravity', 'Center',  '-crop', '50x50+0+0', '+repage', '-filter','lagrange','-sharpen',thumbSharpen,'-quality',thumbQuality, file + "mini"], function(err, stdout, stderr) {					
+						next(err);
+					});
+				} else {
+					next(err);
+				}
 			});
 		});
 	});
@@ -56,11 +59,11 @@ function copyAndCreateThumbnails(from, to, next) {
 
 			util.pump(is, os, function(err) {
 				console.log("File Copied: ", to);
-//				createThumbnail(to, function(err) {
-					fs.unlinkSync(from);
-					console.log("File Deleted: ", from);
+				fs.unlinkSync(from);
+				console.log("File Deleted: ", from);
+				createThumbnail(to, function(err) {
 					next(err);
-//				});
+				});
 			});
 		}
 	});
@@ -144,7 +147,26 @@ function processUploadedFiles(req, res, each, next) {
 				}
 		});
 		async.mapSeries(fileQueue, processOne, function (err) {
-			next(err);		
+			next(err);
 		});
 	}
+}
+
+function deleteMedia(path, next) {
+	fs.unlink(path, function (err) {
+		if (err) {
+		  calipso.error('Error deleting file ' + path, err);
+		}
+	});
+	fs.unlink(path + 'small', function (err) {
+		if (err) {
+		  calipso.error('Error deleting file ' + path + 'small', err);
+		}
+	});
+	fs.unlink(path + 'mini', function (err) {
+		if (err) {
+		  calipso.error('Error deleting file ' + path + 'mini', err);
+		}
+	});
+	return next();
 }

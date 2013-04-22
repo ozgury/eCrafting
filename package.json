@@ -57,11 +57,11 @@
         "adm-zip":"0.1.x",
         "node-xml":"1.0.x",
         "knox":"0.0.x",
-        "mkdirp":"0.3.x"
+        "mkdirp":"0.3.x",
+        "imagemagick":"0.1.x"        
     },
     "optionalDependencies":{
-        "bcrypt":"0.7.x",
-        "imagemagick":"0.1.x"
+        "bcrypt":"0.7.x"
     },
     "scripts":{
         "install":"bash ./bin/install.sh",

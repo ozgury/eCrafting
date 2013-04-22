@@ -71,7 +71,7 @@ function init(module, app, next) {
       module.router.addRoute('GET /user', myProfile, {template:'profile', block:'content'}, this.parallel());
       module.router.addRoute('GET /user/profile/:username', userProfile, {template:'profile', block:'content'}, this.parallel());
       module.router.addRoute('POST /user/profile/:username', updateUserProfile, {block:'content'}, this.parallel());
-      module.router.addRoute('GET /user/profile/:username/edit', updateUserForm, {block:'content'}, this.parallel());
+      module.router.addRoute('GET /user/profile/:username/edit', updateUserForm, {template:'user.edit',block:'content'}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/lock', lockUser, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/unlock', unlockUser, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/delete', deleteUser, {admin:true}, this.parallel());
@@ -82,6 +82,7 @@ function init(module, app, next) {
       var User = new calipso.lib.mongoose.Schema({
         // Single default property
         username:{type:String, required:true, unique:true},
+        image:{type: calipso.lib.mongoose.Schema.ObjectId, ref: 'Media'},      
         fullname:{type:String, required:false},
         password:{type:String, required:false},
         hash:{type:String, required:true, "default":''},
@@ -350,7 +351,7 @@ function registerUserForm(req, res, template, block, next) {
  */
 function updateUserForm(req, res, template, block, next) {
 
-  res.layout = 'admin';
+//  res.layout = 'admin';
 
   var isAdmin = (req.session.user && req.session.user.isAdmin);
   var User = calipso.db.model('User');
@@ -370,6 +371,7 @@ function updateUserForm(req, res, template, block, next) {
         label:'Profile',
         fields:[
           {label:'Username', name:'user[username]', type:'text', readonly:!isAdmin},
+          {label:'Image', name:'user[image]', type:'hidden'},
           {label:'Full Name', name:'user[fullname]', type:'text'},
           {label:'Email', name:'user[email]', type:'text'},
           {label:'Language', name:'user[language]', type:'select', options:req.languages},
@@ -451,9 +453,10 @@ function updateUserForm(req, res, template, block, next) {
     }
 
     var values = {user:u};
-
+console.log("values: ", values);
     calipso.form.render(userForm, values, req, function (form) {
-      calipso.theme.renderItem(req, res, form, block, {}, next);
+      form.image = 'gak';
+      calipso.theme.renderItem(req, res, template, block, { form: form, user:u }, next);
     });
 
   });
@@ -613,8 +616,9 @@ function updateUserProfile(req, res, template, block, next) {
           next();
           return;
         }
-
+        console.log("Form: ", form.user);
         u.fullname = form.user.fullname;
+        u.image = (form.user.image.length) ? form.user.image : null;
         u.username = uname || form.user.username;
         u.email = form.user.email;
         u.language = form.user.language;

@@ -37,7 +37,7 @@ var routes = [
 		{ path: 'DELETE /api/circles/:id/calls/:cid/projects/:pid', fn: deleteCallProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:delete") },
 
 		// Media Calls
-		{ path: 'GET /api/media/:id?', fn: listMedia },
+		{ path: 'GET /api/media/:id?.:size?', fn: listMedia },
 		{ path: 'POST /api/media', fn: createMedia },
 		{ path: 'POST /api/media/:id', fn: updateMedia },
 		{ path: 'DELETE /api/media/:id', fn: deleteMedia },
@@ -606,13 +606,14 @@ function createMedia(req, res, template, block, next) {
 function listMedia(req, res, template, block, next) {
 	var Media = calipso.db.model('Media');
 	var id = req.moduleParams.id;
+	var size = req.moduleParams.size || '';
 
 	if (id) {
 		Media.findById(id, function (err, m) {
 			if (err || !m) {
 				return responseError(res, 404, err);
 			}
-			var data = fs.readFile(m.path, function (err, data) {
+			var data = fs.readFile(m.path + size, function (err, data) {
 				if (err) {
 					return responseError(res, 404, err);
 				};
@@ -647,9 +648,8 @@ function updateMedia(req, res, template, block, next) {
 			author = 'Unknown';
 		}
 		if (m && m.path) {
-			fs.unlink(m.path, function (err) {
-				calipso.error('Error deleting file ', m.path, err);
-			});			
+			media.deleteMedia(m.path, function (err) {
+			});
 		}
 		media.processUploadedFiles(req, res, function(err, file, next) {
 			if (err) {
@@ -694,20 +694,17 @@ function deleteMedia(req, res, template, block, next) {
 			return responseError(res, 404, err);
 		}
 		calipso.e.pre_emit('MEDIA_DELETE', m);
-		fs.unlink(m.path, function (err) {
-			if (err) {
-			  calipso.error('Error deleting file ' + m.path, err);
-			}
-		});
-		Media.remove({
-			_id: id
-		}, function (err) {
-			if (err) {
-				calipso.error("Error deleting media", err);
-				return responseError(res, 400, err);
-			}
-			calipso.e.post_emit('MEDIA_DELETE', m);
-			return responseOk(res, m);
+		media.deleteMedia(m.path, function (err) {
+			Media.remove({
+				_id: id
+			}, function (err) {
+				if (err) {
+					calipso.error("Error deleting media", err);
+					return responseError(res, 400, err);
+				}
+				calipso.e.post_emit('MEDIA_DELETE', m);
+				return responseOk(res, m);
+			});
 		});
 	});
 }

@@ -98,28 +98,56 @@ ecr.Utilities = function () {
 			},
 		}).bind('fileuploadalways', function (e, data) {
 			if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
-			$('#progress').addClass('hidden');
-			$('.fileupload').removeClass('fileupload-new').addClass('fileupload-exists');
-			$('.fileupload').find('.fileupload-preview img').attr('src', '/api/media/' + (JSON.parse(data.xhr().response))[0]._id);
-			$('.fileupload').find('span.fileupload-preview').html((JSON.parse(data.xhr().response))[0].fileName);
-			$idInput.val((JSON.parse(data.xhr().response))[0]._id);
+				$('#progress').addClass('hidden');
+				$('.fileupload').removeClass('fileupload-new').addClass('fileupload-exists');
+				$('.fileupload').find('.fileupload-preview img').attr('src', '/api/media/' + (JSON.parse(data.xhr().response))[0]._id);
+				$('.fileupload').find('span.fileupload-preview').html((JSON.parse(data.xhr().response))[0].fileName);
+				$idInput.val((JSON.parse(data.xhr().response))[0]._id);
+				that.setFileUpload($fileUpload, $idInput, $removeButton);
+			}
+		});
+
+		function fileDeleted(response, jqXhr) {
+			$('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
+			$('.fileupload').find('span.fileupload-preview').html('');
+			$idInput.val('');
 			that.setFileUpload($fileUpload, $idInput, $removeButton);
 		}
-	});
 
-	function fileDeleted(response, jqXhr) {
-		$('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
-		$('.fileupload').find('span.fileupload-preview').html('');
-		$idInput.val('');
-		that.setFileUpload($fileUpload, $idInput, $removeButton);
+		$removeButton.click(function(event){
+			var command = 'media/' + $idInput.val();
+
+			apiWrapper.apiCall(command, null, 'DELETE', fileDeleted, fileDeleted);
+		});
 	}
-				
-	$removeButton.click(function(event){
-		var command = 'media/' + $idInput.val();
 
-		apiWrapper.apiCall(command, null, 'DELETE', fileDeleted, fileDeleted);
-	});
-}
+	this.setLocationSearch = function ($location) {
+		var geocoder = new google.maps.Geocoder();
+
+		$location.typeahead({
+		   source: function (query, process) {
+				new geocoder.geocode({ 'address': query, 'bounds': null }, function (results, status) {
+					var items = [];
+
+					$.map(results, function (item) {
+						items.push(item.formatted_address);
+					})
+	            return process(items);
+				});
+			},
+			//This bit is executed upon selection of an address
+			select: function (event, ui) {
+			//	egiq.page.search(ui.item.result);
+			}
+		}).bind('keypress', function (e) {
+			var code = (e.keyCode ? e.keyCode : e.which);
+			if (code == 13) {
+				e.stopPropagation();
+				//				egiq.page.search();
+				return false;
+			};
+		});
+	}
 };
 
 /*

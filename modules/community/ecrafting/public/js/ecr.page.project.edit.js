@@ -48,6 +48,7 @@ ecr.page.Page = function () {
 
 	this.initialize = function () {
 		setFileUpload();
+		ecr.util.setLocationSearch($('#location'));
 		$('#FORM').submit(function () {
 			$('html, body').animate({ scrollTop: 0 }, 'slow');
 

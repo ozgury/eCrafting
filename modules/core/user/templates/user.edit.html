@@ -1,0 +1,45 @@
+<%- form %>
+
+
+Bla(<% console.log("Bla ", form.image) %>)
+
+<textarea id="imageEdit" class="template">
+		<% if(user.image) { %>
+		<div class="fileupload fileupload-exists" data-provides="fileupload">
+			<% } else { %>
+			<div class="fileupload fileupload-new" data-provides="fileupload">
+				<% } %>
+				<div class="fileupload-new thumbnail" style="width: 50px; height: 50px;"><img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" /></div>
+				<div class="fileupload-preview fileupload-exists thumbnail" style="width: 50px; height: 50px;">
+					<% if(user.image) { %>
+					<img src="/api/media/<%- user.image %>" />
+					<% } else { %>
+					<img src="http://www.placehold.it/50x50/EFEFEF/AAAAAA" />
+					<% } %>
+				</div>
+				<span class="btn btn-file">
+					<span class="fileupload-new">Select image</span>
+					<span class="fileupload-exists">Change</span>
+					<input id="fileupload" name="files[]" type="file" />
+				</span>
+				<a href="javascript:void()" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+			</div>
+			<div id="progress" class="progress progress-striped active hidden">
+				<div class="bar" style="width: 0;"></div>
+			</div>
+
+			<p class="help-block">Enter an image for user.</p>
+		</div>
+</textarea>
+
+<script src="/js/ecr.page.user.edit.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+	ecr.load();
+	$(document).ready(function () {
+		ecr.page = new ecr.page.Page();
+		ecr.page.initialize();
+	});
+//]]>
+</script>
+
