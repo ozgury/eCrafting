@@ -66,7 +66,7 @@ function init(module, app, next) {
       module.router.addRoute('POST /admin/roles/:role?', updateRole, {block:'content'}, this.parallel());
       module.router.addRoute('GET /admin/roles/:role/delete', deleteRole, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/logout', logoutUser, null, this.parallel());
-      module.router.addRoute('GET /user/register', registerUserForm, {block:'content'}, this.parallel());
+      module.router.addRoute('GET /user/register', registerUserForm, {template:'user.edit',block:'content'}, this.parallel());
       module.router.addRoute('POST /user/register', registerUser, null, this.parallel());
       module.router.addRoute('GET /user', myProfile, {template:'profile', block:'content'}, this.parallel());
       module.router.addRoute('GET /user/profile/:username', userProfile, {template:'profile', block:'content'}, this.parallel());
@@ -284,7 +284,7 @@ function roleForm(req, res, template, block, next) {
  */
 function registerUserForm(req, res, template, block, next) {
 
-  res.layout = 'admin';
+  //res.layout = 'admin';
 
   // TODO : Use secitons!
   var userForm = {
@@ -295,6 +295,7 @@ function registerUserForm(req, res, template, block, next) {
         label:'Your Details',
         fields:[
           {label:'Email', name:'user[email]', type:'text', placeholder: "email address", description:'Enter your email address, you can control the privacy settings of this.', cls: "input-xlarge"},
+          {label:'Image', name:'user[image]', type:'hidden'},
           {label:'Full Name', name:'user[fullname]', type:'text', description:'Enter your actual name, you can control the privacy settings of this.'},
           //{label:'Language', name:'user[language]', type:'select', options:req.languages, description:'Select your default language.'},
           // TODO : Select based on available
@@ -341,7 +342,7 @@ function registerUserForm(req, res, template, block, next) {
   }
 
   calipso.form.render(userForm, null, req, function (form) {
-    calipso.theme.renderItem(req, res, form, block, {}, next);
+    calipso.theme.renderItem(req, res, template, block, { form: form}, next);
   });
 
 }
@@ -453,9 +454,8 @@ function updateUserForm(req, res, template, block, next) {
     }
 
     var values = {user:u};
-console.log("values: ", values);
+
     calipso.form.render(userForm, values, req, function (form) {
-      form.image = 'gak';
       calipso.theme.renderItem(req, res, template, block, { form: form, user:u }, next);
     });
 
@@ -854,6 +854,8 @@ function registerUser(req, res, template, block, next) {
 
       var u = new User(form.user);
 
+      u.image = (form.user.image.length) ? form.user.image : null;
+
       u.username = u.email;
       // Over ride admin
       if (req.session.user && req.session.user.isAdmin) {
@@ -928,7 +930,7 @@ function registerUser(req, res, template, block, next) {
           }
 
           // If not already redirecting, then redirect
-          next(err);
+          //next(err);
 
         });
       }
