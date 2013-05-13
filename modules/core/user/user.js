@@ -82,7 +82,7 @@ function init(module, app, next) {
       var User = new calipso.lib.mongoose.Schema({
         // Single default property
         username:{type:String, required:true, unique:true},
-        image:{type: calipso.lib.mongoose.Schema.ObjectId, ref: 'Media'},      
+        image:{type: calipso.lib.mongoose.Schema.ObjectId, required:false, ref: 'Media'},      
         fullname:{type:String, required:false},
         password:{type:String, required:false},
         hash:{type:String, required:true, "default":''},
@@ -616,7 +616,6 @@ function updateUserProfile(req, res, template, block, next) {
           next();
           return;
         }
-        console.log("Form: ", form.user);
         u.fullname = form.user.fullname;
         u.image = (form.user.image.length) ? form.user.image : null;
         u.username = uname || form.user.username;
@@ -852,9 +851,11 @@ function registerUser(req, res, template, block, next) {
       var repeat_password = form.user.repeat_password;
       delete form.user.repeat_password;
 
-      var u = new User(form.user);
+      if ((form.user.image != null) && (form.user.image == '')) {
+        form.user.image = null;
+      }
 
-      u.image = (form.user.image.length) ? form.user.image : null;
+      var u = new User(form.user);
 
       u.username = u.email;
       // Over ride admin
