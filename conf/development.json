@@ -131,14 +131,14 @@
     "mail": {
       "enabled": true,
       "config": {
-        "host": "",
-        "port": "",
-        "domain": "",
-        "authentication": false,
+        "host": "mail.potioninfosystems.com",
+        "port": "587",
+        "domain": "potioninfosystems.com",
+        "authentication": true,
         "ssl": false,
-        "from": "",
-        "username": "",
-        "password": "",
+        "from": "info@ecrafting.com",
+        "username": "Potiontest4@potioninfosystems.com",
+        "password": "123456",
         "base64": false
       }
     },

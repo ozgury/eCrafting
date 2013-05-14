@@ -47,6 +47,8 @@ function init(module, app, next) {
   calipso.e.addEvent('USER_UNLOCK');
   calipso.e.addEvent('USER_LOGIN');
   calipso.e.addEvent('USER_LOGOUT');
+  calipso.e.addEvent('USER_ACTIVATIONMAIL');
+  calipso.e.addEvent('USER_ACTIVATE');
 
   // Define permissions
   calipso.permission.Helper.addPermission("admin:user", "Users", true);
@@ -75,6 +77,7 @@ function init(module, app, next) {
       module.router.addRoute('GET /user/profile/:username/lock', lockUser, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/unlock', unlockUser, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/delete', deleteUser, {admin:true}, this.parallel());
+      module.router.addRoute('GET /user/activate/:username/:userId', activateUser, { end:false }, this.parallel());
 
     },
     function done() {
@@ -93,6 +96,7 @@ function init(module, app, next) {
         about:{type:String},
         language:{type:String, "default":'en'},
         roles:[String],
+        active:{type:Boolean, "default":false},
         locked:{type:Boolean, "default":false}
       });
 
@@ -301,17 +305,7 @@ function registerUserForm(req, res, template, block, next) {
           // TODO : Select based on available
           {label:'About You', name:'user[about]', type:'textarea', description:'Write something about yourself, this will appear on your profile page.'},
           {label:'New Password', name:'user[new_password]', type:'password', description:'Enter a password, the stronger the better.'},
-          {label:'Repeat Password', name:'user[repeat_password]', type:'password', description:'Repeat as always.'},
-          {label:'Show Full Name', name:'user[showName]', type:'select', options:[
-            {label:'Never', value:'never'},
-            {label:'Registered Users Only', value:'registered'},
-            {label:'Public', value:'public'}
-          ], description:'Decide how your profile displays your full name.'},
-          {label:'Show Email', name:'user[showEmail]', type:'select', options:[
-            {label:'Never', value:'never'},
-            {label:'Registered Users Only', value:'registered'},
-            {label:'Public', value:'public'}
-          ], description:'Decide how your profile displays your email.'}
+          {label:'Repeat Password', name:'user[repeat_password]', type:'password', description:'Repeat as always.'}
         ]
       }
     ],
@@ -739,6 +733,12 @@ function loginUser(req, res, template, block, next) {
           calipso.lib.crypto.check(form.user.password, user.hash, function (err, ok) {
             if (user && !user.locked && ok) {
               found = true;
+              if (found && !user.active) {
+                req.flash('error', req.t('This account is not active. Please click on the activation link in your email.'));
+                res.redirect(calipso.config.get('server:loginPath') || 'back');
+                return;
+              }
+
               calipso.e.post_emit('USER_LOGIN', user);
               createUserSession(req, res, user, function (err) {
                 if (err) {
@@ -748,7 +748,9 @@ function loginUser(req, res, template, block, next) {
             }
 
             if (!found) {
-              req.flash('error', req.t('You may have entered an incorrect username or password, please try again.  If you still cant login after a number of tries your account may be locked, please contact the site administrator.'));
+              req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
+              res.redirect(calipso.config.get('server:loginPath') || 'back');
+              return;
             }
 
             if (res.statusCode != 302) {
@@ -760,15 +762,13 @@ function loginUser(req, res, template, block, next) {
             return;
           });
         } else {
-          req.flash('error', req.t('You may have entered an incorrect username or password, please try again.  If you still cant login after a number of tries your account may be locked, please contact the site administrator.'));
+          req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
           next();
           return;
         }
       });
-
     }
   });
-
 }
 
 /**
@@ -817,15 +817,12 @@ function logoutUser(req, res, template, block, next) {
         // Check for error
         calipso.e.post_emit('USER_LOGOUT', u);
         if (res.statusCode != 302) {
-          res.redirect(returnTo || 'back');
+          res.redirect('/');
           return;
         }
         next();
-
       });
-
     });
-
   } else {
     // Fail quietly
     res.redirect(returnTo || 'back');
@@ -923,8 +920,9 @@ function registerUser(req, res, template, block, next) {
             }
           } else {
             calipso.e.post_emit('USER_CREATE', u);
+            calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
             if (!res.noRedirect) {
-              req.flash('info', req.t('Profile created, you can now login using this account.'));
+              req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
               res.redirect('/user/profile/' + u.username);
               return;
             }
@@ -1036,6 +1034,49 @@ function deleteUser(req, res, template, block, next) {
 
   });
 }
+
+/**
+ * Activate a user account
+ */
+function activateUser(req, res, template, block, next) {
+  var User = calipso.db.model('User');
+  var username = req.moduleParams.username;
+  var userId = req.moduleParams.userId;
+
+  User.findOne({username:username}, function (err, u) {
+
+    if (err || !u) {
+      req.flash('error', req.t('There was an error activating that user account.'));
+      res.redirect('/user/profile/' + username);
+      return;
+    }
+    if (u.active) {
+      req.flash('info', req.t('User already active. Please logon with your username and password.'));
+      res.redirect('/');
+      return;
+    }
+
+    u.active = true;
+    calipso.e.pre_emit('USER_ACTIVATE', u);
+    u.save(function (err) {
+      if (err) {
+        req.flash('error', req.t('There was an error activating that user account.'));
+      } else {
+        calipso.e.post_emit('USER_UNLOCK', u);
+        req.flash('info', req.t('Account activated. Welcome to eCrafting.'));
+      }
+      calipso.e.post_emit('USER_LOGIN', u);
+      createUserSession(req, res, u, function (err) {
+        if (err) {
+          calipso.error("Error saving session: " + err);
+        }
+        res.redirect('/');
+      });
+    });
+  });
+
+}
+
 
 /**
  * Helper function for link to user
