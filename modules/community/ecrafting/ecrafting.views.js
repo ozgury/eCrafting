@@ -442,10 +442,13 @@ function showProject(req, res, template, block, next) {
 						} else {
 						// Set the page layout to the circle
 						if (format === "html") {
+							var basePath = calipso.config.get('server:url');
+
 							calipso.theme.renderItem(req, res, template, block, {
 								circle: circle,
 								call: call,
-								project: project
+								project: project,
+								basePath: basePath
 							}, next);
 						}
 						if (format === "json") {

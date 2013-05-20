@@ -206,7 +206,7 @@ ecr.Application = function () {
 	};
 };
 
-var disqus_developer = 0; // developer mode is on
+var disqus_developer = 1; // developer mode is on
 var disqus_shortname = 'ecrafting';
 var disqus_identifier;
 var disqus_url;
