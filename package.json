@@ -58,7 +58,8 @@
         "node-xml":"1.0.x",
         "knox":"0.0.x",
         "mkdirp":"0.3.x",
-        "imagemagick":"0.1.x"        
+        "imagemagick":"0.1.x",
+        "mustache": "0.7.x"
     },
     "optionalDependencies":{
         "bcrypt":"0.7.x"

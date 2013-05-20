@@ -5,7 +5,7 @@ var rootpath = process.cwd() + '/',
   path = require('path'),
   calipso = require(path.join(rootpath, 'lib/calipso')),
   Query = require("mongoose").Query,
-  mustache = require("mailer/vendor/mustache"),
+  mustache = require("mustache"),
   mail = require("mailer");
 
 /**
