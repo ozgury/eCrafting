@@ -916,27 +916,23 @@ function registerUser(req, res, template, block, next) {
             req.flash('error', req.t('Could not save user because {msg}.', {msg:msg}));
             if (res.statusCode != 302 && !res.noRedirect) {
               res.redirect('back');
-              return;
             }
+            return;
           } else {
             calipso.e.post_emit('USER_CREATE', u);
             calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
             if (!res.noRedirect) {
               req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
               res.redirect('/user/profile/' + u.username);
-              return;
             }
+            return;
           }
-
           // If not already redirecting, then redirect
           //next(err);
-
         });
       }
     }
-
   });
-
 }
 
 /**
@@ -956,7 +952,6 @@ function myProfile(req, res, template, block, next) {
  * View user profile
  */
 function userProfile(req, res, template, block, next) {
-
   var User = calipso.db.model('User');
   var username = req.moduleParams.username;
 
