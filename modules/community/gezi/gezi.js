@@ -104,7 +104,7 @@ function init(module, app, next) {
 
 function tweet(name, address, msg) {
 	if (!(msg.indexOf(geziHash) < 0)) {
-		msg += geziHash;
+		msg += ' ' + geziHash;
 	}
 
 	oAuth.post(
