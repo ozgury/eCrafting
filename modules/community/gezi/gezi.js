@@ -36,6 +36,7 @@ oAuth= new OAuth(
 );
 
 var geziHash = "#direngeziparki";
+var tweetLength = 144;
 
 function route(req, res, module, app, next) {
 	var aPerm = calipso.permission.Helper.hasPermission("admin:ecrafting");
@@ -103,7 +104,8 @@ function init(module, app, next) {
 
 
 function tweet(name, address, msg) {
-	if (!(msg.indexOf(geziHash) < 0)) {
+	if (msg.indexOf(geziHash) < 0) {
+		msg = msg.substring(0, tweetLength);
 		msg += ' ' + geziHash;
 	}
 
