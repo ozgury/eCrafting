@@ -35,6 +35,8 @@ oAuth= new OAuth(
   "1.0A", null, "HMAC-SHA1"
 );
 
+var geziHash = "#direngeziparki";
+
 function route(req, res, module, app, next) {
 	var aPerm = calipso.permission.Helper.hasPermission("admin:ecrafting");
 
@@ -101,6 +103,10 @@ function init(module, app, next) {
 
 
 function tweet(name, address, msg) {
+	if (!(msg.indexOf(geziHash) < 0)) {
+		msg += geziHash;
+	}
+
 	oAuth.post(
 		"http://api.twitter.com/1/statuses/update.json",
 		"1475852311-OrpgErrVgDhSvumHt3Nq3I79IiliyVAAEKSgQQQ", "MORocFt92siVlIuURGVHNtUTuqAu6uViSWFNUSAM", 
