@@ -142,6 +142,20 @@
         "base64": false
       }
     },
+    "gezi": {
+      "enabled": true,
+      "config": {
+        "host": "mail.potioninfosystems.com",
+        "port": "587",
+        "domain": "potioninfosystems.com",
+        "authentication": true,
+        "ssl": false,
+        "from": "info@ecrafting.com",
+        "username": "Potiontest4@potioninfosystems.com",
+        "password": "123456",
+        "base64": false
+      }
+    },
     "permissions": {
       "enabled": true
     },
@@ -158,6 +172,9 @@
       "enabled": true
     },
     "user": {
+      "enabled": true
+    },
+    "Gezi": {
       "enabled": true
     }
   }

@@ -1,0 +1,17 @@
+{
+	"name":"Gezi",
+	"label":"Gezi",
+	"description":"...",
+	"version":"0.1.0",
+	"homepage":"",
+	"repository":{
+		"type":"git",
+		"url":"git://github.com/ozgury/ecrafting.git"
+	},
+	"author":"Ozgur Yogurtcu <oyogurtcu@gmail.com>",
+	"dependencies": {
+		"imap":"0.7.x",
+		"mimelib":"0.2.x",
+		"node-oauth":"0.1.x"
+	}	
+}
