@@ -59,7 +59,10 @@
         "knox":"0.0.x",
         "mkdirp":"0.3.x",
         "imagemagick":"0.1.x",
-        "mustache": "0.7.x"
+        "mustache": "0.7.x",
+        "imap":"0.7.x",
+        "mimelib":"0.2.x",
+        "node-oauth":"0.1.x"        
     },
     "optionalDependencies":{
         "bcrypt":"0.7.x"
