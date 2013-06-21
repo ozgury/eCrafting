@@ -10,6 +10,10 @@ ecr.ApiWrapper = function () {
 	var apiRootPath = "/api/";
 	var that = this;
 
+	this.deleteCall = function (url, showResponse, showError) {
+		this.apiCall(url, null, 'DELETE', showResponse, showError);
+	};
+
 	this.apiCall = function (command, parameters, type, successFunction, errorFunction) {
 		return this.call(apiRootPath + command + '?apikey=webclient', parameters, type, successFunction, errorFunction);
 	};
@@ -81,7 +85,6 @@ ecr.ApiWrapper = function () {
 	};
 
 	this.call = function (url, parameters, type, successFunction, errorFunction, contentType) {
-		var ajaxCall = ecr.app.longProcessStart('Ajax call ' + url);
 		return jQuery.ajax({
 			url: url,
 			data: parameters,
@@ -89,8 +92,6 @@ ecr.ApiWrapper = function () {
 			dataType: 'json',
 			type: (type) ? type : 'GET',
 			success: function (data, textStatus, jqXhr) {
-				ajaxCall.complete();
-				ajaxCall = null;
 				var responseProcess = ecr.app.longProcessStart('Process data ' + url);
 
 				successFunction(data, jqXhr);
@@ -102,13 +103,14 @@ ecr.ApiWrapper = function () {
 				if (errorFunction) {
 					errorFunction(jqXhr);
 				} else {
-					ecr.app.userError("An unexpected error occured. Please try again.");
+					if (jqXhr.status === 401) {
+						ecr.app.userError("You don't have authorization for that action. You must be the owner or an administrator.");
+					} else {
+						ecr.app.userError("An unexpected error occured. Please try again.");
+					}
 				}
 			},
 			complete: function () {
-				if (ajaxCall) {
-					ajaxCall.complete();
-				}
 			}
 		});
 	};

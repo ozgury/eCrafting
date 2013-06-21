@@ -1,9 +1,55 @@
+<script type="text/javascript"> 
+
+	if (typeof (ecr.page) == 'undefined') {
+		ecr.page = {};
+	};
+
+
+	ecr.page.Page = function() {
+		var apiWrapper = new ecr.ApiWrapper();
+
+		return {
+			doJoin: function() {
+				bootbox.confirm("Are you sure you want to delete circle '<%- circle.name %>'?", function(confirmed) {
+					if (confirmed) {
+						apiWrapper.apiCall('circles/<%- circle._id %>/join', JSON.stringify({ dummy: 'data' }), 'POST', 
+							function (data, jqXhr) {
+								ecr.app.success('Your request to join this circle was sent to the circle owner.');
+							}
+						);
+					}
+				}); 
+			},
+			
+			doDelete: function() {
+				bootbox.confirm("Are you sure you want to join circle '<%- circle.name %>'?", function(confirmed) {
+					if (confirmed) {
+						apiWrapper.deleteCall('circles/<%- circle._id %>/', 
+							function (data, jqXhr) {
+								ecr.app.redirectWithSuccessMessage('/circles/list/', "Circle '<%- circle.name %>' deleted.");
+							}
+						);
+					}
+				}); 
+			}
+		};
+	};
+
+</script> 
+
 <div class='circle'>
 	<legend><%- circle.name %>
 		<div class="pull-right">
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
+			<%
+			if (!isOwner) {
+			%>
+				<a href='#' onclick='ecr.page.doJoin()' class="btn"><i class="icon-plus-sign"></i> <strong>Join this Circle</strong></a>
+			<%
+			}
+			%>
 			<a href='/circles/edit/<%- circle._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
-			<a href="#" class="btn"><i class="icon-trash"></i> <strong>Delete</strong></a>
+			<a href="#" onclick='ecr.page.doDelete()' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 		</div>
 	</legend>

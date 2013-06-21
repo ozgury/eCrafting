@@ -1,19 +1,19 @@
 /**
  * This is sub module called by user, to allow management of circles.
  */
-var rootpath = process.cwd() + '/',
-	path = require('path'),
-	Query = require("mongoose").Query,
-	calipso = require(path.join(rootpath, 'lib/calipso')),
-	mongooseTypes = require("mongoose-types"),
-	mongooseValidate = require('mongoose-validate'),
-	extensions = require('./lib/schema.extensions');
-	eCrafting = {},
-	calipso.domain = module.exports = {
-		init: init,
-		install: install,
-		route: route
-};
+ var rootpath = process.cwd() + '/',
+ path = require('path'),
+ Query = require("mongoose").Query,
+ calipso = require(path.join(rootpath, 'lib/calipso')),
+ mongooseTypes = require("mongoose-types"),
+ mongooseValidate = require('mongoose-validate'),
+ extensions = require('./lib/schema.extensions');
+ eCrafting = {},
+ calipso.domain = module.exports = {
+ 	init: init,
+ 	install: install,
+ 	route: route
+ };
 
 /**
 * Initialization
@@ -38,18 +38,18 @@ function init(module, app, next) {
 
 		var Project = new calipso.lib.mongoose.Schema({
 			owner: {
-				 type: calipso.lib.mongoose.SchemaTypes.Email,
-				 required: true
+				type: calipso.lib.mongoose.SchemaTypes.Email,
+				required: true
 			},
 			name: {
-				 type: String,
-				 required: true
+				type: String,
+				required: true
 			},
 			description: {
-				 type: String,
+				type: String,
 			},
 			approved: {
-				 type:Boolean
+				type:Boolean
 			},
 			media: [{
 				type: calipso.lib.mongoose.Schema.ObjectId,
@@ -69,17 +69,17 @@ function init(module, app, next) {
 				ref: 'Media'
 			},
 			name: {
-					type: String,
+				type: String,
 			},
 			description: {
-					type: String,
+				type: String,
 			},
 			date: {
-					type: Date,
-					required: true
+				type: Date,
+				required: true
 			},
 			location: {
-					type:String
+				type:String
 			},
 			projects: [{
 				type: calipso.lib.mongoose.Schema.ObjectId,
@@ -121,13 +121,13 @@ function init(module, app, next) {
 
 		Circle.path('name').validate(function (v) {
 			return v && v.length > 4 && v.length < 40;
-	 	}, 'Circle name should be more than 4 and less than 40 characters');
-	 	Call.path('name').validate(function (v) {
+		}, 'Circle name should be more than 4 and less than 40 characters');
+		Call.path('name').validate(function (v) {
 			return v && v.length > 4 && v.length < 40;
-	 	}, 'Call name should be more than 4 and less than 40 characters');
-	 	Project.path('name').validate(function (v) {
+		}, 'Call name should be more than 4 and less than 40 characters');
+		Project.path('name').validate(function (v) {
 			return v && v.length > 4 && v.length < 40;
-	 	}, 'Project name should be more than 4 and less than 40 characters');
+		}, 'Project name should be more than 4 and less than 40 characters');
 
 		Project.plugin(extensions, { index: true });
 		Call.plugin(extensions, { index: true });
@@ -177,15 +177,39 @@ function route(req, res, module, app) {
 	calipso.domain.circle.pre("validate", function (next) {
 		 //console.log("Circle pre validate");
 		 next();
-	});
+		});
 
 	calipso.domain.circle.pre('save', function (next) {
 		//console.log("Circle pre save");
 		next();
+	});
+
+	calipso.domain.call.pre("remove", function (next) {
+		var Project = calipso.db.model('Project');
+
+		Project.remove({
+			'_id': { $in: this.projects}
+		}, function(err, docs){
+			if (err) {
+				calipso.error("Error ", err);
+			}
+		});
+	});
+
+	calipso.domain.circle.pre("remove", function (next) {
+		var Call = calipso.db.model('Call');
+
+		Call.remove({
+			'_id': { $in: this.calls}
+		}, function(err, docs){
+			if (err) {
+				calipso.error("Error ", err);
+			}
+		});
 	});
 }
 
 /**
  * Installation process - asynch
  */
-function install(next) {}
+ function install(next) {}

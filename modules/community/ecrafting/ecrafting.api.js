@@ -22,6 +22,7 @@ var routes = [
 		// Circles
 		{ path: 'GET /api/circles/:id?', fn: listCircles },
 		{ path: 'POST /api/circles/:id?', fn: updateCircle, permit: calipso.permission.Helper.hasPermission("ecrafting:circle:update") },
+		{ path: 'POST /api/circles/:id/join', fn: joinCircle },
 		{ path: 'DELETE /api/circles/:id', fn: deleteCircle, permit: calipso.permission.Helper.hasPermission("ecrafting:circle:delete") },
 
 		// Circle Calls
@@ -64,7 +65,7 @@ function responseOk(res, body) {
 }
 
 function responseError(res, code, error) {
-	calipso.error("Error", (error) ? error.stack : null);
+	calipso.error("Error", (error) ? error : null);
 	res.send(code, error);
 }
 
@@ -114,8 +115,6 @@ function readCallFromBody(req, body, existingCall) {
 }
 
 function readProjectFromBody(req, body, existingProject) {
-	console.log("Gak ");
-	console.log("Gak ", body);
 	if (!existingProject) {
 		var Project = calipso.db.model('Project');
 
@@ -123,7 +122,6 @@ function readProjectFromBody(req, body, existingProject) {
 		existingProject.owner = req.session.user.username;
 	}
 	mapFields(body, existingProject);
-	console.log("Form ", body);
 
 	var media = body.media;
 	var toDelete = [];
@@ -144,8 +142,6 @@ function readProjectFromBody(req, body, existingProject) {
 		p.media.push(m);
 	});
 	*/
-	console.log('Project: ', existingProject);
-	console.log('ToDelete: ', toDelete);
 	return existingProject;
 }
 
@@ -187,6 +183,30 @@ function listCircles(req, res, template, block, next) {
 			return responseError(res, 404, err);
 		}
 		return responseOk(res, circles);
+	});
+}
+
+function joinCircle(req, res, template, block, next) {
+	var Circle = calipso.db.model('Circle');
+	var User = calipso.db.model('User');
+	var id = req.moduleParams.id;
+
+	Circle.findById(id, function (err, circle) {
+		data = {
+			circle: circle,
+			user: req.session.user,
+			username: circle.owner
+		}
+		calipso.e.pre_emit('CIRCLE_JOIN_REQUEST', data);
+		
+		User.findOne({username: circle.owner}, function (err, owner) {
+			if (err || !owner) {
+				return responseError(res, 404, err);
+			}
+			data.owner = owner;
+			calipso.e.post_emit('CIRCLE_JOIN_REQUEST', data);
+			return responseOk(res, data);
+		});
 	});
 }
 
@@ -352,7 +372,7 @@ function updateCircleCall(req, res, template, block, next) {
 			circle.calls.forEach(function (call) {
 				if (call.id == cId) {
 					if (!utilities.isAdminOrDataOwner(req, call)) {
-						return responseError(res, 401);			
+						return responseError(res, 401);
 					}
 					calipso.e.pre_emit('CALL_UPDATE', call);
 					call = readCallFromBody(req, req.body, call);
@@ -373,33 +393,43 @@ function updateCircleCall(req, res, template, block, next) {
 
 function deleteCircleCall(req, res, template, block, next) {
 	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
 	var id = req.moduleParams.id;
 	var cId = req.moduleParams.cid;
 
 	Circle.findById(id, function (err, circle) {
 		if (!circle) {
 			return responseError(res, 404, err);
-		} else {
-			var call = circle.calls.id(cId);
-
-			if (!call) {
-				return responseError(res, 404, err);
-			} else if (!utilities.isAdminOrDataOwner(req, call)) {
-				return responseError(res, 401);			
-			}
-			calipso.e.pre_emit('CALL_DELETE', call);
-			circle.calls.pull({ _id: cId });
-			circle.save(function (err) {
-				if (!err) {
-					calipso.e.post_emit('CALL_DELETE', call);
-					return responseOk(res, call);
-				} else {
-					calipso.error("Error deleting call", err);
-					return responseError(res, 400, err);
-				}
-			});
 		}
-	});
+		var i = circle.calls.length;
+
+		while (i--) {
+			var call = circle.calls[i];
+	
+			if (call == cId) {
+				Call.findById(cId, function (err, call) {
+					if (err) {
+						return responseError(res, 404, err);
+					}
+					if (!utilities.isAdminOrDataOwner(req, call)) {
+						return responseError(res, 401);			
+					}
+					calipso.e.pre_emit('CALL_DELETE', call);
+
+					circle.calls.remove(call);
+					circle.save(function (err) {
+						if (err) {
+							return responseError(res, 400, err);
+						}
+						call.remove();
+						next(err);				
+						calipso.e.post_emit('CALL_DELETE', call);
+						return responseOk(res, call);
+					});
+				});
+			}
+		}
+	});	
 }
 
 function listProjects(req, res, template, block, next) {
@@ -500,14 +530,14 @@ function updateCallProject(req, res, template, block, next) {
 			if (!call) {
 				return responseError(res, 404, err);
 			}
-			console.log("Here");
+
 			call.projects.forEach(function (project) {
 				if (project.id == pId) {
 					if (!utilities.isAdminOrDataOwner(req, project)) {
 						return responseError(res, 401);			
 					}
 					calipso.e.pre_emit('PROJECT_UPDATE', project);
-			console.log("Also Here");
+
 					project = readProjectFromBody(req, req.body, project);
 					project.save(function (err) {
 						if (err) {
@@ -525,37 +555,43 @@ function updateCallProject(req, res, template, block, next) {
 }
 
 function deleteCallProject(req, res, template, block, next) {
-	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
+	var Project = calipso.db.model('Project');
 	var id = req.moduleParams.id;
 	var cId = req.moduleParams.cid;
 	var pId = req.moduleParams.pid;
 
-	Circle.findById(id, function (err, circle) {
-		if (!circle) {
-			return responseError(res, 404, err);
-		}
-		var call = circle.calls.id(cId);
-
+	Call.findById(cId, function (err, call) {
 		if (!call) {
 			return responseError(res, 404, err);
 		}
-		var project = call.projects.id(pId);
-		if (!project) {
-			return responseError(res, 404, err);
-		} else if (!utilities.isAdminOrDataOwner(req, project)) {
-			return responseError(res, 401);			
-		}
+		var i = call.projects.length;
 
-		calipso.e.pre_emit('PROJECT_DELETE', project);
-		call.projects.pull({ _id: pId });
-		circle.save(function (err) {
-			if (err) {
-				calipso.error("Error deleting project", err);
-				return responseError(res, 400, err);
+		while (i--) {
+			var project = call.projects[i];
+	
+			if (project == pId) {
+				Project.findById(pId, function (err, project) {
+					if (err) {
+						return responseError(res, 404, err);
+					}
+					if (!utilities.isAdminOrDataOwner(req, project)) {
+						return responseError(res, 401);			
+					}
+					calipso.e.pre_emit('PROJECT_DELETE', project);
+					call.projects.remove(project);
+					call.save(function (err) {
+						if (err) {
+							return responseError(res, 400, err);
+						}
+						project.remove();
+						next(err);				
+						calipso.e.post_emit('PROJECT_DELETE', project);
+						return responseOk(res, project);
+					});
+				});
 			}
-			calipso.e.post_emit('PROJECT_DELETE', project);
-			return responseOk(res, project);
-		});
+		}
 	});
 }
 

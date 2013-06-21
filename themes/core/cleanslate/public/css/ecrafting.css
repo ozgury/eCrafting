@@ -268,3 +268,8 @@ a:hover {
 #slide-right:hover {
     opacity: 1;
 }
+
+[class^="icon-"], [class*=" icon-"] {
+  margin-top: 4px;
+  margin-right: 2px;
+}

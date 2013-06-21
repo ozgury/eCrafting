@@ -181,6 +181,10 @@ ecr.Application = function () {
 		this.userMessage(message + stateErrors, 'error');
 	};
 
+	this.redirectWithSuccessMessage = function (url, message) {
+		window.location.replace(url + (url.indexOf("?") === -1 ? '?msg=' : '&msg=') + encodeURIComponent(message));
+	}
+
 	this.initializePage = function () {
 		// Set the twipsies
 		if ($().twipsy) {
@@ -202,6 +206,11 @@ ecr.Application = function () {
 		$(".container").fadeIn(1000);
 		if (ecr.page && ecr.page.initialize) {
 			ecr.page.initialize();
+		}
+		var message = ecr.util.getQueryParameter('msg');
+
+		if (message && message.length > 0) {
+			ecr.app.userSuccess(message);
 		}
 	};
 };

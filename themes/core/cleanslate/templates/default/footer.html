@@ -5,6 +5,19 @@
 	<img src="http://www.nsf.gov/images/logos/nsf1.gif" width="50" class="pull-left activity-img"><br>
     &copy; <%= (new Date()).getFullYear() %> This material is based upon work supported by the National Science Foundation under Grant No. 1238172. Any opinions, findings, and conclusions or recommendations expressed in this material are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
 </div>
+<script type="text/javascript">
+//<![CDATA[
+ecr.load();
+$(document).ready(function () {
+	if (ecr.page.Page) {
+		ecr.page = new ecr.page.Page();
+		if (ecr.page.initialize) {
+			ecr.page.initialize();
+		}
+	}
+});
+//]]>
+</script>
 
 <script src="/bootstrap/js/bootstrap.js"></script>
 <!-- <script src="/jasny-bootstrap/js/jasny-bootstrap.js"></script> -->
@@ -13,3 +26,4 @@
 <script src="/lib/jqueryfileupload/js/jquery.iframe-transport.js"></script>
 <script src="/lib/jqueryfileupload/js/jquery.fileupload.js"></script>
 <script src="/js/mustache.js"></script>
+<script src="/js/bootbox.js"></script>

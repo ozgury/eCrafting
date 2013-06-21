@@ -100,7 +100,7 @@ function addActivity(event, data, next) {
 			break;
 
 		default:
-			calipso.error("Unexpected Event: " + event);
+			//calipso.error("Unexpected Event: " + event);
 			return next();
 	}
 

@@ -50,6 +50,11 @@ function init(module, app, next) {
   calipso.e.addEvent('USER_ACTIVATIONMAIL');
   calipso.e.addEvent('USER_ACTIVATE');
 
+  // This shouldn't be here but in eCrafting, but because of the dependency issues need to add it here.
+  calipso.e.addEvent('CIRCLE_JOIN_REQUEST');
+  calipso.e.addEvent('CIRCLE_ADDED_USER');
+
+
   // Define permissions
   calipso.permission.Helper.addPermission("admin:user", "Users", true);
   calipso.permission.Helper.addPermission("admin:user:register", "Register other users.");
@@ -1058,7 +1063,7 @@ function activateUser(req, res, template, block, next) {
         req.flash('error', req.t('There was an error activating that user account.'));
       } else {
         calipso.e.post_emit('USER_UNLOCK', u);
-        req.flash('info', req.t('Account activated. Welcome to eCrafting.'));
+        req.flash('success', req.t('Account activated. Welcome to eCrafting.'));
       }
       calipso.e.post_emit('USER_LOGIN', u);
       createUserSession(req, res, u, function (err) {

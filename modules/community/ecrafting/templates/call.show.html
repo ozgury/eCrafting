@@ -1,9 +1,36 @@
+<script type="text/javascript"> 
+
+	if (typeof (ecr.page) == 'undefined') {
+		ecr.page = {};
+	};
+
+
+	ecr.page.Page = function() {
+		var apiWrapper = new ecr.ApiWrapper();
+
+		return {
+			doDelete: function() {
+				bootbox.confirm("Are you sure you want to delete call '<%- call.name %>'?", function(confirmed) {
+					if (confirmed) {
+						apiWrapper.deleteCall('circles/<%- circle._id %>/calls/<%- call._id %>/', 
+							function (data, jqXhr) {
+								ecr.app.redirectWithSuccessMessage('/circles/show/<%- circle._id %>/', "Call '<%- call.name %>' deleted.");
+							}
+						);
+					}
+				}); 
+			},
+		};
+	};
+
+</script> 
+
 <div class='circle'>
 	<legend><%- call.name %> in <%- circle.name %> 
 		<div class="pull-right">
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
 			<a href='/circles/edit/<%- call._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
-			<a href="#" class="btn"><i class="icon-trash"></i> <strong>Delete</strong></a>
+			<a href="#" onclick='ecr.page.doDelete()' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 		</div>
 	</legend>
@@ -64,10 +91,4 @@
 							%>
 						</div>
 					</div>
-
-
-
-
-
-
 				</div>

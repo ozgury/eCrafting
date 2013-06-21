@@ -30,22 +30,22 @@ var routes = [{
 	path: 'GET /circles',
 	fn: listCircle,
 //	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
-template: 'circle.list',
-block: 'content.circle.show'
+	template: 'circle.list',
+	block: 'content.circle.show'
 }, {
 	path: 'GET /circles/list.:format?',
 	fn: listCircle,
 	admin: false,
 //	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
-template: 'circle.list',
-block: 'content.circle.list'
+	template: 'circle.list',
+	block: 'content.circle.list'
 }, {
 	path: 'GET /circles/show/:id.:format?',
 	fn: showCircle,
 	admin: false,
 //		permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
-template: 'circle.show',
-block: 'content.circle.show'
+	template: 'circle.show',
+	block: 'content.circle.show'
 }, {
 	path: 'GET /circles/edit/:id?',
 	fn: editCircleForm,
@@ -53,6 +53,13 @@ block: 'content.circle.show'
 	permit: calipso.permission.Helper.hasPermission("ecrafting:circle:update"),
 	block: 'content.circle.edit',
 	template: 'circle.edit'
+}, {
+	path: 'GET /circles/add/:id/:uName/:uId?',
+	fn: addUserToCircle,
+	admin: false,
+	permit: calipso.permission.Helper.hasPermission("ecrafting:circle:update"),
+	template: 'circle.show',
+	block: 'content.circle.show'
 }, {
 	path: 'GET /calls',
 	fn: listCall,
@@ -208,6 +215,34 @@ calipso.theme.renderItem(req, res, template, block, { circle: {}, action: "/api/
 }
 }
 
+function addUserToCircle(req, res, template, block, next) {
+	var Circle = calipso.db.model('Circle');
+	var User = calipso.db.model('User');
+	var id = req.moduleParams.id;
+	var uId = req.moduleParams.uId;
+
+	Circle.findById(id, function (err, c) {
+		if (err || c === null) {
+			res.statusCode = 404;
+			next();
+		} else {
+			calipso.e.pre_emit('CIRCLE_ADDED_USER', c);
+			c.save(function (err) {
+				if (err) {
+					calipso.error("Error updating circle", err);
+					return responseError(res, 400, err);
+				}
+				calipso.e.post_emit('CIRCLE_ADDED_USER', c);
+				req.flash('success', req.t('New user added to circle.'));
+				calipso.theme.renderItem(req, res, template, block, {
+					circle: c,
+					isOwner: c.owner === req.session.user.username
+				}, next);
+			});
+		}
+	}).populate('calls').exec();
+}
+
 /**
 * Show circle
 */
@@ -225,7 +260,8 @@ function showCircle(req, res, template, block, next) {
 			// Set the page layout to the circle
 			if (format === "html") {
 				calipso.theme.renderItem(req, res, template, block, {
-					circle: circle
+					circle: circle,
+					isOwner: circle.owner === req.session.user.username
 				}, next);
 			}
 			if (format === "json") {
@@ -342,11 +378,11 @@ function showCall(req, res, template, block, next) {
 		if (err || circle === null) {
 			 // item = {id:'ERROR',type:'content',meta:{title:"Not Found!",content:"Sorry, I couldn't find that circle!"}};
 			 // res.redirect
-			res.statusCode = 404;
+			 res.statusCode = 404;
 			 next();
-		} else {
-			Call.findById(id, function (err, call) {
-				if (err || call === null) {
+			} else {
+				Call.findById(id, function (err, call) {
+					if (err || call === null) {
 					 // item = {id:'ERROR',type:'content',meta:{title:"Not Found!",content:"Sorry, I couldn't find that circle!"}};
 					 // res.redirect
 					 next();
@@ -364,9 +400,9 @@ function showCall(req, res, template, block, next) {
 							next();
 						}
 					}
-			}).populate('projects').exec();
-		}
-	});
+				}).populate('projects').exec();
+			}
+		});
 }
 
 function listCall(req, res, template, block, next) {
@@ -422,20 +458,20 @@ function showProject(req, res, template, block, next) {
 		if (err || call === null) {
 			 // item = {id:'ERROR',type:'content',meta:{title:"Not Found!",content:"Sorry, I couldn't find that circle!"}};
 			 // res.redirect
-			res.statusCode = 404;
+			 res.statusCode = 404;
 			 next();
-		} else {
-
-		Circle.findOne({ 'calls': call._id }, function (err, circle) {
-			if (err || call === null) {
-				 // item = {id:'ERROR',type:'content',meta:{title:"Not Found!",content:"Sorry, I couldn't find that circle!"}};
-				 // res.redirect
-				res.statusCode = 404;
-				 next();
 			} else {
 
-				Project.findById(id, function (err, project) {
-					if (err || project === null) {
+				Circle.findOne({ 'calls': call._id }, function (err, circle) {
+					if (err || call === null) {
+				 // item = {id:'ERROR',type:'content',meta:{title:"Not Found!",content:"Sorry, I couldn't find that circle!"}};
+				 // res.redirect
+				 res.statusCode = 404;
+				 next();
+				} else {
+
+					Project.findById(id, function (err, project) {
+						if (err || project === null) {
 						 // item = {id:'ERROR',type:'content',meta:{title:"Not Found!",content:"Sorry, I couldn't find that circle!"}};
 						 // res.redirect
 						 next();
@@ -461,8 +497,8 @@ function showProject(req, res, template, block, next) {
 
 				}
 			});
-		}
-	});
+			}
+		});
 }
 
 function listProject(req, res, template, block, next) {

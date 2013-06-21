@@ -81,7 +81,7 @@ exports = module.exports = {
       "label":"Base 64 Auth",
       "type":"checkbox",
       "description":"Use base64 encoding for username and password."
-    }
+    },
   }
 };
 
@@ -134,6 +134,7 @@ function bindEvents() {
           if (err || !mts) {
             calipso.debug("Email: " + mts.name + " was not sent because: " + (err || "unknown."));
           }
+          console.log("Sending Email: ", data);
           sendMail(mts, data);
         });
       });
