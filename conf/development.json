@@ -19,7 +19,7 @@
       "maximumRestarts": "1"
     },
     "events": {
-      "maxListeners": "500"
+      "maxListeners": 500
     },
     "loginPath": "",
     "authentication": {

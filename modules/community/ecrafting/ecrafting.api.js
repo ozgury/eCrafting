@@ -94,6 +94,7 @@ function readCircleFromBody(req, body, existingCircle) {
 		existingCircle.owner = req.session.user.username;
 	}
 	mapFields(body, existingCircle);
+
 	existingCircle.members = body.members instanceof Array ? body.members : utilities.commaSeparatedtoArray(body.members, existingCircle.members);
 	existingCircle.links = body.links instanceof Array ? body.links : utilities.commaSeparatedtoArray(body.links, existingCircle.links);
 	existingCircle.tags = body.tags instanceof Array ? body.tags : utilities.commaSeparatedtoArray(body.tags, existingCircle.tags);

@@ -216,30 +216,44 @@ calipso.theme.renderItem(req, res, template, block, { circle: {}, action: "/api/
 }
 
 function addUserToCircle(req, res, template, block, next) {
+	function content (c)
+	{
+		calipso.theme.renderItem(req, res, template, block, {
+			circle: c,
+			canJoinCircle: req.session.user && !utilities.isUserCircleMember(req.session.user.username, c)
+		}, next);
+	}
 	var Circle = calipso.db.model('Circle');
 	var User = calipso.db.model('User');
 	var id = req.moduleParams.id;
 	var uId = req.moduleParams.uId;
+	var uName = req.moduleParams.uName;
 
 	Circle.findById(id, function (err, c) {
 		if (err || c === null) {
 			res.statusCode = 404;
-			next();
-		} else {
-			calipso.e.pre_emit('CIRCLE_ADDED_USER', c);
-			c.save(function (err) {
-				if (err) {
-					calipso.error("Error updating circle", err);
-					return responseError(res, 400, err);
-				}
-				calipso.e.post_emit('CIRCLE_ADDED_USER', c);
-				req.flash('success', req.t('New user added to circle.'));
-				calipso.theme.renderItem(req, res, template, block, {
-					circle: c,
-					canJoin: req.session.user && c.owner != req.session.user.username
-				}, next);
-			});
+			return next();
 		}
+		var dontAdd = false;
+		if (!utilities.isAdminOrDataOwner(req, c)) {
+			req.flash('error', req.t('Only administrators and circle owners can approve users.'));
+			return content (c);
+ 		}
+		calipso.e.pre_emit('CIRCLE_ADDED_USER', c);
+		if (utilities.isUserCircleMember(uId, c)) {
+			req.flash('info', req.t('User' + uId + 'already in the circle.'));
+			return content (c);
+		}
+		c.members.push(uName);
+		c.save(function (err) {
+			if (err) {
+				calipso.error("Error updating circle", err);
+				return responseError(res, 400, err);
+			}
+			calipso.e.post_emit('CIRCLE_ADDED_USER', c);
+			req.flash('success', req.t('New user added to circle.'));
+			return content (c);
+		});
 	}).populate('calls').exec();
 }
 
@@ -261,7 +275,7 @@ function showCircle(req, res, template, block, next) {
 			if (format === "html") {
 				calipso.theme.renderItem(req, res, template, block, {
 					circle: circle,
-					canJoin: req.session.user && circle.owner != req.session.user.username
+					canJoinCircle: req.session.user && !utilities.isUserCircleMember(req.session.user.username, circle)
 				}, next);
 			}
 			if (format === "json") {
