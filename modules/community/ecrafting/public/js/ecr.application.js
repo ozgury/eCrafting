@@ -121,15 +121,9 @@ ecr.Application = function () {
 	};
 
 	this.userMessage = function (message, type) {
-		$('#status').hide().fadeIn('slow');
-		if ($('#status').length == 0) {
-			var statusHtml = "<div id='status-panel' class='alert-message default fade in' data-alert='alert' style='display: none'><a class='close' href='#'>&times;</a><div id='status'>" +
-							message + "</div></div>";
-			$('#messages').html(statusHtml);
-			$('#status').hide().fadeIn('slow');
-		} else {
-			$('#status').html(message);
-		}
+		var statusHtml = '<div class="' + type + ' alert alert-block"><button type="button" class="close" data-dismiss="alert">×</button><p>' +
+						message + "</p></div>";
+		$('#messages').html(statusHtml);
 		$('#status-panel').removeClass('info success warning error default').addClass(type);
 		$('#status-panel').show();
 	};

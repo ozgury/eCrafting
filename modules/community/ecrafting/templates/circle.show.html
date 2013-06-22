@@ -10,11 +10,11 @@
 
 		return {
 			doJoin: function() {
-				bootbox.confirm("Are you sure you want to delete circle '<%- circle.name %>'?", function(confirmed) {
+				bootbox.confirm("Are you sure you want to join circle '<%- circle.name %>'?", function(confirmed) {
 					if (confirmed) {
 						apiWrapper.apiCall('circles/<%- circle._id %>/join', JSON.stringify({ dummy: 'data' }), 'POST', 
 							function (data, jqXhr) {
-								ecr.app.success('Your request to join this circle was sent to the circle owner.');
+								ecr.app.userSuccess('Your request to join this circle was sent to the circle owner.');
 							}
 						);
 					}
@@ -22,7 +22,7 @@
 			},
 			
 			doDelete: function() {
-				bootbox.confirm("Are you sure you want to join circle '<%- circle.name %>'?", function(confirmed) {
+				bootbox.confirm("Are you sure you want to delete circle '<%- circle.name %>'?", function(confirmed) {
 					if (confirmed) {
 						apiWrapper.deleteCall('circles/<%- circle._id %>/', 
 							function (data, jqXhr) {
@@ -42,7 +42,7 @@
 		<div class="pull-right">
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
 			<%
-			if (!isOwner) {
+			if (canJoinCircle) {
 			%>
 				<a href='#' onclick='ecr.page.doJoin()' class="btn"><i class="icon-plus-sign"></i> <strong>Join this Circle</strong></a>
 			<%
@@ -78,6 +78,10 @@
 		<tr>
 			<th><%- t('Tags') %></th>
 			<td><%- circle.tags %></td>
+		</tr>
+		<tr>
+			<th><%- t('Members') %></th>
+			<td><%- circle.members %></td>
 		</tr>
 		<tr>
 			<th><%- t('Location') %></th>
