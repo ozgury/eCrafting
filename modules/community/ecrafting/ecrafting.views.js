@@ -236,7 +236,7 @@ function addUserToCircle(req, res, template, block, next) {
 				req.flash('success', req.t('New user added to circle.'));
 				calipso.theme.renderItem(req, res, template, block, {
 					circle: c,
-					isOwner: c.owner === req.session.user.username
+					canJoin: req.session.user && c.owner != req.session.user.username
 				}, next);
 			});
 		}
@@ -261,7 +261,7 @@ function showCircle(req, res, template, block, next) {
 			if (format === "html") {
 				calipso.theme.renderItem(req, res, template, block, {
 					circle: circle,
-					isOwner: circle.owner === req.session.user.username
+					canJoin: req.session.user && circle.owner != req.session.user.username
 				}, next);
 			}
 			if (format === "json") {
