@@ -18,6 +18,11 @@ ecr.page.Page = function () {
 
 		apiWrapper.apiCall(command, parameters, null, function (data, jqXhr) {
 			$.each(data, function(index, circle) {
+				if (!circle.image) {
+					circle.image = "http://placehold.it/100x100/95A5A6/fff/&text=C";
+				} else {
+					circle.image = '/api/media/' + circle.image;
+				}
 				$('#circleList').append(Mustache.to_html($('#circleListItem').val(), circle));
 			});
 		});

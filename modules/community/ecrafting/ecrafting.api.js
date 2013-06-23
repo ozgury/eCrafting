@@ -77,7 +77,9 @@ function mapFields (fields, record) {
 
   props.forEach(function (name) {
 	 // If not private (e.g. _id), then copy
-	 if (!name.match(/^_.*/)) {
+	 // OY Don't copy the media
+	 console.log("Name", name);
+	 if (name != "media" && !name.match(/^_.*/)) {
 		record.set(name, fields[name]);
 	 }
   });
@@ -112,7 +114,7 @@ function readCallFromBody(req, body, existingCall) {
 		existingCall.owner = req.session.user.username;
 	}
 	mapFields(body, existingCall);
-	existingCircle.materials = body.materials instanceof Array ? body.materials : utilities.commaSeparatedtoArray(body.materials, existingCall.materials);
+	existingCall.materials = body.materials instanceof Array ? body.materials : utilities.commaSeparatedtoArray(body.materials, existingCall.materials);
 	return existingCall;
 }
 
@@ -124,32 +126,58 @@ function readProjectFromBody(req, body, existingProject) {
 		existingProject.owner = req.session.user.username;
 	}
 	mapFields(body, existingProject);
+	console.log('body: ', body);
+	console.log('existingProject: ', existingProject);
+
+
 	existingProject.materials = body.materials instanceof Array ? body.materials : utilities.commaSeparatedtoArray(body.materials, existingProject.materials);
 
 	var media = body.media;
 	var toDelete = [];
+	var toAdd = [];
 
 	console.log('From page: ', media);
 	
-	existingProject.media.forEach(function(savedMedia) {
-		if (media === undefined || media.indexOf(savedMedia) == 0) {
-			toDelete.push(savedMedia);
+	existingProject.media.forEach(function(m) {
+		if (media === undefined || media.indexOf(m.toString()) < 0) {
+			console.log('Adding delete:', m, media, media.indexOf(m.toString()));
+			console.log('Types:', typeof m, typeof media[0]);
+			toDelete.push(m);
 		}
 	});
-	console.log('ToDelete: ', toDelete);
 
-	existingProject.media = [];
 	if (media != undefined) {
 		media.forEach(function(m) {
-			existingProject.media.push(m);
+			if (existingProject.media.indexOf(m) < 0) {
+				toAdd.push(m);
+			}
 		});
-		console.log('Pushed new: ', existingProject.media);
 	}
-	/*
-	toDelete.forEach(function(m)
-		p.media.push(m);
+
+
+	console.log('ToDelete: ', toDelete);
+	console.log('ToAdd: ', toAdd);
+
+	toDelete.forEach(function(m) {
+		existingProject.media.remove(m);
 	});
-	*/
+
+	toAdd.forEach(function(m) {
+		existingProject.media.push(m);
+	});
+
+	var Media = calipso.db.model('Media');
+
+	Media.remove({
+		'_id': { $in: toDelete}
+	}, function(err, docs){
+		if (err) {
+			console.log("Error deleting media:", err);
+			calipso.error("Error ", err);
+		} else {
+			console.log("Deleted media:", err);
+		}
+	});
 	return existingProject;
 }
 
@@ -543,15 +571,15 @@ function updateCallProject(req, res, template, block, next) {
 					}
 					calipso.e.pre_emit('PROJECT_UPDATE', project);
 
-					project = readProjectFromBody(req, req.body, project);
-			console.log('Saving Prohject: ', project);
-					project.save(function (err) {
+					var updatedProject = readProjectFromBody(req, req.body, project);
+			console.log('Saving Prohject: ', updatedProject);
+					updatedProject.save(function (err) {
 						if (err) {
 							calipso.error("Error updating project", err);
 							return responseError(res, 400, err);
 						}
-						calipso.e.post_emit('PROJECT_UPDATE', project);
-						return responseOk(res, project);
+						calipso.e.post_emit('PROJECT_UPDATE', updatedProject);
+						return responseOk(res, updatedProject);
 					});
 				}
 			});

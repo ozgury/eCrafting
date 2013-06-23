@@ -168,19 +168,14 @@ function init(module, app, next) {
 		calipso.domain.call.pre("remove", function (next) {
 			var Project = calipso.db.model('Project');
 
-			console.log("Existing projects:", this.projects);
-
 			Project.remove({
 				'_id': { $in: this.projects}
 			}, function(err, docs){
 				if (err) {
-					console.log("Error deleting projects:", err);
 					calipso.error("Error ", err);
 				} else {
-					console.log("Deleted projects:", err);
 				}
 			});
-
 			next();
 		});
 
