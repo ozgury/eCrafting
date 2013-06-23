@@ -220,6 +220,7 @@ function addUserToCircle(req, res, template, block, next) {
 	{
 		calipso.theme.renderItem(req, res, template, block, {
 			circle: c,
+			canEdit: utilities.isAdminOrDataOwner(req, c),
 			canJoinCircle: req.session.user && !utilities.isUserCircleMember(req.session.user.username, c)
 		}, next);
 	}
@@ -275,6 +276,7 @@ function showCircle(req, res, template, block, next) {
 			if (format === "html") {
 				calipso.theme.renderItem(req, res, template, block, {
 					circle: circle,
+					canEdit: utilities.isAdminOrDataOwner(req, circle),
 					canJoinCircle: req.session.user && !utilities.isUserCircleMember(req.session.user.username, circle)
 				}, next);
 			}
@@ -405,7 +407,8 @@ function showCall(req, res, template, block, next) {
 						if (format === "html") {
 							calipso.theme.renderItem(req, res, template, block, {
 								circle: circle,
-								call: call
+								call: call,
+								canEdit: utilities.isAdminOrDataOwner(req, call)
 							}, next);
 						}
 						if (format === "json") {
@@ -498,6 +501,7 @@ function showProject(req, res, template, block, next) {
 								circle: circle,
 								call: call,
 								project: project,
+								canEdit: utilities.isAdminOrDataOwner(req, project),
 								basePath: basePath
 							}, next);
 						}
