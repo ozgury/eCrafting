@@ -219,7 +219,7 @@ ecr.Application = function () {
 			for (var i=0; i<7; i++) {
 				var li = '<li><a href="' + activities[i].link + '">' +
 							'<div class="activity-img pull-left"><img src="' + 
-							(activities[i].image ? activities[i].image : "http://placehold.it/50x50/95A5A6/fff/&amp;text=K")
+							(activities[i].image ? '/api/media/' + activities[i].image + '.mini' : "http://placehold.it/50x50/95A5A6/fff/&amp;text=K")
 							+ '" class="img-circle"></div>' + 
 							'<div class="activity-text">' + activities[i].description + '</div></a>' + 
 							'<div class="activity-time">' + jQuery.timeago(activities[i].updated) + '</div></li>';
