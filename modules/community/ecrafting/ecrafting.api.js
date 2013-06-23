@@ -261,9 +261,8 @@ function deleteCircle(req, res, template, block, next) {
 			return responseError(res, 401, err);			
 		}
 		calipso.e.pre_emit('CIRCLE_DELETE', c);
-		Circle.remove({
-			_id: id
-		}, function (err) {
+		c.remove(function (err, c) {
+			console.log('deleted', err);
 			if (err) {
 				calipso.error("Error deleting circle", err);
 				return responseError(res, 400, err);
@@ -364,7 +363,6 @@ function updateCircleCall(req, res, template, block, next) {
 				});
 			});
 		});
-		return next();
 	} else {
 		Circle.findOne({ '_id': id, 'calls': cId }, function (err, circle) {
 			if (!circle) {
@@ -389,7 +387,6 @@ function updateCircleCall(req, res, template, block, next) {
 			});
 		}).populate('calls').exec();
 	}
-	next();
 }
 
 function deleteCircleCall(req, res, template, block, next) {
@@ -422,10 +419,10 @@ function deleteCircleCall(req, res, template, block, next) {
 						if (err) {
 							return responseError(res, 400, err);
 						}
-						call.remove();
-						next(err);				
-						calipso.e.post_emit('CALL_DELETE', call);
-						return responseOk(res, call);
+						call.remove(function (err, c) {
+							calipso.e.post_emit('CALL_DELETE', call);
+							return responseOk(res, call);
+						});
 					});
 				});
 			}

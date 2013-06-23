@@ -17,17 +17,9 @@
 function createThumbnail(file, next) {
 	var im = require('imagemagick');
 
-	console.log("Im: ", im);
-	console.log("File: ", file);
-
 	im.identify(file, function(err, ident_metadata){
-		console.log("Err: ", err);
-//		console.log("Meta1: ", ident_metadata);
-
 		im.readMetadata(file, function(err, exif_metadata) {
 
-			console.log("Err: ", err);
-//			console.log("Meta2: ", exif_metadata);
 			var metadata = calipso.lib._.extend(ident_metadata, exif_metadata);
 		//	var metadata = media.get('metadata');
 			var isPortrait = (metadata.width < metadata.height);
@@ -58,9 +50,7 @@ function copyAndCreateThumbnails(from, to, next) {
 			var os = fs.createWriteStream(to);
 
 			util.pump(is, os, function(err) {
-				console.log("File Copied: ", to);
 				fs.unlinkSync(from);
-				console.log("File Deleted: ", from);
 				createThumbnail(to, function(err) {
 					next(err);
 				});

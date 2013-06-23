@@ -29,10 +29,11 @@
 	<legend><%- call.name %> in <%- circle.name %> 
 		<div class="pull-right">
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
+			<a href='/circles/show/<%- circle._id %>/' class="btn"><i class="icon-eye-open"></i> <strong>Goto Circle</strong></a>
 			<%
 			if (canEdit) {
 			%>
-			<a href='/circles/edit/<%- call._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+			<a href='/circles/<%- circle._id %>/calls/edit/<%- call._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
 			<a href="#" onclick='ecr.page.doDelete()' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 			<%
@@ -74,7 +75,7 @@
 		</div>
 		<div class="span4 well">
 			<h4>Calls and Projects</h4>
-			<a href='/circles/<%- call._id %>/calls/edit/' class="btn"><i class="icon-bullhorn"></i> <strong>Create a New Call</strong></a>
+			<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/' class="btn"><i class="icon-bullhorn"></i> <strong>Create a New Project</strong></a>
 			<%
 			if (call.projects.length == 0) {
 				t('No calls defined.')
@@ -85,7 +86,7 @@
 						call.projects.forEach(function(project) {
 							%>
 							<tr>
-								<td><a href='/circles/<%- call._id %>/calls/edit/<%- call._id %>'><%- project.name %></a></td>
+								<td><a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>'><%- project.name %></a></td>
 								<td><%- call.date %></td>
 							</tr>
 									<%

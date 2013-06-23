@@ -3,6 +3,7 @@
  */
  var rootpath = process.cwd() + '/',
  path = require('path'),
+ mongoose = require("mongoose"),
  Query = require("mongoose").Query,
  calipso = require(path.join(rootpath, 'lib/calipso')),
  mongooseTypes = require("mongoose-types"),
@@ -151,6 +152,54 @@ function init(module, app, next) {
 		calipso.domain.circle = Circle;
 		calipso.domain.media = Media;
 		calipso.domain.activity = Activity;
+
+		calipso.domain.circle.pre("validate", function (next) {
+			 console.log("Circle pre validate");
+			 next();
+			});
+
+		calipso.domain.circle.pre('save', function (next) {
+			console.log("Circle pre save");
+			next();
+		});
+
+		calipso.domain.call.pre("remove", function (next) {
+			var Project = calipso.db.model('Project');
+
+			console.log("Existing projects:", this.projects);
+
+			Project.remove({
+				'_id': { $in: this.projects}
+			}, function(err, docs){
+				if (err) {
+					console.log("Error deleting projects:", err);
+					calipso.error("Error ", err);
+				} else {
+					console.log("Deleted projects:", err);
+				}
+			});
+		});
+
+		calipso.domain.circle.pre("remove", function (next) {
+			var Call = calipso.db.model('Call');
+
+			console.log("Existing calls:", this.calls);
+
+			var i = this.calls.length;
+	
+			while (i--) {
+				console.log("Finding call:", this.calls[i], "i:", i);
+				Call.findById(this.calls[i], function (err, call) {
+					console.log("Removing call:", call, err);
+
+					if (!err) {
+						call.remove();						
+					}
+				});
+
+			}
+			next();
+		});
 	}
 
 	function initCalipsoBindings () {
@@ -174,39 +223,6 @@ function init(module, app, next) {
 }
 
 function route(req, res, module, app) {
-	calipso.domain.circle.pre("validate", function (next) {
-		 //console.log("Circle pre validate");
-		 next();
-		});
-
-	calipso.domain.circle.pre('save', function (next) {
-		//console.log("Circle pre save");
-		next();
-	});
-
-	calipso.domain.call.pre("remove", function (next) {
-		var Project = calipso.db.model('Project');
-
-		Project.remove({
-			'_id': { $in: this.projects}
-		}, function(err, docs){
-			if (err) {
-				calipso.error("Error ", err);
-			}
-		});
-	});
-
-	calipso.domain.circle.pre("remove", function (next) {
-		var Call = calipso.db.model('Call');
-
-		Call.remove({
-			'_id': { $in: this.calls}
-		}, function(err, docs){
-			if (err) {
-				calipso.error("Error ", err);
-			}
-		});
-	});
 }
 
 /**

@@ -49,6 +49,7 @@ ecr.page.Page = function () {
 	this.initialize = function () {
 		setFileUpload();
 		ecr.util.setLocationSearch($('#location'));
+
 		$('#FORM').submit(function () {
 			$('html, body').animate({ scrollTop: 0 }, 'slow');
 
@@ -62,7 +63,7 @@ ecr.page.Page = function () {
 			formJson.project.media = media;
 
 			apiWrapper.call($(this).attr('action') + '?apikey=webclient', JSON.stringify(formJson.project), 'POST', function (response, jqXHR) {
-				ecr.app.userSuccess('Done');
+				window.location.href = '/projects/show/' + response._id;
 			}, function (result, other, exception) {
 				if (result.status === 400) {
 					var modelState = eval($.parseJSON(result.responseText));
