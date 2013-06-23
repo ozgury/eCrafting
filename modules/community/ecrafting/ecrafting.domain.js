@@ -178,6 +178,8 @@ function init(module, app, next) {
 					console.log("Deleted projects:", err);
 				}
 			});
+
+			next();
 		});
 
 		calipso.domain.circle.pre("remove", function (next) {
@@ -188,12 +190,18 @@ function init(module, app, next) {
 			var i = this.calls.length;
 	
 			while (i--) {
-				console.log("Finding call:", this.calls[i], "i:", i);
-				Call.findById(this.calls[i], function (err, call) {
-					console.log("Removing call:", call, err);
+				var callId = this.calls[i];
 
-					if (!err) {
-						call.remove();						
+				this.calls.remove(callId);
+				Call.findById(callId, function (err, call) {
+					if (!err && call) {
+						call.remove(function(err, docs){
+							if (err) {
+								calipso.error("Error ", err);
+							} else {
+								console.log("Deleted call:", call);
+							}
+						});
 					}
 				});
 
