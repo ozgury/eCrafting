@@ -60,16 +60,24 @@
 				}
 				%>
 				<tr>
+					<th><%- t('Owner') %></th>
+					<td><a href='/user/profile/<%- call.owner %>'><%- call.owner %></a></td>
+				</tr>
+				<tr>
 					<th><%- t('Description') %></th>
 					<td><%- call.description %></td>
 				</tr>
 				<tr>
-					<th><%- t('Tags') %></th>
-					<td><%- call.tags %></td>
+					<th><%- t('Materials') %></th>
+					<td><%- call.materials %></td>
 				</tr>
 				<tr>
 					<th><%- t('Location') %></th>
 					<td><%- call.location %></td>
+				</tr>
+				<tr>
+					<th><%- t('Date') %></th>
+					<td><%- call.date %></td>
 				</tr>
 			</table>
 		</div>

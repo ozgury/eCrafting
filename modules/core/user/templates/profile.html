@@ -1,9 +1,18 @@
 <div class="content-item">
     <h1><a href="/user/profile/<%= item.username %>"><%= display.name ? display.name : item.username %></a></h1>
+    <%
+    if (item.image) {
+        %>
+            <img src="/api/media/<%- item.image %>.mini" />
+        <%
+    }
+    %>
+
     <% if(display.email) { %>
     <p><a href='mailto:<%- display.email %>'><%= display.email %></a></p>
     <% } %>
     <p><%= item.about %></p>
+    <p>Name: <%= item.fullname %></p>
 
     <p>
         <% if(user.isAdmin || user.username === item.username) { %>

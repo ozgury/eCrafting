@@ -50,12 +50,16 @@
 			<td><%- project.name %></td>
 		</tr>
 		<tr>
+			<th><%- t('Owner') %></th>
+			<td><a href='/user/profile/<%- project.owner %>'><%- project.owner %></a></td>
+		</tr>
+		<tr>
 			<th><%- t('Description') %></th>
 			<td><%- project.description %></td>
 		</tr>
 		<tr>
-			<th><%- t('Tags') %></th>
-			<td><%- project.tags %></td>
+			<th><%- t('Materials') %></th>
+			<td><%- project.materials %></td>
 		</tr>
 		<tr>
 			<th><%- t('Location') %></th>

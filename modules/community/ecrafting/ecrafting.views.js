@@ -240,7 +240,10 @@ function addUserToCircle(req, res, template, block, next) {
 			req.flash('error', req.t('Only administrators and circle owners can approve users.'));
 			return content (c);
  		}
-		calipso.e.pre_emit('CIRCLE_ADDED_USER', c);
+		calipso.e.pre_emit('CIRCLE_ADDED_USER', {
+				circle: c,
+				user: uName
+			});
 		if (utilities.isUserCircleMember(uId, c)) {
 			req.flash('info', req.t('User' + uId + 'already in the circle.'));
 			return content (c);
@@ -251,7 +254,10 @@ function addUserToCircle(req, res, template, block, next) {
 				calipso.error("Error updating circle", err);
 				return responseError(res, 400, err);
 			}
-			calipso.e.post_emit('CIRCLE_ADDED_USER', c);
+			calipso.e.post_emit('CIRCLE_ADDED_USER', {
+				circle: c,
+				user: uName
+			});
 			req.flash('success', req.t('New user added to circle.'));
 			return content (c);
 		});

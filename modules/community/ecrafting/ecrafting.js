@@ -48,6 +48,8 @@ function registerEventListeners () {
 
 	calipso.e.post('USER_CREATE', module.name, addActivity);
 	calipso.e.post('USER_LOGIN', module.name, addActivity);
+
+	calipso.e.post('CIRCLE_ADDED_USER', module.name, addActivity);
 }
 
 function addActivity(event, data, next) {
@@ -67,7 +69,7 @@ function addActivity(event, data, next) {
 			var verb = (event === 'POST_CIRCLE_CREATE') ? 'created': 'updated';
 
 			activity.description = data.owner + ' just ' + verb + ' the circle \'' + data.name + '\'';
-			activity.link = '/circle/show/' + data.id;
+			activity.link = '/circles/show/' + data.id;
 			activity.image = data.image;
 			break;
 
@@ -76,27 +78,33 @@ function addActivity(event, data, next) {
 			var verb = (event === 'POST_CALL_CREATE') ? 'created': 'updated';
 
 			activity.description = data.owner + ' just ' + verb + ' the call \'' + data.name + '\'';
-			activity.link = '/circle/show/' + data.id;
+			activity.link = '/calls/show/' + data.id;
 			activity.image = data.image;
 			break;
 
 		case 'POST_PROJECT_CREATE':
 		case 'POST_PROJECT_UPDATE':
-			var verb = (event === 'POST_CALL_CREATE') ? 'created': 'updated';
+			var verb = (event === 'POST_PROJECT_CREATE') ? 'created': 'updated';
 
 			activity.description = data.owner + ' just ' + verb + ' the project \'' + data.name + '\'';
-			activity.link = '/circle/show/' + data.id;
+			activity.link = '/projects/show/' + data.id;
 			activity.image = (data.media && data.media[0]) ? data.media[0] : null;
 			break;
 
 		case 'POST_USER_CREATE':
 			activity.description = data.fullname + ' just registered.';
-			activity.link = '/user/profile/' + data.id;
+			activity.link = '/user/profile/' + data.username;
 			break;
 
 		case 'POST_USER_LOGIN':
 			activity.description = data.fullname + ' logged on to eCrafting.';
-			activity.link = '/user/profile/' + data.id;
+			activity.link = '/user/profile/' + data.username;
+			break;
+
+		case 'POST_CIRCLE_ADDED_USER':
+			activity.description = data.user + ' just joined the circle \'' + data.circle.name + '\'';
+			activity.link = '/circles/show/' + data.circle.id;
+			activity.image = data.circle.image;
 			break;
 
 		default:

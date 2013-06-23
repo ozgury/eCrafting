@@ -1,53 +1,50 @@
+<script type="text/javascript"> 
+
+	if (typeof (ecr.page) == 'undefined') {
+		ecr.page = {};
+	};
+
+
+	ecr.page.Page = function() {
+		var apiWrapper = new ecr.ApiWrapper();
+
+		return {
+			initialize: function() {
+				var command = 'activities/';
+				var parameters = null;
+
+				apiWrapper.apiCall(command, parameters, null, function (response, jqXhr) {
+					var activities = response;
+
+					for (var i=0; i<7; i++) {
+						var li = '<li><a href="' + activities[i].link + '">' +
+									'<div class="activity-img pull-left"><img src="' + 
+									activities[i].image ? activities[i].image : "http://placehold.it/50x50/95A5A6/fff/&amp;text=K"
+									+ '" class="img-circle"></div>' + 
+									'<div class="activity-text">' + activities[i].description + '</div></a></li>';
+
+						var li = '<li><a href="' + activities[i].link + '">' +
+									'<div class="activity-img pull-left"><img src="' + 
+									(activities[i].image ? activities[i].image : "http://placehold.it/50x50/95A5A6/fff/&amp;text=K")
+									+ '" class="img-circle"></div>' + 
+									'<div class="activity-text">' + activities[i].description + '</div></a>' + 
+									'<div class="activity-time">' + jQuery.timeago(activities[i].updated) + '</div></li>';
+
+						$('#activity-stream').append(li);
+					}
+				});
+			}
+		};
+	};
+
+</script> 
+
 <aside id="activity">
 	<legend>Activities &amp; News</legend>
 	<ul id="activity-stream">
-		<li>
-			<div class="activity-img pull-left"><img src="http://placehold.it/50x50/95A5A6/fff/&amp;text=K" class="img-circle"></div>
-			<div class="activity-user">Kelly:</div>
-			<div class="activity-text">updated the project 'New project here there'.</div>
-		</li>
-		<li>
-			<div class="activity-img pull-left"><img src="http://placehold.it/50x50/95A5A6/fff/&amp;text=M" class="img-circle"></div>
-			<div class="activity-user">Mike:</div>
-			<div class="activity-text">logged on to eCrafting and uploaded a new project.</div>
-		</li>
-		<li>
-			<div class="activity-img pull-left"><img src="http://placehold.it/50x50/95A5A6/fff/&amp;text=C" class="img-circle"></div>
-			<div class="activity-user">Claire:</div>
-			<div class="activity-text">created a circle named 'Brooklyn DIY communities'.</div>
-		</li>
-		<li>
-			<div class="activity-img pull-left"><img src="http://placehold.it/50x50/95A5A6/fff/&amp;text=O" class="img-circle"></div>
-			<div class="activity-user">Orkan:</div>
-			<div class="activity-text">updated the projec 'Franklin Master Project'.</div>
-		</li>
-		<li>
-			<div class="activity-img pull-left"><img src="http://placehold.it/50x50/95A5A6/fff/&amp;text=E" class="img-circle"></div>
-			<div class="activity-user">Edward:</div>
-			<div class="activity-text">Registered on eCrafting and created the call 'Atlantic City DIY Weekend.</div>
-		</li>
-		<li>
-			<div class="activity-img pull-left"><img src="http://placehold.it/50x50/95A5A6/fff/&amp;text=J" class="img-circle"></div>
-			<div class="activity-user">Jessica:</div>
-			<div class="activity-text">updated the project 'New project from Franklin Masters'.</div>
-		</li>
-		<li>
-			<div class="activity-img pull-left"><img src="http://placehold.it/50x50/95A5A6/fff/&amp;text=M" class="img-circle"></div>
-			<div class="activity-user">Michael:</div>
-			<div class="activity-text">updated the project 'DIY Weekend juniors project'.</div>
-		</li>
 	</ul>
 </aside>
 
 <aside class="sidePanelItem">
     <!-- <%- tagcloud %> -->
 </aside>
-
-	<script type="text/javascript">
-	//<![CDATA[
-	$(document).ready(function () {
-
-		// console.log(ecr.page.listActivity())
-	});
-	//]]>
-	</script>

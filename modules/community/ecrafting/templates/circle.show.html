@@ -78,6 +78,10 @@
 		}
 		%>
 		<tr>
+			<th><%- t('Owner') %></th>
+			<td><a href='/user/profile/<%- circle.owner %>'><%- circle.owner %></a></td>
+		</tr>
+		<tr>
 			<th><%- t('Description') %></th>
 			<td><%- circle.description %></td>
 		</tr>
@@ -92,6 +96,10 @@
 		<tr>
 			<th><%- t('Location') %></th>
 			<td><%- circle.location %></td>
+		</tr>
+		<tr>
+			<th><%- t('Links') %></th>
+			<td><%- circle.links %></td>
 		</tr>
 	</table>
 		</div>

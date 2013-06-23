@@ -52,6 +52,7 @@ function init(module, app, next) {
 			approved: {
 				type:Boolean
 			},
+			materials: [String],
 			media: [{
 				type: calipso.lib.mongoose.Schema.ObjectId,
 				ref: 'Media'
@@ -82,6 +83,7 @@ function init(module, app, next) {
 			location: {
 				type:String
 			},
+			materials: [String],
 			projects: [{
 				type: calipso.lib.mongoose.Schema.ObjectId,
 				ref: 'Project'
