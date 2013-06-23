@@ -112,6 +112,7 @@ function readCallFromBody(req, body, existingCall) {
 		existingCall.owner = req.session.user.username;
 	}
 	mapFields(body, existingCall);
+	existingCircle.materials = body.materials instanceof Array ? body.materials : utilities.commaSeparatedtoArray(body.materials, existingCall.materials);
 	return existingCall;
 }
 
@@ -123,20 +124,26 @@ function readProjectFromBody(req, body, existingProject) {
 		existingProject.owner = req.session.user.username;
 	}
 	mapFields(body, existingProject);
+	existingProject.materials = body.materials instanceof Array ? body.materials : utilities.commaSeparatedtoArray(body.materials, existingProject.materials);
 
 	var media = body.media;
 	var toDelete = [];
+
+	console.log('From page: ', media);
 	
 	existingProject.media.forEach(function(savedMedia) {
 		if (media === undefined || media.indexOf(savedMedia) == 0) {
 			toDelete.push(savedMedia);
 		}
 	});
+	console.log('ToDelete: ', toDelete);
+
 	existingProject.media = [];
 	if (media != undefined) {
 		media.forEach(function(m) {
 			existingProject.media.push(m);
 		});
+		console.log('Pushed new: ', existingProject.media);
 	}
 	/*
 	toDelete.forEach(function(m)
@@ -537,6 +544,7 @@ function updateCallProject(req, res, template, block, next) {
 					calipso.e.pre_emit('PROJECT_UPDATE', project);
 
 					project = readProjectFromBody(req, req.body, project);
+			console.log('Saving Prohject: ', project);
 					project.save(function (err) {
 						if (err) {
 							calipso.error("Error updating project", err);
