@@ -9,7 +9,7 @@
 //<![CDATA[
 ecr.load();
 $(document).ready(function () {
-	if (ecr.page.Page) {
+	if (ecr.page && ecr.page.Page) {
 		ecr.page = new ecr.page.Page();
 		if (ecr.page.initialize) {
 			ecr.page.initialize();
