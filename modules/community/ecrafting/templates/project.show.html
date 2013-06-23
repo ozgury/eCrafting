@@ -65,6 +65,27 @@
 			<th><%- t('Location') %></th>
 			<td><%- project.location %></td>
 		</tr>
+		<tr>
+			<th><%- t('Media') %></th>
+			<td>
+			<%
+			if (project.media) {
+				project.media.forEach(function(m, index) {
+				%>
+					<ul class="thumbnails">
+						<li id="media<%- index %>" class="span4">
+							<a href="javascript:void(0)" class="thumbnail">
+								<img src="/api/media/<%- m %>.mini" style="width: 50px; height: 50px" alt="">
+							</a>
+						</li>
+					</ul>
+				<%
+				});
+			}
+				%>
+
+			</td>
+		</tr>
 	</table>
 		</div>
 	</div>
