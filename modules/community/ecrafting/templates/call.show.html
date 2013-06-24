@@ -94,7 +94,7 @@
 						call.projects.forEach(function(project) {
 							%>
 							<tr>
-								<td><a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>'><%- project.name %></a></td>
+								<td><a href='/projects/show/<%- project._id %>'><%- project.name %></a></td>
 								<td><%- call.date %></td>
 							</tr>
 									<%

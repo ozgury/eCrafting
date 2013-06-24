@@ -116,33 +116,9 @@
 					circle.calls.forEach(function(call) {
 						%>
 						<tr>
-							<td><a href='/circles/<%- circle._id %>/calls/edit/<%- call._id %>'><%- call.name %></a></td>
+							<td><a href='/calls/show/<%- call._id %>'><%- call.name %></a></td>
 							<td><%- call.date %></td>
 						</tr>
-						<tr>
-							<td></td>
-							<td>
-								<%
-								if (call.projects.length == 0) {
-									t('No project defined.')
-									} else {
-										%>
-										<table class="table table-bordered table-hover">
-											<%
-											call.projects.forEach(function(project) {
-												%>
-												<tr>
-													<td><a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>'><%- project.name %></a></td>
-												</tr>
-												<%
-												});
-												%>
-											</table>
-											<%
-										}
-										%>
-									</td>
-								</tr>
 								<%
 								});
 								%>
