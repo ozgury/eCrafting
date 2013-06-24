@@ -78,7 +78,6 @@ function mapFields (fields, record) {
   props.forEach(function (name) {
 	 // If not private (e.g. _id), then copy
 	 // OY Don't copy the media
-	 console.log("Name", name);
 	 if (name != "media" && !name.match(/^_.*/)) {
 		record.set(name, fields[name]);
 	 }
@@ -126,9 +125,6 @@ function readProjectFromBody(req, body, existingProject) {
 		existingProject.owner = req.session.user.username;
 	}
 	mapFields(body, existingProject);
-	console.log('body: ', body);
-	console.log('existingProject: ', existingProject);
-
 
 	existingProject.materials = body.materials instanceof Array ? body.materials : utilities.commaSeparatedtoArray(body.materials, existingProject.materials);
 
@@ -136,12 +132,8 @@ function readProjectFromBody(req, body, existingProject) {
 	var toDelete = [];
 	var toAdd = [];
 
-	console.log('From page: ', media);
-	
 	existingProject.media.forEach(function(m) {
 		if (media === undefined || media.indexOf(m.toString()) < 0) {
-			console.log('Adding delete:', m, media, media.indexOf(m.toString()));
-			console.log('Types:', typeof m, typeof media[0]);
 			toDelete.push(m);
 		}
 	});
@@ -153,10 +145,6 @@ function readProjectFromBody(req, body, existingProject) {
 			}
 		});
 	}
-
-
-	console.log('ToDelete: ', toDelete);
-	console.log('ToAdd: ', toAdd);
 
 	toDelete.forEach(function(m) {
 		existingProject.media.remove(m);
@@ -172,10 +160,8 @@ function readProjectFromBody(req, body, existingProject) {
 		'_id': { $in: toDelete}
 	}, function(err, docs){
 		if (err) {
-			console.log("Error deleting media:", err);
 			calipso.error("Error ", err);
 		} else {
-			console.log("Deleted media:", err);
 		}
 	});
 	return existingProject;
@@ -271,7 +257,7 @@ function updateCircle(req, res, template, block, next) {
 			} else {
 				var newCircle = readCircleFromBody(req, req.body, oldCircle);
 				calipso.e.pre_emit('CIRCLE_UPDATE', newCircle);
-				console.log("newCircle: ", newCircle);
+
 				newCircle.save(function (err) {
 					if (err) {
 						calipso.error("Error updating circle", err);
@@ -297,7 +283,7 @@ function deleteCircle(req, res, template, block, next) {
 		}
 		calipso.e.pre_emit('CIRCLE_DELETE', c);
 		c.remove(function (err, c) {
-			console.log('deleted', err);
+
 			if (err) {
 				calipso.error("Error deleting circle", err);
 				return responseError(res, 400, err);
@@ -572,7 +558,7 @@ function updateCallProject(req, res, template, block, next) {
 					calipso.e.pre_emit('PROJECT_UPDATE', project);
 
 					var updatedProject = readProjectFromBody(req, req.body, project);
-			console.log('Saving Prohject: ', updatedProject);
+
 					updatedProject.save(function (err) {
 						if (err) {
 							calipso.error("Error updating project", err);
@@ -656,6 +642,16 @@ function createMedia(req, res, template, block, next) {
 		m.mediaType = file.file.type;
 		m.path = file.to;
 		m.author = author;
+
+		m.data = fs.readFileSync(file.to);
+		m.dataSmall = fs.readFileSync(file.to + 'small');
+		m.dataMini = fs.readFileSync(file.to + 'mini');
+
+		fs.unlinkSync(file.to);
+		fs.unlinkSync(file.to + 'small');
+		fs.unlinkSync(file.to + 'mini');
+
+
 		calipso.e.pre_emit('MEDIA_CREATE', m);
 		m.save(function(err) {
 			if (err) {
@@ -683,14 +679,15 @@ function listMedia(req, res, template, block, next) {
 			if (err || !m) {
 				return responseError(res, 404, err);
 			}
-			var data = fs.readFile(m.path + size, function (err, data) {
-				if (err) {
-					return responseError(res, 404, err);
-				};
-				// Below line somehow kills the login.
-				//res.writeHead(200, {'Content-Type': m.mediaType });
-				return res.end(data, 'binary');
-			});
+			res.contentType(m.mediaType);
+			if (size == 'mini') {
+				res.send(m.dataMini);
+			} else if (size == 'small') {
+				res.send(m.dataSmall);
+			} else {
+				res.send(m.data);
+			}
+			return res.end();
 		});
 	} else {
 		return responseError(res, 404);
@@ -733,6 +730,15 @@ function updateMedia(req, res, template, block, next) {
 			m.mediaType = file.file.type;
 			m.path = file.to;
 			m.author = author;
+
+			m.data = fs.readFileSync(file.to);
+			m.dataSmall = fs.readFileSync(file.to + 'small');
+			m.dataMini = fs.readFileSync(file.to + 'mini');
+
+			fs.unlinkSync(file.to);
+			fs.unlinkSync(file.to + 'small');
+			fs.unlinkSync(file.to + 'mini');
+
 			calipso.e.pre_emit('MEDIA_UPDATE', m);
 			m.save(function(err) {
 				if (err) {

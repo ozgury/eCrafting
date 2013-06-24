@@ -9,6 +9,7 @@
 	async = require('async');
 	calipso = require(path.join(rootpath, 'lib/calipso')),
 	im = require('imagemagick'),
+	Query = require("mongoose").Query,	
 	exports = module.exports = {
 		processUploadedFiles : processUploadedFiles,
 		deleteMedia : deleteMedia
@@ -108,11 +109,6 @@ function processUploadedFiles(req, res, each, next) {
 	function processOne(file, next) {
 		copyAndCreateThumbnails(file.file.path, file.to, function(err) {
 			each(err, file, next);
-/*
-				m.save(function(err) {
-					next(err, m._id);
-				});
-*/
 		});
 	}
 	var basePath = "uploads";

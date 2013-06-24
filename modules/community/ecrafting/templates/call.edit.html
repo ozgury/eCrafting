@@ -1,6 +1,6 @@
 
 <form id="FORM" name="FORM" method="post" action="<%- action %>" class="form-horizontal">
-	<input type="hidden" id="id" name="id" value="<%- circle.id %>"  />
+	<input type="hidden" id="id" name="id" value="<%- call.id %>"  />
 	<legend>
 		<% if(call.id) { %>
 		Edit Circle Call
@@ -23,7 +23,7 @@
 		<div class="control-group field-type-text" id="call_name-wrapper">
 			<label class="control-label" for="name">Name:</label>
 			<div class="controls">
-				<input type="text" class="text" name="name" id="name" value="<%- call.name %>" data-object="call" />
+				<input type="text" class="text" name="name" id="name" value='<%- call.name %>' data-object="call" />
 				<p class="help-block">Enter the name of the call.</p>
 			</div>
 		</div>

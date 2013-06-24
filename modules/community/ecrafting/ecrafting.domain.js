@@ -11,9 +11,9 @@
  extensions = require('./lib/schema.extensions');
  eCrafting = {},
  calipso.domain = module.exports = {
- 	init: init,
- 	install: install,
- 	route: route
+	init: init,
+	install: install,
+	route: route
  };
 
 /**
@@ -22,14 +22,24 @@
 function init(module, app, next) {
 	function initEntities(module, app, next) {
 		mongooseTypes.loadTypes(calipso.lib.mongoose);
-		
+
+		var File = new calipso.lib.mongoose.Schema({
+    		binary: { data: Buffer, contentType: String }
+		});
+
+		File.plugin(extensions, { index: true });
+		calipso.db.model('File', File);
+
 		var Media = new calipso.lib.mongoose.Schema({
-			name:{type: String, "default":""},
-			fileName:{type: String},
-			mediaType:{type: String, required: true},
-			path:{type: String, required: true},
-			author:{type: String, required: true},
-			sort:{type: Number,"default":0},
+			name: { type: String, "default":"" },
+			fileName: { type: String },
+			mediaType: { type: String, required: true },
+			path: { type: String, required: true },
+			author: { type: String, required: true },
+			sort: { type: Number, "default": 0 },
+			data: Buffer,
+			dataSmall: Buffer,
+			dataMini: Buffer,
 			description:String
 		});
 
