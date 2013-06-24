@@ -23,13 +23,6 @@ function init(module, app, next) {
 	function initEntities(module, app, next) {
 		mongooseTypes.loadTypes(calipso.lib.mongoose);
 
-		var File = new calipso.lib.mongoose.Schema({
-    		binary: { data: Buffer, contentType: String }
-		});
-
-		File.plugin(extensions, { index: true });
-		calipso.db.model('File', File);
-
 		var Media = new calipso.lib.mongoose.Schema({
 			name: { type: String, "default":"" },
 			fileName: { type: String },
