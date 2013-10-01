@@ -8,7 +8,6 @@ themes/custom
 themes/private
 themes/site
 media/*
-conf/*
 *.pid
 *.log
 *.swp
@@ -18,4 +17,3 @@ conf/*
 .idea
 uploads/
 logs/
-conf/

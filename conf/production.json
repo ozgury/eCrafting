@@ -1,21 +1,25 @@
 {
   "version": "0.3.0",
-  "installed": false,
+  "installed": true,
   "database": {
-    "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
+    "uri": "mongodb://ecrafting:eCra6t1ng@ds037047.mongolab.com:37047/ecrafting"
+  },
+  "authentication": {
+    "password": true,
+    "migrate2pbkdf2": false
   },
   "server": {
     "name": "Calipso",
-    "url": "http://localhost:3000",
+    "url": "http://ecrafting.herokuapp.com",
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
-      "workers": "",
+      "workers": 0,
       "restartWorkers": true,
-      "maximumRestarts": "1"
+      "maximumRestarts": 1
     },
     "events": {
-      "maxListeners": "500"
+      "maxListeners": 500
     },
     "loginPath": "",
     "authentication": {
@@ -38,13 +42,12 @@
   "performance": {
     "cache": {
       "enabled": false,
-      "ttl": "600"
+      "ttl": 600
     },
     "watchFiles": true
   },
   "session": {
-    "secret": "calipso",
-    "maxAge": ""
+    "secret": "calipso"
   },
   "theme": {
     "default": "cleanslate",
@@ -58,7 +61,7 @@
   "logging": {
     "console": {
       "enabled": true,
-      "level": "debug",
+      "level": "info",
       "timestamp": true,
       "colorize": true
     },
@@ -83,8 +86,31 @@
     "admin": {
       "enabled": true
     },
+    "devtools": {
+      "enabled": false
+    },
     "ecrafting": {
       "enabled": true
+    },
+    "google-analytics": {
+      "enabled": true,
+      "config": {
+        "key": "",
+        "anonymize-ip": true,
+        "track-pagespeed": true
+      }
+    },
+    "media": {
+      "enabled": false
+    },
+    "pusher": {
+      "enabled": false
+    },
+    "richforms": {
+      "enabled": false
+    },
+    "tweetstream": {
+      "enabled": false
     },
     "aloha": {
       "enabled": true
@@ -99,19 +125,19 @@
       "enabled": true
     },
     "contentVersions": {
-      "enabled": false
+      "enabled": true
     },
     "mail": {
       "enabled": true,
       "config": {
-        "host": "192.168.2.6",
-        "port": "25",
+        "host": "",
+        "port": "",
         "domain": "",
-        "authentication": true,
+        "authentication": false,
         "ssl": false,
-        "from": "eCrafting",
-        "username": "serviceaccount@brooklynindustries.com",
-        "password": "P@ssw0rd",
+        "from": "",
+        "username": "",
+        "password": "",
         "base64": false
       }
     },
@@ -119,7 +145,7 @@
       "enabled": true
     },
     "scheduler": {
-      "enabled": true
+      "enabled": false
     },
     "static": {
       "enabled": true

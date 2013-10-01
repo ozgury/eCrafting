@@ -1,0 +1,164 @@
+{
+  "version": "0.3.0",
+  "installed": true,
+  "database": {
+    "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
+  },
+  "authentication": {
+    "password": true,
+    "migrate2pbkdf2": false
+  },
+  "server": {
+    "name": "Calipso",
+    "url": "http://localhost:3000",
+    "modulePath": "./modules",
+    "themePath": "./themes",
+    "cluster": {
+      "workers": "",
+      "restartWorkers": true,
+      "maximumRestarts": "1"
+    },
+    "events": {
+      "maxListeners": "500"
+    },
+    "loginPath": "",
+    "authentication": {
+      "password": true,
+      "migrate2pbkdf2": false,
+      "facebookAppId": "573278046017651",
+      "facebookAppSecret": "8062c524ef4396572deeedb0ea646fbb",
+      "googleClientId": "",
+      "googleClientSecret": "",
+      "twitterConsumerKey": "",
+      "twitterConsumerSecret": ""
+    }
+  },
+  "calipso": {
+    "repo": {
+      "url": "http://calip.so/repo/api",
+      "defaultVersion": "master"
+    }
+  },
+  "performance": {
+    "cache": {
+      "enabled": false,
+      "ttl": "600"
+    },
+    "watchFiles": true
+  },
+  "session": {
+    "secret": "calipso",
+    "maxAge": ""
+  },
+  "theme": {
+    "default": "cleanslate",
+    "front": "cleanslate",
+    "admin": "cleanslate"
+  },
+  "i18n": {
+    "language": "en",
+    "additive": true
+  },
+  "logging": {
+    "console": {
+      "enabled": true,
+      "level": "debug",
+      "timestamp": true,
+      "colorize": true
+    },
+    "file": {
+      "enabled": true,
+      "level": "debug",
+      "filepath": "logs/calipso.log",
+      "timestamp": true
+    }
+  },
+  "libraries": {
+    "stylus": {
+      "enable": false,
+      "warn": true,
+      "compress": false
+    },
+    "formidable": {
+      "keepExtensions": true
+    }
+  },
+  "modules": {
+    "admin": {
+      "enabled": true
+    },
+    "devtools": {
+      "enabled": false
+    },
+    "ecrafting": {
+      "enabled": true
+    },
+    "google-analytics": {
+      "enabled": true,
+      "config": {
+        "key": "",
+        "anonymize-ip": true,
+        "track-pagespeed": true
+      }
+    },
+    "media": {
+      "enabled": false
+    },
+    "pusher": {
+      "enabled": false
+    },
+    "richforms": {
+      "enabled": false
+    },
+    "tweetstream": {
+      "enabled": false
+    },
+    "aloha": {
+      "enabled": false
+    },
+    "assets": {
+      "enabled": false
+    },
+    "content": {
+      "enabled": true
+    },
+    "contentTypes": {
+      "enabled": true
+    },
+    "contentVersions": {
+      "enabled": true
+    },
+    "mail": {
+      "enabled": true,
+      "config": {
+        "host": "",
+        "port": "",
+        "domain": "",
+        "authentication": false,
+        "ssl": false,
+        "from": "",
+        "username": "",
+        "password": "",
+        "base64": false
+      }
+    },
+    "permissions": {
+      "enabled": true
+    },
+    "scheduler": {
+      "enabled": true
+    },
+    "static": {
+      "enabled": true
+    },
+    "tagcloud": {
+      "enabled": true
+    },
+    "taxonomy": {
+      "enabled": true
+    },
+    "user": {
+      "enabled": true
+    }
+  }
+}
