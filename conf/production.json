@@ -130,14 +130,14 @@
     "mail": {
       "enabled": true,
       "config": {
-        "host": "",
-        "port": "",
-        "domain": "",
-        "authentication": false,
-        "ssl": false,
-        "from": "",
-        "username": "",
-        "password": "",
+        "host": "smtp.gmail.com",
+        "port": "465",
+        "domain": "potioninfosystems.com",
+        "authentication": true,
+        "ssl": true,
+        "from": "info@ecrafting.com",
+        "username": "ecraftinginfo@gmail.com",
+        "password": "@crafting",
         "base64": false
       }
     },
