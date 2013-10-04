@@ -177,6 +177,7 @@ function sendMail(templates, data) {
 }
 
 function toUser(user, template, data, callback) {
+  console.log("ToUser: ", user, data);
   var host = calipso.config.getModuleConfig("mail", "host");
   var port = calipso.config.getModuleConfig("mail", "port");
   var domain = calipso.config.getModuleConfig("mail", "domain");
@@ -184,6 +185,7 @@ function toUser(user, template, data, callback) {
   var username = calipso.config.getModuleConfig("mail", "username");
   var password = calipso.config.getModuleConfig("mail", "password");
   if (!host || !port || !domain || !username || !password) {
+    console.log("Invalid Configuration: ", host, port, domain);
     return;
   }
   if (base64) {
@@ -196,6 +198,7 @@ function toUser(user, template, data, callback) {
     address:calipso.config.get('server:url'),
     data:data
   });
+  console.log("Before mail.send: ");
   mail.send({
       host:host, // smtp server hostname
       port:port, // smtp server port
