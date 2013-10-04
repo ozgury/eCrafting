@@ -133,7 +133,7 @@
       "config": {
         "host": "smtp.gmail.com",
         "port": "465",
-        "domain": "potioninfosystems.com",
+        "domain": "gmail.com",
         "authentication": true,
         "ssl": true,
         "from": "info@ecrafting.com",
