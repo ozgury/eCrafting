@@ -108,7 +108,7 @@ function init(module, app, next) {
   var MailTemplate = new calipso.lib.mongoose.Schema({
     name:{type:String, required:true, "default":''},
     to:{type:String, required:true},
-    subject:{type:String, required:false, "defualt":''},
+    subject:{type:String, required:false, "default":''},
     body:{type:String, required:false, "default":''},
     event:{type:String, required:false}
   });
@@ -216,15 +216,36 @@ function toUser(user, template, data, callback) {
   };
 
   console.log("Maildata: ", mailData);
-  mail.send(mailData, function (err, result) {
-      console.log("In send: ", err, result);
-      if (err) {
-        calipso.debug("Error in mail.js: " + err);
-      } else {
-        calipso.debug("Email sent with result: " + result);
-      }
-      callback();
-  });
+
+  if (process.env.SENDGRID_USERNAME && process.env.SENDGRID_PASSWORD) {
+      console.log("Sendgridding...");
+      var sendgrid  = require('sendgrid')(
+        process.env.SENDGRID_USERNAME,
+        process.env.SENDGRID_PASSWORD
+      );
+
+      sendgrid.send({
+        to: mailData.to,
+        from: mailData.from,
+        subject: mailData.subject,
+        text: mailData.body
+      }, function(err, json) {
+        if (err) { 
+          calipso.debug("Error in sendgrid " + err);
+        }
+        console.log(json);
+      });
+  } else {
+    mail.send(mailData, function (err, result) {
+        console.log("In send: ", err, result);
+        if (err) {
+          calipso.debug("Error in mail.js: " + err);
+        } else {
+          calipso.debug("Email sent with result: " + result);
+        }
+        callback();
+    });
+  }
 }
 
 /**
