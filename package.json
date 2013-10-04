@@ -62,8 +62,7 @@
         "mustache": "0.7.x",
         "imap":"0.7.x",
         "mimelib":"0.2.x",
-        "oauth":"0.9.x",
-        "sendgrid": "0.3.1"
+        "oauth":"0.9.x"
     },
     "optionalDependencies":{
         "bcrypt":"0.7.x"
