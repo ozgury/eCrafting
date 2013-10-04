@@ -201,7 +201,7 @@ function toUser(user, template, data, callback) {
   });
   console.log("Template done: ", body);
   console.log("Before mail.send: ");
-  mail.send({
+  var mailData = {
       host:host, // smtp server hostname
       port:port, // smtp server port
       domain:domain, // domain used by client to identify itself to server
@@ -213,15 +213,18 @@ function toUser(user, template, data, callback) {
       ssl:calipso.config.getModuleConfig("mail", "ssl") == true ? true : false, // true/false
       username:username, // Account username
       password:password               // Account password
-    },
-    function (err, result) {
+  };
+
+  console.log("Maildata: ", mailData);
+  mail.send(mailData, function (err, result) {
+      console.log("In send: ", err, result);
       if (err) {
         calipso.debug("Error in mail.js: " + err);
       } else {
         calipso.debug("Email sent with result: " + result);
       }
       callback();
-    });
+  });
 }
 
 /**
