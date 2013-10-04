@@ -192,12 +192,14 @@ function toUser(user, template, data, callback) {
     username = (new Buffer(username)).toString("base64");
     password = (new Buffer(password)).toString("base64");
   }
+  console.log("Read configurations: ");
   var body = mustache.to_html(template.body, {
     toUser:user.username || '-',
     servername:calipso.config.get('server:name'),
     address:calipso.config.get('server:url'),
     data:data
   });
+  console.log("Template done: ", body);
   console.log("Before mail.send: ");
   mail.send({
       host:host, // smtp server hostname
