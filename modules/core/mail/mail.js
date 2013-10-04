@@ -233,7 +233,7 @@ function toUser(user, template, data, callback) {
         if (err) { 
           calipso.debug("Error in sendgrid " + err);
         }
-        console.log(json);
+        console.log("Sendgrid done: ", json, err);
       });
   } else {
     mail.send(mailData, function (err, result) {
