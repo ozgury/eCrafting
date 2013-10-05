@@ -217,7 +217,7 @@ function toUser(user, template, data, callback) {
 
   console.log("Maildata: ", mailData);
 
-  if (process.env.SENDGRID_USERNAME && process.env.SENDGRID_PASSWORD) {
+  if (false && process.env.SENDGRID_USERNAME && process.env.SENDGRID_PASSWORD) {
       console.log("Sendgridding...");
       var sendgrid  = require('sendgrid')(
         process.env.SENDGRID_USERNAME,
@@ -244,6 +244,7 @@ function toUser(user, template, data, callback) {
           calipso.debug("Email sent with result: " + result);
         }
         callback();
+        return;
     });
   }
 }
