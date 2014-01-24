@@ -824,13 +824,13 @@ function listContent(req, res, template, block, next) {
 
   var query = new Query();
 
-  if (req.session && req.session.user && vPerm(req.session.user)) {
+ /* if (req.session && req.session.user && vPerm(req.session.user)) {
     // Show all
   } else {
     // Published only if not admin
     query.where('status', 'published');
   }
-
+*/
   if (tag) {
     res.layout = "tagLanding" // Enable landing page layout to be created for a tag view
     query.where('tags', tag);
