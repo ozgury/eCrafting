@@ -14,12 +14,14 @@ exports = module.exports = function (req, options, callback) {
    */
   step(
     function getContent() {
-      options.getContent(req, 'about-me', this.parallel());
-      options.getBlock('tagcloud', this.parallel());
-      options.getBlock(/^side.*/, this.parallel());
+      options.getContent(req, {alias:'welcome'}, this.parallel());
+/*      options.getContent(req, 'about-me', this.parallel());
+
+      options.getContentList({contetn:'welcome'}, {req:req}, this.parallel());
+*/
     },
-    function done(err, about, tagcloud, side) {
-      callback(err, {about:about, tagcloud:tagcloud, side:side});
+    function done(err, welcome, about, content) {
+      callback(err, { welcome: welcome });
     }
   );
 };

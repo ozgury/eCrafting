@@ -75,9 +75,9 @@ function init(module, app, next) {
       module.router.addRoute('GET /content', listContent, {admin:true, permit:vPerm, template:'listAdmin', block:'content.list'}, this.parallel());
       module.router.addRoute('GET /content/list.:format?', listContent, {admin:true, permit:vPerm, template:'listAdmin', block:'content.list'}, this.parallel());
       module.router.addRoute('POST /content', createContent, {admin:true, permit:cPerm}, this.parallel());
-      module.router.addRoute('GET /content/new', createContentForm, {admin:true, permit:vPerm, block:'content.create'}, this.parallel());
+      module.router.addRoute('GET /content/new', createContentForm, {admin:true, permit:vPerm, template:'edit', block:'content.create'}, this.parallel());
       module.router.addRoute('GET /content/show/:id', showContentByID, {admin:true, permit:vPerm, template:'show', block:'content.show'}, this.parallel());
-      module.router.addRoute('GET /content/edit/:id', editContentForm, {admin:true, permit:uPerm, block:'content.edit'}, this.parallel());
+      module.router.addRoute('GET /content/edit/:id', editContentForm, {admin:true, permit:uPerm, template:'edit', block:'content.edit'}, this.parallel());
       module.router.addRoute('GET /content/delete/:id', deleteContent, {admin:true, permit:dPerm}, this.parallel());
       module.router.addRoute('POST /content/:id', updateContent, {admin:true, permit:uPerm}, this.parallel());
 
@@ -99,6 +99,7 @@ function init(module, app, next) {
         title:{type:String, required:true, "default":''},
         teaser:{type:String, required:false, "default":''},
         taxonomy:{type:String, "default":''},
+//        image:{type: calipso.lib.mongoose.Schema.ObjectId, required:false, ref: 'Media'},      
         content:{type:String, required:false, "default":''},
         status:{type:String, required:false, "default":'draft', index:true},
         alias:{type:String, required:true, index:true},
@@ -217,7 +218,9 @@ function contentForm() {
             return calipso.data.contentTypes
           }, description:'Select the type, this impacts custom fields and page display.'},
           {label:'Teaser', name:'content[teaser]', type:'textarea', description:'Enter some short text that describes the content, appears in lists.'},
-          {label:'Content', name:'content[content]', type:'textarea', description:'Enter the full content text.'}
+          {label:'Content', name:'content[content]', type:'textarea', description:'Enter the full content text.'},
+          {label:'Link', name:'content[link]', type:'text', description:'Url for the content (if any).'},
+          {label:'Image', name:'content[image]', type:'hidden'}
         ]
       },
       {
@@ -483,7 +486,7 @@ function createContentFormByType(req, res, template, block, next) {
 
     calipso.e.pre_emit('CONTENT_CREATE_FORM', form, function (form) {
       calipso.form.render(form, values, req, function (form) {
-        calipso.theme.renderItem(req, res, form, block, {}, next);
+        calipso.theme.renderItem(req, res, template, block, { form: form, content:null}, next);
       });
     });
   });
@@ -538,7 +541,7 @@ function editContentForm(req, res, template, block, next) {
         // Test!
         calipso.e.pre_emit('CONTENT_UPDATE_FORM', form, function (form) {
           calipso.form.render(form, values, req, function (form) {
-            calipso.theme.renderItem(req, res, form, block, {}, next);
+            calipso.theme.renderItem(req, res, template, block, { form: form, content:c}, next);
           });
         });
 
@@ -575,6 +578,11 @@ function updateContent(req, res, template, block, next) {
           c.updated = new Date();
           c.alias = form.content.alias ? form.content.alias : titleAlias(c.title);
           c.tags = form.content.tags ? form.content.tags.replace(/[\s]+/g, "").split(",") : [];
+
+          c.image = null;
+          if ((form.content.image != null) && (form.content.image == '')) {
+            c.image = form.content.image;
+          }
 
           // Get content type
           ContentType.findOne({contentType:form.content.contentType}, function (err, contentType) {
@@ -866,7 +874,7 @@ function contentLink(req, content) {
  * From a theme
  */
 function getContentList(query, out, next) {
-  console.log("Query: ", query);
+//  console.log("Query: ", query);
 
   var Content = calipso.db.model('Content');
   var pager = out.hasOwnProperty('pager') ? out.pager : true;

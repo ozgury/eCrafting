@@ -681,6 +681,7 @@ function updateUserProfile(req, res, template, block, next) {
           saveUser();
         }
         function saveUser() {
+
           calipso.e.pre_emit('USER_UPDATE', u);
           u.save(function (err) {
             if (err) {

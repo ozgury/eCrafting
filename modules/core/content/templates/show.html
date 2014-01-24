@@ -11,4 +11,13 @@
     <p class='tags'><%- content.tags %></p>
 
     <p class='content'><%- content.content %></p>
+
+	<%
+	if (content.image) {
+		%>
+		<img src="/api/media/<%- content.image %>" />
+		<%
+	}
+	%>
+
 </div>

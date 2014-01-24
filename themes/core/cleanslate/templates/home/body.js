@@ -15,10 +15,18 @@ exports = module.exports = function (req, options, callback) {
 
     function getContent() {
       options.getContent(req, "welcome", this.parallel());
-    }, function done(err, welcome, homepageText) {
+      options.getContentList({contentType:'Carousel'}, {req:req}, this.parallel());
+    }, function done(err, welcome, carousel) {
+
+
+
+
+  carousel.contents.forEach(function(item) {
+  });
+
       callback(err, {
         welcome:welcome,
-        homepageText:homepageText
+        carousel:carousel
       });
     });
 

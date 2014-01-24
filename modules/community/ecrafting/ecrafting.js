@@ -15,7 +15,7 @@
 		init:init,
 		route:route,
 		last:true,
-		depends:['user']
+		depends:['user', 'content']
 	};
 
 // Override default Calipso form.
@@ -144,7 +144,7 @@ function init(module, app, next) {
 	calipso.lib.step(
 		function defineRoutes() {
 			module.router.addRoute('GET /ecrafting', showMain, {template:'ecrafting', admin:true, block:'admin.show'}, this.parallel());
-			module.router.addRoute('GET /about', showMain, {template:'about', block:'content.show'}, this.parallel());
+			module.router.addRoute('GET /about', showAbout, {template:'about', block:'content.show' }, this.parallel());
 			module.router.addRoute('GET /locations', showMain, {template:'locations', block:'content.show'}, this.parallel());
 			module.router.addRoute('GET /timeline', showMain, {template:'timeline', block:'content.show'}, this.parallel());
 			module.router.addRoute('GET /current', showMain, {template:'current', block:'content.show'}, this.parallel());
@@ -171,6 +171,34 @@ function init(module, app, next) {
 }
 
 function showMain(req, res, template, block, next) {
-	calipso.theme.renderItem(req, res, template, block, {content: { title: "eCrafting Dashboard"} }, next);
+	calipso.theme.renderItem(req, res, template, block, {content: { title: "eCrafting Dashboard" } }, next);
 //  res.send('eCrafting dashboard.');
+}
+
+function showHome(req, res, template, block, next) {
+  calipso.lib.step(function () {
+    req.helpers.getContentList({contentType:'Carousel'}, {req:req}, this);
+  }, function done(err, carouselList) {
+    calipso.theme.renderItem(req, res, template, block, {carouselList:carouselList}, next);
+  });
+
+}
+
+function showAbout(req, res, template, block, next) {
+/*
+    req.helpers.getContentList(query, {req:req, format:format, sortBy:sortBy}, this);
+
+var about = calipso.helpers.getContent(req, {alias:'about'});
+console.log("About: ", about);
+
+	calipso.theme.renderItem(req, res, template, block, {content: { title: "eCrafting Dashboard" } }, next);
+
+*/
+
+  calipso.lib.step(function () {
+    req.helpers.getContent(req, {alias:'about'}, this);
+  }, function done(err, about) {
+    calipso.theme.renderItem(req, res, template, block, {about:about}, next);
+  });
+
 }
