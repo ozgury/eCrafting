@@ -12,8 +12,8 @@ git push dev master
 3. Content Management:
 	Go to /admin
 	Click on Content Management/Content Types
-	Verify About and Carousel cointent types
+	Verify About and Carousel content types
 	About is used for About page content. Must be only one of that type.
-	Carousel is used for editing cCarousel pages. You can add any number of content. Each entry is a Carousel item.
+	Carousel is used for editing Carousel pages. You can add any number of content. Each entry is a Carousel item.
 	Click on Content Management/Content
 	You can Create new content of type Carousel or edit the existing ones
