@@ -147,7 +147,7 @@ function init(module, app, next) {
 			module.router.addRoute('GET /about', showAbout, {template:'about', block:'content.show' }, this.parallel());
 			module.router.addRoute('GET /locations', showMain, {template:'locations', block:'content.show'}, this.parallel());
 			module.router.addRoute('GET /timeline', showMain, {template:'timeline', block:'content.show'}, this.parallel());
-			module.router.addRoute('GET /current', showMain, {template:'current', block:'content.show'}, this.parallel());
+			module.router.addRoute('GET /current', showCurrent, {template:'current', block:'content.show'}, this.parallel());
 
 	      module.router.addRoute(/.*/, allPages, {
 	        end:false,
@@ -199,6 +199,15 @@ console.log("About: ", about);
     req.helpers.getContent(req, {alias:'about'}, this);
   }, function done(err, about) {
     calipso.theme.renderItem(req, res, template, block, {about:about}, next);
+  });
+
+}
+
+function showCurrent(req, res, template, block, next) {
+  calipso.lib.step(function () {
+    req.helpers.getContent(req, {alias:'currentcall'}, this);
+  }, function done(err, current) {
+    calipso.theme.renderItem(req, res, template, block, {current:current}, next);
   });
 
 }

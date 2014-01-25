@@ -1,8 +1,7 @@
 <div class="hero-unit">
-	<img src="/images/calls/call-02.jpg" style="">
-	<p>Join us in Philadelphia, starting Friday, February 14th (all travel expenses will be paid), and join hundreds of others from February 14-16 for 48 hours for fun, prizes, and more. You will need to apply to PennApps 2014 and fill out a super short application by December 24th, 2013 ( <a href="http://2014s.pennapps.com">http://2014s.pennapps.com</a> ). Organizers will contact you in January about acceptance and with more information. 
+	<img src="/api/media/<%- current.get('image') %>" style="">
 
-	<p>For more information, check out also StitchFest 2014 ( <a href"http://www.stitchfest.org">http://www.stitchfest.org</a> ), and feel free to contact us atinfo@stitchfest.org.</p> 
+	<%- current.teaser %>
 
-	<p><a href="#" class="btn btn-primary btn-large btn-block">Join This Call</a></p>
+	<p><a href="<%- current.get('link') %>" class="btn btn-primary btn-large btn-block">Join This Call</a></p>
 </div>
