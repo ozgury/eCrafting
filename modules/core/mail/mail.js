@@ -177,7 +177,7 @@ function sendMail(templates, data) {
 }
 
 function toUser(user, template, data, callback) {
-  console.log("ToUser: ", user, data);
+  console.log("++++++++++++++++++++++++++++++++ToUser: ", user, data);
   var host = calipso.config.getModuleConfig("mail", "host");
   var port = calipso.config.getModuleConfig("mail", "port");
   var domain = calipso.config.getModuleConfig("mail", "domain");
@@ -185,22 +185,22 @@ function toUser(user, template, data, callback) {
   var username = calipso.config.getModuleConfig("mail", "username");
   var password = calipso.config.getModuleConfig("mail", "password");
   if (!host || !port || !domain || !username || !password) {
-    console.log("Invalid Configuration: ", host, port, domain);
+    console.log("++++++++++++++++++++++++++++++Invalid Configuration: ", host, port, domain);
     return;
   }
   if (base64) {
     username = (new Buffer(username)).toString("base64");
     password = (new Buffer(password)).toString("base64");
   }
-  console.log("Read configurations: ");
+  console.log("+++++++++++++++++++++++++++++++++Read configurations: ");
   var body = mustache.to_html(template.body, {
     toUser:user.username || '-',
     servername:calipso.config.get('server:name'),
     address:calipso.config.get('server:url'),
     data:data
   });
-  console.log("Template done: ", body);
-  console.log("Before mail.send: ");
+  console.log("+++++++++++++++++++++++Template done: ", body);
+  console.log("++++++++++++++++++++++++++++++Before mail.send: ");
   var mailData = {
       host:host, // smtp server hostname
       port:port, // smtp server port
@@ -215,38 +215,18 @@ function toUser(user, template, data, callback) {
       password:password               // Account password
   };
 
-  console.log("Maildata: ", mailData);
+  console.log("++++++++++++++++++++Maildata: ", mailData);
 
-  if (false && process.env.SENDGRID_USERNAME && process.env.SENDGRID_PASSWORD) {
-      console.log("Sendgridding...");
-      var sendgrid  = require('sendgrid')(
-        process.env.SENDGRID_USERNAME,
-        process.env.SENDGRID_PASSWORD
-      );
-
-      sendgrid.send({
-        to: mailData.to,
-        from: mailData.from,
-        subject: mailData.subject,
-        text: mailData.body
-      }, function(err, json) {
-        if (err) { 
-          calipso.debug("Error in sendgrid " + err);
-        }
-        console.log("Sendgrid done: ", json, err);
-      });
-  } else {
-    mail.send(mailData, function (err, result) {
-        console.log("In send: ", err, result);
-        if (err) {
-          calipso.debug("Error in mail.js: " + err);
-        } else {
-          calipso.debug("Email sent with result: " + result);
-        }
-        callback();
-        return;
-    });
-  }
+  mail.send(mailData, function (err, result) {
+      console.log("++++++++++++++++++++++++++In send: ", err, result);
+      if (err) {
+        calipso.debug("+++++++++++++++++++++++++++Error in mail.js: " + err);
+      } else {
+        calipso.debug("+++++++++++++++++++++++++++Email sent with result: " + result);
+      }
+      callback();
+      return;
+  });
 }
 
 /**
