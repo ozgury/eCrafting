@@ -53,8 +53,8 @@ function registerEventListeners () {
 }
 
 function addActivity(event, data, next) {
-	console.log("Event: ", event);
-	console.log("Data: ", data);
+	//console.log("Event: ", event);
+	//console.log("Data: ", data);
 	var Activity = calipso.db.model('Activity');
 	var activity = new Activity({
 		description: null,
