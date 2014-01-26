@@ -377,6 +377,8 @@ function updateUserForm(req, res, template, block, next) {
           {label:'Language', name:'user[language]', type:'select', options:req.languages},
           // TODO : Select based on available
           {label:'About You', name:'user[about]', type:'textarea'},
+          {label:'Is Active', name:'user[active]', type:'checkbox', labelFirst:true},
+          {label:'Is Locked', name:'user[locked]', type:'checkbox', labelFirst:true}
         ]
       },
       {
