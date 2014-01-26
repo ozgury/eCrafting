@@ -377,8 +377,8 @@ function updateUserForm(req, res, template, block, next) {
           {label:'Language', name:'user[language]', type:'select', options:req.languages},
           // TODO : Select based on available
           {label:'About You', name:'user[about]', type:'textarea'},
-          {label:'Is Active', name:'user[active]', type:'checkbox', labelFirst:true},
-          {label:'Is Locked', name:'user[locked]', type:'checkbox', labelFirst:true}
+          //{label:'Is Active', name:'user[active]', type:'checkbox', labelFirst:true},
+          //{label:'Is Locked', name:'user[locked]', type:'checkbox', labelFirst:true}
         ]
       },
       {
@@ -933,7 +933,6 @@ function registerUser(req, res, template, block, next) {
               res.redirect('/user/profile/' + u.username);
               calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
             }
-            return;
           }
           // If not already redirecting, then redirect
           //next(err);
