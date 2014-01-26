@@ -909,10 +909,7 @@ function registerUser(req, res, template, block, next) {
           next(err);
         }
         u.hash = hash;
-        saveUser();
-      });
 
-      function saveUser() {
         calipso.e.pre_emit('USER_CREATE', u);
         u.save(function (err) {
 
@@ -932,12 +929,15 @@ function registerUser(req, res, template, block, next) {
               req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
               res.redirect('/user/profile/' + u.username);
               calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
+              return next(err);
             }
           }
           // If not already redirecting, then redirect
-          //next(err);
+          next(err);
         });
-      }
+
+      });
+
     }
   });
 }

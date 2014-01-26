@@ -208,10 +208,10 @@ if (id) {
 }
 }).populate('calls').exec();
 } else {
-//		var Circle = calipso.db.model('Circle');
-//		var c = new Circle();
+	//		var Circle = calipso.db.model('Circle');
+	//		var c = new Circle();
 
-calipso.theme.renderItem(req, res, template, block, { circle: {}, action: "/api/circles/" }, next);
+	calipso.theme.renderItem(req, res, template, block, { circle: {}, action: "/api/circles/" }, next);
 }
 }
 
