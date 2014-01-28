@@ -883,17 +883,17 @@ function registerUser(req, res, template, block, next) {
         u.roles = ['Guest']; // Todo - need to make sure guest role can't be deleted?
       }
 
-      //TODO : Add form validation and email confirmation
-      req.flash('error', req.t('Something is wrong.'));
-      res.redirect('back');
-      return;
-
       // Check to see if new passwords match
       if (new_password != repeat_password) {
         req.flash('error', req.t('Your passwords do not match.'));
         res.redirect('back');
         return;
       }
+
+      //TODO : Add form validation and email confirmation
+      req.flash('error', req.t('Something is wrong.'));
+      res.redirect('back');
+      return;
 
       // Check to see if new passwords are blank
       if (new_password === '') {
