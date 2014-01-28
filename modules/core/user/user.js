@@ -890,11 +890,6 @@ function registerUser(req, res, template, block, next) {
         return;
       }
 
-      //TODO : Add form validation and email confirmation
-      req.flash('error', req.t('Something is wrong.'));
-      res.redirect('back');
-      return;
-
       // Check to see if new passwords are blank
       if (new_password === '') {
         req.flash('error', req.t('Your password cannot be blank.'));
@@ -913,6 +908,11 @@ function registerUser(req, res, template, block, next) {
           next(err);
         }
         u.hash = hash;
+
+        //TODO : Add form validation and email confirmation
+        req.flash('error', req.t('Something is wrong.'));
+        res.redirect('back');
+        return;
 
         calipso.e.pre_emit('USER_CREATE', u);
         u.save(function (err) {
