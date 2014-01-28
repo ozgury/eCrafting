@@ -864,9 +864,6 @@ function registerUser(req, res, template, block, next) {
 
       u.username = u.email;
 
-      req.flash('error', req.t('Something is wrong.'));
-      res.redirect('back');
-      return;
       // Override admin
       if (req.session.user && req.session.user.isAdmin) {
 
@@ -887,6 +884,9 @@ function registerUser(req, res, template, block, next) {
       }
 
       //TODO : Add form validation and email confirmation
+      req.flash('error', req.t('Something is wrong.'));
+      res.redirect('back');
+      return;
 
       // Check to see if new passwords match
       if (new_password != repeat_password) {
