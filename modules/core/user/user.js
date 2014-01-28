@@ -929,11 +929,12 @@ function registerUser(req, res, template, block, next) {
               req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
               res.redirect('/user/profile/' + u.username);
               calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
-              return next(err);
+              return;
+              //return next(err);
             }
           }
           // If not already redirecting, then redirect
-          next(err);
+          //next(err);
         });
 
       });
