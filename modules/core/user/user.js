@@ -863,7 +863,7 @@ function registerUser(req, res, template, block, next) {
       var u = new User(form.user);
 
       u.username = u.email;
-      // Over ride admin
+      // Override admin
       if (req.session.user && req.session.user.isAdmin) {
 
         var newRoles = [];
