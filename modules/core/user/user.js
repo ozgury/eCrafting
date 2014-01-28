@@ -852,17 +852,21 @@ function registerUser(req, res, template, block, next) {
       // Get the password values and remove from form
       // This ensures they are never stored
       var new_password = form.user.new_password;
-      delete form.user.new_password;
       var repeat_password = form.user.repeat_password;
+
+      delete form.user.new_password;
       delete form.user.repeat_password;
 
       if ((form.user.image != null) && (form.user.image == '')) {
         form.user.image = null;
       }
-
       var u = new User(form.user);
 
       u.username = u.email;
+
+      req.flash('error', req.t('Something is wrong.'));
+      res.redirect('back');
+      return;
       // Override admin
       if (req.session.user && req.session.user.isAdmin) {
 
