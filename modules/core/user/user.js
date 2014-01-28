@@ -7,7 +7,8 @@ var rootpath = process.cwd() + '/',
   roles = require('./user.roles'),
   Query = require("mongoose").Query,
   mongooseTypes = require("mongoose-types"),
-  everyauth = require("everyauth");
+  everyauth = require("everyauth"),
+  crypto = require('crypto');
 
 exports = module.exports = {
   init:init,
@@ -664,6 +665,7 @@ function updateUserProfile(req, res, template, block, next) {
             }
 
             u.password = ''; // Temporary for migration to hash, remove later
+
             // Create the hash
             calipso.lib.crypto.hash(new_password, calipso.config.get('session:secret'), function (err, hash) {
               if (err) {
@@ -897,6 +899,38 @@ function registerUser(req, res, template, block, next) {
         return;
       }
 
+      var hash = crypto.createHash('md5').update(calipso.config.get('session:secret') + u.email).digest('hex');
+
+      console.log('++++++++Hash: ', hash); // 9b74c9897bac770ffc029102a200c5de
+      u.hash = hash;
+
+      calipso.e.pre_emit('USER_CREATE', u);
+      u.save(function (err) {
+
+        if (err) {
+          var msg = err.message;
+          if (err.code === 11000) {
+            msg = "a user has already registered with that email";
+          }
+          req.flash('error', req.t('Could not save user because {msg}.', {msg:msg}));
+          if (res.statusCode != 302 && !res.noRedirect) {
+            res.redirect('back');
+          }
+          return;
+        } else {
+          calipso.e.post_emit('USER_CREATE', u);
+          calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
+          if (!res.noRedirect) {
+            req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
+            res.redirect('/user/profile/' + u.username);
+            return next(err);
+          }
+        }
+        // If not already redirecting, then redirect
+        next(err);
+      });
+
+/*
       // Create the hash
       calipso.lib.crypto.hash(new_password, calipso.config.get('session:secret'), function (err, hash) {
         //TODO : Add form validation and email confirmation
@@ -913,37 +947,9 @@ function registerUser(req, res, template, block, next) {
           }
           next(err);
         }
-        u.hash = hash;
-
-
-        calipso.e.pre_emit('USER_CREATE', u);
-        u.save(function (err) {
-
-          if (err) {
-            var msg = err.message;
-            if (err.code === 11000) {
-              msg = "a user has already registered with that email";
-            }
-            req.flash('error', req.t('Could not save user because {msg}.', {msg:msg}));
-            if (res.statusCode != 302 && !res.noRedirect) {
-              res.redirect('back');
-            }
-            return;
-          } else {
-            calipso.e.post_emit('USER_CREATE', u);
-            //calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
-            if (!res.noRedirect) {
-              req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
-              res.redirect('/user/profile/' + u.username);
-              return next(err);
-            }
-          }
-          // If not already redirecting, then redirect
-          //next(err);
-        });
 
       });
-
+*/
     }
   });
 }
