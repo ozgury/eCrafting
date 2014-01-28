@@ -899,6 +899,12 @@ function registerUser(req, res, template, block, next) {
 
       // Create the hash
       calipso.lib.crypto.hash(new_password, calipso.config.get('session:secret'), function (err, hash) {
+        //TODO : Add form validation and email confirmation
+        req.flash('error', req.t('Something is wrong.'));
+        res.redirect('back');
+        return;
+
+
         if (err) {
           req.flash('error', req.t('Could not hash user password because {msg}.', {msg:msg}));
           if (res.statusCode != 302 && !res.noRedirect) {
@@ -909,10 +915,6 @@ function registerUser(req, res, template, block, next) {
         }
         u.hash = hash;
 
-        //TODO : Add form validation and email confirmation
-        req.flash('error', req.t('Something is wrong.'));
-        res.redirect('back');
-        return;
 
         calipso.e.pre_emit('USER_CREATE', u);
         u.save(function (err) {
