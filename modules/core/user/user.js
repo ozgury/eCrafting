@@ -742,7 +742,7 @@ function loginUser(req, res, template, block, next) {
 
           if (user.hash != hash) {
             req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
-            next();
+            res.redirect(calipso.config.get('server:loginPath') || 'back');
             return;
           }
 
@@ -771,7 +771,7 @@ function loginUser(req, res, template, block, next) {
 
           if (res.statusCode != 302) {
             // res.redirect(calipso.config.get('server:loginPath') || 'back');
-            res.redirect('/');
+            res.redirect(calipso.config.get('server:loginPath') || 'back');
             return;
           }
           next();
@@ -779,7 +779,7 @@ function loginUser(req, res, template, block, next) {
 
         } else {
           req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
-          next();
+          res.redirect(calipso.config.get('server:loginPath') || 'back');
           return;
         }
       });
