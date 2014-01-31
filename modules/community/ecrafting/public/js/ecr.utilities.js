@@ -120,34 +120,6 @@ ecr.Utilities = function () {
 			apiWrapper.apiCall(command, null, 'DELETE', fileDeleted, fileDeleted);
 		});
 	}
-
-	this.setLocationSearch = function ($location) {
-		var geocoder = new google.maps.Geocoder();
-
-		$location.typeahead({
-		   source: function (query, process) {
-				new geocoder.geocode({ 'address': query, 'bounds': null }, function (results, status) {
-					var items = [];
-
-					$.map(results, function (item) {
-						items.push(item.formatted_address);
-					})
-	            return process(items);
-				});
-			},
-			//This bit is executed upon selection of an address
-			select: function (event, ui) {
-			//	egiq.page.search(ui.item.result);
-			}
-		}).bind('keypress', function (e) {
-			var code = (e.keyCode ? e.keyCode : e.which);
-			if (code == 13) {
-				e.stopPropagation();
-				//				egiq.page.search();
-				return false;
-			};
-		});
-	}
 };
 
 /*

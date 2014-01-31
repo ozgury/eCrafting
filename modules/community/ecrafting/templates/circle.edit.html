@@ -69,6 +69,8 @@
 					<input type="text" class="text" name="location" id="location" value="<%- circle.location %>" data-object="circle" />
 
 					<p class="help-block">Enter the circle location.</p>
+					<input type="hidden" name="lat" id="lat" value="<%- circle.lat %>" data-object="circle" />
+					<input type="hidden" name="lng" id="lng" value="<%- circle.lng %>" data-object="circle" />
 				</div>
 			</div>
 
@@ -137,4 +139,4 @@
 			</form>
 
 	<script src="/js/ecr.page.circle.edit.js"></script>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
