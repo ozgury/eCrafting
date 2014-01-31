@@ -46,7 +46,7 @@ function registerEventListeners () {
 	calipso.e.post('PROJECT_UPDATE', module.name, addActivity);
 	calipso.e.post('PROJECT_DELETE', module.name, addActivity);
 
-	calipso.e.post('USER_CREATE', module.name, addActivity);
+	calipso.e.post('USER_ACTIVATE', module.name, addActivity);
 	calipso.e.post('USER_LOGIN', module.name, addActivity);
 
 	calipso.e.post('CIRCLE_ADDED_USER', module.name, addActivity);
