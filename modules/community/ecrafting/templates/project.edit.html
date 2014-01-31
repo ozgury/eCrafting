@@ -95,6 +95,8 @@
 					<input type="text" class="text" name="location" id="location" value="<%- project.location %>"  data-object="project"/>
 
 					<p class="help-block">Enter the project location.</p>
+					<input type="hidden" name="lat" id="lat" value="<%- project.lat %>" data-object="project" />
+					<input type="hidden" name="lng" id="lng" value="<%- project.lng %>" data-object="project" />
 				</div>
 			</div>
 
@@ -113,4 +115,4 @@
 	</form>
 
 	<script src="/js/ecr.page.project.edit.js"></script>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>	
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>

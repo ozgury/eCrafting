@@ -18,5 +18,6 @@ ecr.page.Page = function () {
 		apiWrapper.ajaxifyFormSubmissionAsJson($('#FORM'), 'call', function (response, jqXHR) {
 			window.location.href = '/calls/show/' + response._id;
 		});
+		ecr.util.setLocationSearch();
 	}
 };

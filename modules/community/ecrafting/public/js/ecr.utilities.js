@@ -120,6 +120,35 @@ ecr.Utilities = function () {
 			apiWrapper.apiCall(command, null, 'DELETE', fileDeleted, fileDeleted);
 		});
 	}
+
+	this.setLocationSearch = function ($location) {
+		var service = new google.maps.places.AutocompleteService();
+		var geocoder = new google.maps.Geocoder();
+		 
+		$('#location').typeahead({
+		  source: function(query, process) {
+		    service.getPlacePredictions({ input: query }, function(predictions, status) {
+		      if (status == google.maps.places.PlacesServiceStatus.OK) {
+		        process($.map(predictions, function(prediction) {
+		          return prediction.description;
+		        }));
+		      }
+		    });
+		  },
+		  updater: function (item) {
+		    geocoder.geocode({ address: item }, function(results, status) {
+				if (status != google.maps.GeocoderStatus.OK) {
+					ecr.app.userError("Can't find the address.");
+					return;
+		    	}
+				$('#lat').val(results[0].geometry.location.lat());
+				$('#lng').val(results[0].geometry.location.lng());
+			});
+		    return item;
+		  }
+		});
+	}
+
 };
 
 /*

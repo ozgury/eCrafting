@@ -87,6 +87,8 @@
 					<input type="text" class="text" name="location" id="location" value="<%- call.location %>" data-object="call" />
 
 					<p class="help-block">Enter the call location.</p>
+					<input type="hidden" name="lat" id="lat" value="<%- call.lat %>" data-object="call" />
+					<input type="hidden" name="lng" id="lng" value="<%- call.lng %>" data-object="call" />
 				</div>
 			</div>
 
@@ -134,4 +136,4 @@
 			</form>
 
 	<script src="/js/ecr.page.call.edit.js"></script>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
