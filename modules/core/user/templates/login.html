@@ -4,6 +4,8 @@
 
     <%- form %>
 
+    <a href="javascript:void(0)" onclick="ecr.page.forgotPassword();">Forgot Password</a>
+
     <% } else { %>
 
     <h2><%- t("{name} Profile",{name:user.username}) %></h2>
@@ -15,3 +17,16 @@
 
     <% } %>
 </div>
+
+<script src="/js/ecr.page.login.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+    $(document).ready(function () {
+        ecr.load();
+        ecr.page = new ecr.page.Page();
+        ecr.page.initialize();
+    });
+//]]>
+</script>
+

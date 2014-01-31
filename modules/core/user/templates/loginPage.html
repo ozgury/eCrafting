@@ -15,3 +15,18 @@
 
     <% } %>
 </div>
+
+<script src="/js/ecr.page.login.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+    $(document).ready(function () {
+        ecr.load();
+        ecr.page = new ecr.page.Page();
+        if (ecr.page.initialize) {
+            ecr.page.initialize();
+        }
+    });
+//]]>
+</script>
+

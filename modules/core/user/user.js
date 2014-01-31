@@ -49,6 +49,7 @@ function init(module, app, next) {
   calipso.e.addEvent('USER_LOGIN');
   calipso.e.addEvent('USER_LOGOUT');
   calipso.e.addEvent('USER_ACTIVATIONMAIL');
+  calipso.e.addEvent('USER_FORGOTPASSWORD');
   calipso.e.addEvent('USER_ACTIVATE');
 
   // This shouldn't be here but in eCrafting, but because of the dependency issues need to add it here.
@@ -84,8 +85,11 @@ function init(module, app, next) {
       module.router.addRoute('GET /user/profile/:username/unlock', unlockUser, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/delete', deleteUser, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/activate/:username/:userId', activateUser, { end:false }, this.parallel());
-
+      module.router.addRoute('POST /user/resetpassword', resetPassword, {block:'content'}, this.parallel());
+      module.router.addRoute('GET /user/setpassword/:username/:userId', setPasswordPage, { end:false, template:'loginPage', block:'content' }, this.parallel());
+      module.router.addRoute('POST /user/setpassword', setPassword, null, this.parallel());
     },
+
     function done() {
 
       var User = new calipso.lib.mongoose.Schema({
@@ -186,7 +190,8 @@ function userDisplay(req, username, next) {
 function userFields() {
   var fields = calipso.auth.password ? [
     {label:'Username', name:'user[username]', type:'text'},
-    {label:'Password', name:'user[password]', type:'password'}
+    {label:'Password', name:'user[password]', type:'password'},
+    {name:'forgotPassword', text:'Forgot Password', type:'link', href:'javascript:void(0)' }
   ] : [];
   if (calipso.auth.google) {
     fields.push({name:'google', text:'Use Google Login', type:'link', href:'/auth/google', cls:'googleicon'});
@@ -643,44 +648,37 @@ function updateUserProfile(req, res, template, block, next) {
         if (old_password) {
 
           // Check to see if old password is valid
-          calipso.lib.crypto.check(old_password, u.hash, function (err, ok) {
-            if (u.hash != '' && !ok) {
+          var hash = crypto.createHash('md5').update(old_password + calipso.config.get('session:secret') + u.email).digest('hex');
+
+          if (u.hash != hash) {
               req.flash('error', req.t('Your old password was invalid.'));
               res.redirect('back');
               return;
-            }
+          }
 
-            // Check to see if new passwords match
-            if (new_password != repeat_password) {
-              req.flash('error', req.t('Your new passwords do not match.'));
-              res.redirect('back');
-              return;
-            }
+          // Check to see if new passwords match
+          if (new_password != repeat_password) {
+            req.flash('error', req.t('Your new passwords do not match.'));
+            res.redirect('back');
+            return;
+          }
 
-            // Check to see if new passwords are blank
-            if (new_password === '') {
-              req.flash('error', req.t('Your password cannot be blank.'));
-              res.redirect('back');
-              return;
-            }
+          // Check to see if new passwords are blank
+          if (new_password === '') {
+            req.flash('error', req.t('Your password cannot be blank.'));
+            res.redirect('back');
+            return;
+          }
 
-            u.password = ''; // Temporary for migration to hash, remove later
+          u.password = ''; // Temporary for migration to hash, remove later
 
-            // Create the hash
-            calipso.lib.crypto.hash(new_password, calipso.config.get('session:secret'), function (err, hash) {
-              if (err) {
-                req.flash('error', req.t('Could not hash password because {msg}.', {msg:err.message}));
-                if (res.statusCode != 302) {
-                  res.redirect('/');
-                  return;
-                }
-                next();
-                return;
-              }
-              u.hash = hash;
-              saveUser();
-            });
-          });
+
+          var newHash = crypto.createHash('md5').update(new_password + calipso.config.get('session:secret') + u.email).digest('hex');
+          
+          u.hash = newHash;
+          saveUser();
+
+
         } else {
           saveUser();
         }
@@ -740,37 +738,45 @@ function loginUser(req, res, template, block, next) {
 
       User.findOne({username:username}, function (err, user) {
         if (user) {
-          calipso.lib.crypto.check(form.user.password, user.hash, function (err, ok) {
-            if (user && !user.locked && ok) {
-              found = true;
-              if (found && !user.active) {
-                req.flash('error', req.t('This account is not active. Please click on the activation link in your email.'));
-                res.redirect(calipso.config.get('server:loginPath') || 'back');
-                return;
-              }
+          var hash = crypto.createHash('md5').update(form.user.password + calipso.config.get('session:secret') + user.email).digest('hex');
 
-              calipso.e.post_emit('USER_LOGIN', user);
-              createUserSession(req, res, user, function (err) {
-                if (err) {
-                  calipso.error("Error saving session: " + err);
-                }
-              });
-            }
+          if (user.hash != hash) {
+            req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
+            next();
+            return;
+          }
 
-            if (!found) {
-              req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
+          if (user && !user.locked) {
+            found = true;
+            if (found && !user.active) {
+              calipso.e.post_emit('USER_ACTIVATIONMAIL', user);
+              req.flash('error', req.t('This account is not active. We just sent you an email to activate your account. Please click on the activation link in the email.'));
               res.redirect(calipso.config.get('server:loginPath') || 'back');
               return;
             }
 
-            if (res.statusCode != 302) {
-              // res.redirect(calipso.config.get('server:loginPath') || 'back');
-              res.redirect('/');
-              return;
-            }
-            next();
+            calipso.e.post_emit('USER_LOGIN', user);
+            createUserSession(req, res, user, function (err) {
+              if (err) {
+                calipso.error("Error saving session: " + err);
+              }
+            });
+          }
+
+          if (!found) {
+            req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
+            res.redirect(calipso.config.get('server:loginPath') || 'back');
             return;
-          });
+          }
+
+          if (res.statusCode != 302) {
+            // res.redirect(calipso.config.get('server:loginPath') || 'back');
+            res.redirect('/');
+            return;
+          }
+          next();
+          return;
+
         } else {
           req.flash('error', req.t('You may have entered an incorrect username or password, please try again.'));
           next();
@@ -780,6 +786,140 @@ function loginUser(req, res, template, block, next) {
     }
   });
 }
+
+/**
+ * Reset Password
+ */
+function resetPassword(req, res, template, block, next) {
+  var User = calipso.db.model('User');
+  var username = req.body.username;
+
+
+  User.findOne({username:username}, function (err, u) {
+
+    console.log("user: ", u);
+
+    if (err || !u) {
+      return res.send(500);
+    }
+    calipso.e.post_emit('USER_FORGOTPASSWORD', u);
+    return res.send(200, u);
+  });
+}
+
+function setPasswordPage(req, res, template, block, next) {
+  var User = calipso.db.model('User');
+  var username = req.moduleParams.username;
+
+  console.log("Username: ", username);
+
+  var username = req.moduleParams.username;
+  var userId = req.moduleParams.userId;
+
+  User.findOne({username:username}, function (err, u) {
+
+    if (err || !u) {
+      req.flash('error', req.t('Problem processing the request.'));
+      res.redirect('/');
+      return;
+    }
+    if (u._id != userId) {
+      console.log("u._id: ", u._id);
+      req.flash('error', req.t('Problem processing the request.'));
+      res.redirect('/');
+      return;
+    }
+  });
+
+  var fields = calipso.auth.password ? [
+    {label:'Username', name:'user[usernamelabel]', type:'text', readonly:'true', value: username},
+    {label:'New Password', name:'user[new_password]', type:'password', description:'Enter a password, the stronger the better.'},
+    {label:'Repeat Password', name:'user[repeat_password]', type:'password', description:'Repeat as always.'},
+    {label:'Username', name:'user[username]', type:'hidden', value: username},
+  ] : [];
+
+  var userForm = {
+    id: 'setPassword-form', cls:'login', title:'Set Password', type:'form', method:'POST', action:'/user/setpassword',
+    fields: fields,
+    buttons:[
+      {name:'submit', type:'submit', value:'Change'}
+    ]
+  };
+
+  calipso.form.render(userForm, null, req, function (form) {
+    calipso.theme.renderItem(req, res, template, block, {form:form}, next);
+  });
+
+}
+
+function setPassword(req, res, template, block, next) {
+
+  calipso.form.process(req, function (form) {
+    if (form) {
+
+      var User = calipso.db.model('User');
+      var username = form.user.username;
+      var found = false;
+
+      console.log("form:", form);
+
+      User.findOne({username:username}, function (err, user) {
+        if (user) {
+          var new_password = form.user.new_password;
+          delete form.user.new_password;
+          var repeat_password = form.user.repeat_password;
+          delete form.user.repeat_password;
+
+          // Check to see if new passwords match
+          if (new_password != repeat_password) {
+            req.flash('error', req.t('Your new passwords do not match.'));
+            res.redirect('back');
+            return;
+          }
+
+          // Check to see if new passwords are blank
+          if (new_password === '') {
+            req.flash('error', req.t('Your password cannot be blank.'));
+            res.redirect('back');
+            return;
+          }
+
+          user.password = ''; // Temporary for migration to hash, remove later
+
+
+          var newHash = crypto.createHash('md5').update(new_password + calipso.config.get('session:secret') + user.email).digest('hex');
+          
+          user.hash = newHash;
+
+          user.save(function (err) {
+            if (err) {
+
+              req.flash('error', req.t('Could not save user because {msg}.', {msg:err.message}));
+              if (res.statusCode != 302) {
+                res.redirect('back');
+                return;
+              }
+
+            } else {
+              createUserSession(req, res, user, function (err) {
+                if (err) {
+                  calipso.error("Error saving session: " + err);
+                }
+                res.redirect('/');
+              });
+
+            }
+          });
+        } else {
+          req.flash('error', req.t('Problem processing the request.'));
+          next();
+          return;
+        }
+      });
+    }
+  });
+}
+
 
 /**
  * Helper function to check if the user is an admin
@@ -899,7 +1039,7 @@ function registerUser(req, res, template, block, next) {
         return;
       }
 
-      var hash = crypto.createHash('md5').update(calipso.config.get('session:secret') + u.email).digest('hex');
+      var hash = crypto.createHash('md5').update(new_password + calipso.config.get('session:secret') + u.email).digest('hex');
 
       console.log('++++++++Hash: ', hash); // 9b74c9897bac770ffc029102a200c5de
       u.hash = hash;
@@ -1088,7 +1228,6 @@ function activateUser(req, res, template, block, next) {
       });
     });
   });
-
 }
 
 
@@ -1276,16 +1415,14 @@ function install(next) {
           about:'',
           roles:['Administrator']
         });
-        calipso.lib.crypto.hash(adminUser.password, calipso.config.get('session:secret'), function (err, hash) {
-          if (err) {
-            return self()(err);
-          }
-          admin.hash = hash;
-          admin.save(self());
-        }),
 
-          // Delete this now to ensure it isn't hanging around;
-          delete calipso.data.adminUser;
+       var hash = crypto.createHash('md5').update(adminUser.password + calipso.config.get('session:secret') + u.email).digest('hex');
+
+        admin.hash = hash;
+        admin.save(self());
+
+        // Delete this now to ensure it isn't hanging around;
+        delete calipso.data.adminUser;
 
       } else {
         // Fatal error
