@@ -686,6 +686,8 @@ function listMedia(req, res, template, block, next) {
 				return responseError(res, 404, err);
 			}
 			res.contentType(m.mediaType);
+			res.setHeader('Content-disposition', 'attachment; filename=' + m.fileName);
+
 			if (size == 'mini') {
 				res.send(m.dataMini);
 			} else if (size == 'small') {
