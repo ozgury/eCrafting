@@ -23,7 +23,7 @@
 		<div class="control-group field-type-file" id="circle_image-wrapper">
 			<label class="control-label" for="fileupload">Image:</label>
 			<div class="controls">
-				<input type="hidden" id="image" name="image" value="<%- circle.image %>"  data-object="circle"/>
+				<input type="hidden" id="image" name="image" value="<%- circle.image %>" data-object="circle"/>
 
 				<% if(circle.image) { %>
 				<div class="fileupload fileupload-exists" data-provides="fileupload">
@@ -41,7 +41,7 @@
 						<span class="btn btn-file">
 							<span class="fileupload-new">Select image</span>
 							<span class="fileupload-exists">Change</span>
-							<input id="fileupload" name="files[]" type="file" />
+							<input id="fileupload" name="files[]" type="file" accept="image/*" />
 						</span>
 						<a href="javascript:void()" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
 					</div>

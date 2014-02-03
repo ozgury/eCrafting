@@ -13,7 +13,9 @@ ecr.page.Page = function () {
 	var apiWrapper = new ecr.ApiWrapper();
 
 	this.initialize = function () {
-		ecr.util.setFileUpload($(':file'), $('#image'), $('.removebutton'));
+		ecr.util.setFileUploadDiv($('#imageUpload'));
+		ecr.util.setFileUploadDiv($('#attachmentUpload'));
+//		ecr.util.setFileUpload($(':file'), $('#image'), $('.removebutton'));
 		ecr.util.setLocationSearch($('#location'));		
 		apiWrapper.ajaxifyFormSubmissionAsJson($('#FORM'), 'call', function (response, jqXHR) {
 			window.location.href = '/calls/show/' + response._id;

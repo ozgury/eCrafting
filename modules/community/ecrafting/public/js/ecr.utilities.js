@@ -80,7 +80,53 @@ ecr.Utilities = function () {
 		return text.length > length ? text.substr(0, length - 1) + '…' : text;
 	};
 
-	this.setFileUpload = function ($fileUpload, $idInput, $removeButton) {
+	this.setFileUploadDiv = function ($rootDiv) {
+		// $(':file'), $('#image'), $('.removebutton')
+		var apiWrapper = new ecr.ApiWrapper();
+		var $fileUpload = $rootDiv.find(':file'), 
+			$idInput = $rootDiv.find('.id'), 
+			$removeButton = $rootDiv.find('.removebutton');
+
+		$fileUpload.fileupload({
+			url: '/api/media/' + $idInput.val(),
+			sequentialUploads: true,
+			singleFileUploads: false,
+			dataType: 'json',
+			uploadtype: 'image',
+			progressall: function (e, data) {
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				$rootDiv.find('#progress').removeClass('hidden');
+				$rootDiv.find('#progress .bar').css(
+					'width',
+					progress + '%'
+					);
+			},
+		}).bind('fileuploadalways', function (e, data) {
+			if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
+				$rootDiv.find('#progress').addClass('hidden');
+				$rootDiv.find('.fileupload').removeClass('fileupload-new').addClass('fileupload-exists');
+				$rootDiv.find('.fileupload').find('.fileupload-preview img').attr('src', '/api/media/' + (JSON.parse(data.xhr().response))[0]._id);
+				$rootDiv.find('.fileupload').find('span.fileupload-preview').html((JSON.parse(data.xhr().response))[0].fileName);
+				$idInput.val((JSON.parse(data.xhr().response))[0]._id);
+				that.setFileUploadDiv($rootDiv);
+			}
+		});
+
+		function fileDeleted(response, jqXhr) {
+			$rootDiv.find('.fileupload').addClass('fileupload-new').removeClass('fileupload-exists');			
+			$rootDiv.find('.fileupload').find('span.fileupload-preview').html('');
+			$idInput.val('');
+			that.setFileUpload($fileUpload, $idInput, $removeButton);
+		}
+
+		$removeButton.click(function(event){
+			var command = 'media/' + $idInput.val();
+
+			apiWrapper.apiCall(command, null, 'DELETE', fileDeleted, fileDeleted);
+		});
+	}
+
+	this.setFileUpload = function ($fileUpload, $idInput, $removeButton, imagesOnly) {
 		var apiWrapper = new ecr.ApiWrapper();
 
 		$fileUpload.fileupload({
@@ -88,6 +134,7 @@ ecr.Utilities = function () {
 			sequentialUploads: true,
 			singleFileUploads: false,
 			dataType: 'json',
+			uploadtype: 'image',
 			progressall: function (e, data) {
 				var progress = parseInt(data.loaded / data.total * 100, 10);
 				$('#progress').removeClass('hidden');

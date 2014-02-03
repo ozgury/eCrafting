@@ -79,6 +79,10 @@ function init(module, app, next) {
 			description: {
 				type: String,
 			},
+			attachment: {
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Media'
+			},
 			date: {
 				type: Date,
 				required: true

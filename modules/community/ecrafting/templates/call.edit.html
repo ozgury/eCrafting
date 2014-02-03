@@ -30,8 +30,8 @@
 
 		<div class="control-group field-type-file" id="call_image-wrapper">
 			<label class="control-label" for="fileupload">Image:</label>
-			<div class="controls">
-				<input type="hidden" id="image" name="image" value="<%- call.image %>" data-object="call" />
+			<div id="imageUpload" class="controls">
+				<input type="hidden" id="image" name="image" class="id" value="<%- call.image %>" data-object="call" />
 
 				<% if(call.image) { %>
 				<div class="fileupload fileupload-exists" data-provides="fileupload">
@@ -49,7 +49,7 @@
 						<span class="btn btn-file">
 							<span class="fileupload-new">Select image</span>
 							<span class="fileupload-exists">Change</span>
-							<input id="fileupload" name="files[]" type="file" />
+							<input id="fileupload" name="files[]" type="file"  accept="image/*"/>
 						</span>
 						<a href="javascript:void()" class="removebutton btn fileupload-exists" data-dismiss="fileupload">Remove</a>
 					</div>
@@ -67,6 +67,37 @@
 					<textarea class="textarea" rows="10" name="description" id="description" data-object="call"><%- call.description %></textarea>
 
 					<p class="help-block">Enter a description.</p>
+				</div>
+			</div>
+
+			<div class="control-group field-type-textarea" id="circle_description-wrapper">
+				<label class="control-label" for="description">Attachments:</label>
+				<div class="controls" id="attachmentUpload">
+				<input type="hidden" id="attachment" name="attachment" class="id" value="<%- call.attachment %>" data-object="call" />
+
+					<% if (call.attachment) { %>
+						<a href="/api/media/<%- call.attachment %>">Download</a>
+					<% } %>
+
+					<div class="fileupload fileupload-new" data-provides="fileupload">
+						<div class="input-append">
+							<div class="uneditable-input span3">
+								<i class="icon-file fileupload-exists"></i>
+								<span class="fileupload-preview"></span>
+							</div>
+							<span class="btn btn-file">
+								<span class="fileupload-new">Select file</span>
+								<span class="fileupload-exists">Change</span>
+								<input type="file" />
+							</span>
+							<a href="javascript:void()" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+						</div>
+					</div>
+					<div id="progress" class="progress progress-striped active hidden">
+						<div class="bar" style="width: 0;"></div>
+					</div>
+
+					<p class="help-block">You can upload a file for the circle.</p>
 				</div>
 			</div>
 

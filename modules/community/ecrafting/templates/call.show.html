@@ -67,6 +67,16 @@
 					<th><%- t('Description') %></th>
 					<td><%- call.description %></td>
 				</tr>
+				<%
+				if (call.attachment) {
+					%>
+					<tr>
+						<th><%- t('Attachment') %></th>
+						<td><a href="/api/media/<%- call.attachment %>">Download</a></td>
+					</tr>
+					<%
+				}
+				%>
 				<tr>
 					<th><%- t('Materials') %></th>
 					<td><%- call.materials %></td>

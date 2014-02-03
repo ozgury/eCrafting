@@ -20,9 +20,9 @@ function createThumbnail(file, next) {
 
 	im.identify(file, function(err, ident_metadata){
 		im.readMetadata(file, function(err, exif_metadata) {
-
 			var metadata = calipso.lib._.extend(ident_metadata, exif_metadata);
 		//	var metadata = media.get('metadata');
+
 			var isPortrait = (metadata.width < metadata.height);
 			
 			var thumbSharpen = '0.2'
@@ -41,7 +41,7 @@ function createThumbnail(file, next) {
 	});
 }
 
-function copyAndCreateThumbnails(from, to, next) {
+function copyAndCreateThumbnails(from, to, type, next) {
 
 	mkdirp(path.dirname(to), 0755, function (err) {
 		if (err) {
@@ -51,10 +51,16 @@ function copyAndCreateThumbnails(from, to, next) {
 			var os = fs.createWriteStream(to);
 
 			util.pump(is, os, function(err) {
+				console.log("type: ", type);
 				fs.unlinkSync(from);
-				createThumbnail(to, function(err) {
+				if (type.indexOf("image/") == 0) {
+					createThumbnail(to, function(err) {
+						next(err);
+					});
+				} else {
 					next(err);
-				});
+				}
+
 			});
 		}
 	});
@@ -71,43 +77,9 @@ function mediaPath(filePath) {
 	return newPath + filePath;
 }
 
-/*
-
-		im.identify(file.to, function(err, ident_metadata){
-
-			// If imagemagick fails (not installed) ignore silently
-			if (!err) {    
-				
-				var thumb = path.join(
-						path.dirname(file.to),
-						path.basename(file.to, path.extname(file.to)) + "-thumb" + path.extname(file.to));
-				
-				m.thumb = thumb.replace(path.join(rootpath,"media"),"");
-				im.readMetadata(file.to, function(err, exif_metadata) {
-					var metadata = calipso.lib._.extend(ident_metadata, exif_metadata);
-				
-					// Set our metadata
-					m.set('metadata',metadata);          
-
-					fixRotation(m, function(err, m) {
-							createThumbnail(m, function(err, m) {
-								if (err) throw err                
-								m.save(function(err) {
-									next(err, m._id);  
-								});      
-							});              
-
-					});
-				});
-			} else {
-				calipso.silly("ImageMagick failed, no thumbnail or rotation available ...");
-			}      
-
-*/
-
 function processUploadedFiles(req, res, each, next) {
 	function processOne(file, next) {
-		copyAndCreateThumbnails(file.file.path, file.to, function(err) {
+		copyAndCreateThumbnails(file.file.path, file.to, file.file.type, function(err) {
 			each(err, file, next);
 		});
 	}

@@ -106,6 +106,9 @@ function readCallFromBody(req, body, existingCall) {
 	if ((body.image != null) && (body.image == '')) {
 		body.image = null;
 	}
+	if ((body.attachment != null) && (body.attachment == '')) {
+		body.attachment = null;
+	}
 	if (!existingCall) {
 		var Call = calipso.db.model('Call');
 
@@ -402,6 +405,7 @@ function updateCircleCall(req, res, template, block, next) {
 							return responseError(res, 400, err);
 						}
 						calipso.e.post_emit('CALL_UPDATE', call);
+						console.log("Call: ", call);
 						return responseOk(res, call);
 					});
 				}
@@ -644,13 +648,15 @@ function createMedia(req, res, template, block, next) {
 		m.author = author;
 
 		m.data = fs.readFileSync(file.to);
-		m.dataSmall = fs.readFileSync(file.to + 'small');
-		m.dataMini = fs.readFileSync(file.to + 'mini');
-
 		fs.unlinkSync(file.to);
-		fs.unlinkSync(file.to + 'small');
-		fs.unlinkSync(file.to + 'mini');
 
+		if (file.file.type.indexOf("image/") == 0) {
+			m.dataSmall = fs.readFileSync(file.to + 'small');
+			m.dataMini = fs.readFileSync(file.to + 'mini');
+
+			fs.unlinkSync(file.to + 'small');
+			fs.unlinkSync(file.to + 'mini');
+		}
 
 		calipso.e.pre_emit('MEDIA_CREATE', m);
 		m.save(function(err) {
@@ -732,12 +738,14 @@ function updateMedia(req, res, template, block, next) {
 			m.author = author;
 
 			m.data = fs.readFileSync(file.to);
-			m.dataSmall = fs.readFileSync(file.to + 'small');
-			m.dataMini = fs.readFileSync(file.to + 'mini');
-
 			fs.unlinkSync(file.to);
-			fs.unlinkSync(file.to + 'small');
-			fs.unlinkSync(file.to + 'mini');
+
+			if (file.file.type.indexOf("image/") == 0) {
+				m.dataSmall = fs.readFileSync(file.to + 'small');
+				m.dataMini = fs.readFileSync(file.to + 'mini');
+				fs.unlinkSync(file.to + 'small');
+				fs.unlinkSync(file.to + 'mini');
+			}
 
 			calipso.e.pre_emit('MEDIA_UPDATE', m);
 			m.save(function(err) {
@@ -745,6 +753,7 @@ function updateMedia(req, res, template, block, next) {
 					responseError(res, 400, err);
 				}
 				calipso.e.post_emit('MEDIA_UPDATE', m);
+				console.log("Media: ", m);
 				next(err);
 			});
 			results.push(m);
