@@ -1,7 +1,10 @@
 <div class="hero-unit">
+<div id="controls"></div>
+<div id="gmap"></div>
 	<p><strong>ecrafting</strong> team has been busy this past year, completely revamping the inner workshops of 
 		our system. More workshops, better tools and better spaces.</p>
 	<p><a href="#" class="btn btn-primary btn-large btn-block">Create a new Call</a></p>
+	
 </div>
 <ul class="thumbnails">
 	<li class="span4">
@@ -10,7 +13,7 @@
 			<figcaption>
 				<h5>Philadelphia</h5>
 				<p>
-				<a href="#" class="btn btn-primary popover-link" data-original-title="">Join</a>
+				<a href="/calls/list" class="btn btn-primary popover-link" data-original-title="">Join</a>
 				</p>
 			</figcaption>
 		</figure>
@@ -23,7 +26,7 @@
 				<!-- <p>This is a short caption. It contains some technical language like 
 					domain-specific terms like.
 				<p> -->
-					<a href="#" class="btn btn-primary popover-link" data-original-title="">Join</a>
+					<a href="/calls/list" class="btn btn-primary popover-link" data-original-title="">Join</a>
 				</p>
 			</figcaption>
 		</figure>
@@ -36,7 +39,7 @@
 				<!-- <p>This is a short caption. It contains some technical language like 
 					domain-specific terms like.
 				<p> -->
-					<a href="#" class="btn btn-primary popover-link" data-original-title="">Join</a>
+					<a href="/calls/list" class="btn btn-primary popover-link" data-original-title="">Join</a>
 				</p>
 			</figcaption>
 		</figure>
@@ -51,7 +54,7 @@
 				<!-- <p>This is a short caption. It contains some technical language like 
 					domain-specific terms like.
 				<p> -->
-					<a href="#" class="btn btn-primary popover-link" data-original-title="">Join</a>
+					<a href="/calls/list" class="btn btn-primary popover-link" data-original-title="">Join</a>
 				</p>
 			</figcaption>
 		</figure>
@@ -64,7 +67,7 @@
 				<!-- <p>This is a short caption. It contains some technical language like 
 					domain-specific terms like.
 				<p> -->
-					<a href="#" class="btn btn-primary popover-link" data-original-title="">Join</a>
+					<a href="/calls/list" class="btn btn-primary popover-link" data-original-title="">Join</a>
 				</p>
 			</figcaption>
 		</figure>
@@ -77,9 +80,39 @@
 				<!-- <p>This is a short caption. It contains some technical language like 
 					domain-specific terms like.
 				<p> -->
-					<a href="#" class="btn btn-primary popover-link" data-original-title="">Join</a>
+					<a href="/calls/list" class="btn btn-primary popover-link" data-original-title="">Join</a>
 				</p>
 			</figcaption>
 		</figure>
 	</li>
 </ul>
+
+
+
+<script src="http://maps.google.com/maps/api/js?sensor=false&libraries=geometry&v=3.7"></script>
+<script src="/js/maplace.min.js"></script>
+
+<script type="text/javascript">
+
+var data = [{
+        lat: 45.9,
+        lon: 10.9,
+        title: 'Title A1',
+        html: '<h3>Content A1</h3>',
+        zoom: 8,
+        icon: 'http://www.google.com/mapfiles/markerA.png'
+    },{
+        lat: 44.8,
+        lon: 1.7,
+        title: 'Title B1',
+        html: '<h3>Content B1</h3>',
+        show_infowindows: false
+    }
+];
+	//dropdown example
+new Maplace({
+    locations: data,
+    controls_type: 'list',
+    controls_on_map: false
+}).Load();
+</script>
