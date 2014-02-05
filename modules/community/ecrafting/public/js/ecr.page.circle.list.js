@@ -21,7 +21,7 @@ ecr.page.Page = function () {
 				if (!circle.image) {
 					circle.image = "http://placehold.it/100x100/95A5A6/fff/&text=C";
 				} else {
-					circle.image = '/api/media/' + circle.image;
+					circle.image = '/api/media/' + circle.image + ".small";
 				}
 				$('#circleList').append(Mustache.to_html($('#circleListItem').val(), circle));
 			});
