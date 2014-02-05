@@ -196,6 +196,14 @@ a:hover {
 
 
 
+/* CURRENT CALL PAGE */
+
+.wide-image {
+  max-height: 400px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
 /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */
 /* Carousel base class */
@@ -219,7 +227,7 @@ a:hover {
 }
 
 .carousel .item {
-  height: 500px;
+  height: 400px;
 }
 .carousel img {
   position: absolute;
@@ -235,7 +243,7 @@ a:hover {
   position: static;
   max-width: 550px;
   padding: 0 60px;
-  margin-top: 300px;
+  margin-top: 200px;
 }
 .carousel-caption h1,
 .carousel-caption .lead {
