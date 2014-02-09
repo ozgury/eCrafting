@@ -106,9 +106,6 @@ function readCallFromBody(req, body, existingCall) {
 	if ((body.image != null) && (body.image == '')) {
 		body.image = null;
 	}
-	if ((body.attachment != null) && (body.attachment == '')) {
-		body.attachment = null;
-	}
 	if (!existingCall) {
 		var Call = calipso.db.model('Call');
 
@@ -242,12 +239,12 @@ function updateCircle(req, res, template, block, next) {
 	if (!id) {
 		var newCircle = readCircleFromBody(req, req.body);
 
-		calipso.e.pre_emit('CIRCLE_CREATE', newCircle);
+		calipso.e.pre_emit('CIRCLE_CREATE', { circle: newCircle, user: req.session.user});
 		newCircle.save(function (err) {
 			if (err) {
 				return responseError(res, 400, err);
 			}
-			calipso.e.post_emit('CIRCLE_CREATE', newCircle);
+			calipso.e.post_emit('CIRCLE_CREATE', { circle: newCircle, user: req.session.user});
 			return responseOk(res, newCircle);
 		});
 		return next();
@@ -259,15 +256,15 @@ function updateCircle(req, res, template, block, next) {
 				return responseError(res, 401);
 			} else {
 				var newCircle = readCircleFromBody(req, req.body, oldCircle);
-				calipso.e.pre_emit('CIRCLE_UPDATE', newCircle);
+				calipso.e.pre_emit('CIRCLE_UPDATE', { circle: newCircle, user: req.session.user});
 
 				newCircle.save(function (err) {
 					if (err) {
 						calipso.error("Error updating circle", err);
 						return responseError(res, 400, err);
 					}
-					calipso.e.post_emit('CIRCLE_UPDATE', oldCircle);
-					return responseOk(res, oldCircle);
+					calipso.e.post_emit('CIRCLE_UPDATE', { circle: newCircle, user: req.session.user});
+					return responseOk(res, newCircle);
 				});
 			}
 		});
@@ -370,7 +367,7 @@ function updateCircleCall(req, res, template, block, next) {
 			}
 			var newCall = readCallFromBody(req, req.body);
 
-			calipso.e.pre_emit('CALL_CREATE', newCall);
+			calipso.e.pre_emit('CALL_CREATE', { call: newCall, user: req.session.user});
 			newCall.save(function (err) {
 				if (err) {
 					calipso.error("Error creating call", err);
@@ -382,7 +379,7 @@ function updateCircleCall(req, res, template, block, next) {
 						calipso.error("Error creating call", err);
 						return responseError(res, 400, err);
 					}
-					calipso.e.post_emit('CALL_CREATE', newCall);
+					calipso.e.post_emit('CALL_CREATE', { call: newCall, user: req.session.user});
 					return responseOk(res, newCall);
 				});
 			});
@@ -405,7 +402,6 @@ function updateCircleCall(req, res, template, block, next) {
 							return responseError(res, 400, err);
 						}
 						calipso.e.post_emit('CALL_UPDATE', call);
-						console.log("Call: ", call);
 						return responseOk(res, call);
 					});
 				}
@@ -526,7 +522,7 @@ function updateCallProject(req, res, template, block, next) {
 			}
 			var newProject = readProjectFromBody(req, req.body);
 
-			calipso.e.pre_emit('PROJECT_CREATE', newProject);
+			calipso.e.pre_emit('PROJECT_CREATE', { project: newProject, user: req.session.user});
 			newProject.save(function (err) {
 				if (err) {
 					calipso.error("Error creating project", err);
@@ -541,7 +537,7 @@ function updateCallProject(req, res, template, block, next) {
 								calipso.error("Error creating project", err);
 								return responseError(res, 400, err);
 							}
-							calipso.e.post_emit('PROJECT_CREATE', newProject);
+							calipso.e.post_emit('PROJECT_CREATE', { project: newProject, user: req.session.user});
 							return responseOk(res, newProject);
 						});
 					}
@@ -559,7 +555,7 @@ function updateCallProject(req, res, template, block, next) {
 					if (!utilities.isAdminOrDataOwner(req, project)) {
 						return responseError(res, 401);			
 					}
-					calipso.e.pre_emit('PROJECT_UPDATE', project);
+					calipso.e.pre_emit('PROJECT_UPDATE', { project: project, user: req.session.user});
 
 					var updatedProject = readProjectFromBody(req, req.body, project);
 
@@ -568,7 +564,7 @@ function updateCallProject(req, res, template, block, next) {
 							calipso.error("Error updating project", err);
 							return responseError(res, 400, err);
 						}
-						calipso.e.post_emit('PROJECT_UPDATE', updatedProject);
+						calipso.e.post_emit('PROJECT_UPDATE', { project: updatedProject, user: req.session.user});
 						return responseOk(res, updatedProject);
 					});
 				}
@@ -648,15 +644,13 @@ function createMedia(req, res, template, block, next) {
 		m.author = author;
 
 		m.data = fs.readFileSync(file.to);
+		m.dataSmall = fs.readFileSync(file.to + 'small');
+		m.dataMini = fs.readFileSync(file.to + 'mini');
+
 		fs.unlinkSync(file.to);
+		fs.unlinkSync(file.to + 'small');
+		fs.unlinkSync(file.to + 'mini');
 
-		if (file.file.type.indexOf("image/") == 0) {
-			m.dataSmall = fs.readFileSync(file.to + 'small');
-			m.dataMini = fs.readFileSync(file.to + 'mini');
-
-			fs.unlinkSync(file.to + 'small');
-			fs.unlinkSync(file.to + 'mini');
-		}
 
 		calipso.e.pre_emit('MEDIA_CREATE', m);
 		m.save(function(err) {
@@ -686,8 +680,6 @@ function listMedia(req, res, template, block, next) {
 				return responseError(res, 404, err);
 			}
 			res.contentType(m.mediaType);
-			res.setHeader('Content-disposition', 'attachment; filename=' + m.fileName);
-
 			if (size == 'mini') {
 				res.send(m.dataMini);
 			} else if (size == 'small') {
@@ -740,14 +732,12 @@ function updateMedia(req, res, template, block, next) {
 			m.author = author;
 
 			m.data = fs.readFileSync(file.to);
-			fs.unlinkSync(file.to);
+			m.dataSmall = fs.readFileSync(file.to + 'small');
+			m.dataMini = fs.readFileSync(file.to + 'mini');
 
-			if (file.file.type.indexOf("image/") == 0) {
-				m.dataSmall = fs.readFileSync(file.to + 'small');
-				m.dataMini = fs.readFileSync(file.to + 'mini');
-				fs.unlinkSync(file.to + 'small');
-				fs.unlinkSync(file.to + 'mini');
-			}
+			fs.unlinkSync(file.to);
+			fs.unlinkSync(file.to + 'small');
+			fs.unlinkSync(file.to + 'mini');
 
 			calipso.e.pre_emit('MEDIA_UPDATE', m);
 			m.save(function(err) {
@@ -755,7 +745,6 @@ function updateMedia(req, res, template, block, next) {
 					responseError(res, 400, err);
 				}
 				calipso.e.post_emit('MEDIA_UPDATE', m);
-				console.log("Media: ", m);
 				next(err);
 			});
 			results.push(m);

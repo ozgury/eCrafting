@@ -68,27 +68,27 @@ function addActivity(event, data, next) {
 		case 'POST_CIRCLE_UPDATE':
 			var verb = (event === 'POST_CIRCLE_CREATE') ? 'created': 'updated';
 
-			activity.description = data.owner + ' just ' + verb + ' the circle \'' + data.name + '\'';
-			activity.link = '/circles/show/' + data.id;
-			activity.image = data.image;
+			activity.description = data.user.fullname + ' just ' + verb + ' the circle \'' + data.circle.name + '\'';
+			activity.link = '/circles/show/' + data.circle.id;
+			activity.image = data.circle.image;
 			break;
 
 		case 'POST_CALL_CREATE':
 		case 'POST_CALL_UPDATE':
 			var verb = (event === 'POST_CALL_CREATE') ? 'created': 'updated';
 
-			activity.description = data.owner + ' just ' + verb + ' the call \'' + data.name + '\'';
-			activity.link = '/calls/show/' + data.id;
-			activity.image = data.image;
+			activity.description = data.user.fullname + ' just ' + verb + ' the call \'' + data.call.name + '\'';
+			activity.link = '/calls/show/' + data.call.id;
+			activity.image = data.call.image;
 			break;
 
 		case 'POST_PROJECT_CREATE':
 		case 'POST_PROJECT_UPDATE':
 			var verb = (event === 'POST_PROJECT_CREATE') ? 'created': 'updated';
 
-			activity.description = data.owner + ' just ' + verb + ' the project \'' + data.name + '\'';
-			activity.link = '/projects/show/' + data.id;
-			activity.image = (data.media && data.media[0]) ? data.media[0] : null;
+			activity.description = data.user.fullname + ' just ' + verb + ' the project \'' + data.project.name + '\'';
+			activity.link = '/projects/show/' + data.project.id;
+			activity.image = (data.project.media && data.project.media[0]) ? data.project.media[0] : null;
 			break;
 
 		case 'POST_USER_CREATE':
