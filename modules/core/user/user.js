@@ -799,7 +799,7 @@ function resetPassword(req, res, template, block, next) {
 
   User.findOne({username:username}, function (err, u) {
 
-    console.log("user: ", u);
+//    console.log("user: ", u);
 
     if (err || !u) {
       return res.send(500);
@@ -813,7 +813,7 @@ function setPasswordPage(req, res, template, block, next) {
   var User = calipso.db.model('User');
   var username = req.moduleParams.username;
 
-  console.log("Username: ", username);
+//  console.log("Username: ", username);
 
   var username = req.moduleParams.username;
   var userId = req.moduleParams.userId;
@@ -826,7 +826,7 @@ function setPasswordPage(req, res, template, block, next) {
       return;
     }
     if (u._id != userId) {
-      console.log("u._id: ", u._id);
+//      console.log("u._id: ", u._id);
       req.flash('error', req.t('Problem processing the request.'));
       res.redirect('/');
       return;
@@ -863,7 +863,7 @@ function setPassword(req, res, template, block, next) {
       var username = form.user.username;
       var found = false;
 
-      console.log("form:", form);
+//      console.log("form:", form);
 
       User.findOne({username:username}, function (err, user) {
         if (user) {

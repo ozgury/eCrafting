@@ -34,14 +34,7 @@ ecr.page.Page = function () {
 			}
 
 			apiWrapper.call('/user/resetpassword', '{ "username": "' + email + '" }', 'POST', function (result, other, exception) {
-				if (result.status === 400) {
-					var modelState = eval($.parseJSON(result.responseText));
-
-					ecr.app.userError(modelState.errors.name.type);
-					$('#' + modelState.errors.name.path).focus();
-				} else if (result.status === 401) {
-					ecr.app.userError('Unauthorized.');
-				}
+				ecr.app.userSuccess("We snet you an email to reset your password.");
 			}, null)
 			return false;
 		});
