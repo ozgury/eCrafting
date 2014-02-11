@@ -34,7 +34,7 @@ ecr.page.Page = function () {
 			}
 
 			apiWrapper.call('/user/resetpassword', '{ "username": "' + email + '" }', 'POST', function (result, other, exception) {
-				ecr.app.userSuccess("We snet you an email to reset your password.");
+				ecr.app.userSuccess("We sent you an email to reset your password.");
 			}, null)
 			return false;
 		});
