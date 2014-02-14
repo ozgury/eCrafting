@@ -1,11 +1,10 @@
 <div class="hero-unit">
-	<p><strong>ecrafting</strong> team has been busy this past year, completely revamping the inner workshops of 
-		our system. More workshops, better tools and better spaces.</p>
+	<!-- <p><strong>ecrafting</strong> team has been busy this past year, completely revamping the inner workshops of our system. More workshops, better tools and better spaces.</p> -->
 
 	<div id="map" style="width: 100%; height: 300px"></div>
 	<br />
 
-	<p><a href="#" class="btn btn-primary btn-large btn-block">Create a new Call</a></p>
+	<p><a href="circles/list" class="btn btn-primary btn-large btn-block">Create a new Circle &amp; Call</a></p>
 	
 </div>
 <ul class="thumbnails">
@@ -104,18 +103,29 @@
 		}).addTo(map);
 
 
-		L.marker([39.95, -75.17]).addTo(map)
-			.bindPopup("<b>e-crafting!</b><br />Location.").openPopup();
+		$.getJSON( "/api/calls?apikey=webclient", function( data ) {
+	  
+		  $.each( data, function( key, val ) {
+
+		  	console.log(val)
+
+		  	L.marker([val.lat, val.lng]).addTo(map)
+			.bindPopup("<b>"+ val.name +"</b><br />"+val.location)
+			.openPopup();
+
+		  })
+
+		})
 
 
 		var popup = L.popup();
 
-		function onMapClick(e) {
-			popup
-				.setLatLng(e.latlng)
-				.setContent("You clicked the map at " + e.latlng.toString())
-				.openOn(map);
-		}
+		// function onMapClick(e) {
+		// 	popup
+		// 		.setLatLng(e.latlng)
+		// 		.setContent("You clicked the map at " + e.latlng.toString())
+		// 		.openOn(map);
+		// }
 
 		// map.on('click', onMapClick);
 
