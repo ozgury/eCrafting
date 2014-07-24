@@ -61,7 +61,7 @@ function apiDefault(req, res, template, block, next) {
 }
 
 function responseOk(res, body) {
-	return res.send(200, body);
+	return res.json(200, body);
 }
 
 function responseError(res, code, error) {
