@@ -89,7 +89,6 @@ ecr.ApiWrapper = function () {
 			url: url,
 			data: parameters,
 			contentType: (contentType == null) ? "application/json; charset=utf-8" : contentType,
-			dataType: 'json',
 			type: (type) ? type : 'GET',
 			success: function (data, textStatus, jqXhr) {
 				var responseProcess = ecr.app.longProcessStart('Process data ' + url);
