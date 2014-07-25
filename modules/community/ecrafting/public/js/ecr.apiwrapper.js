@@ -85,10 +85,9 @@ ecr.ApiWrapper = function () {
 	};
 
 	this.call = function (url, parameters, type, successFunction, errorFunction, contentType) {
-		return jQuery.ajax({
+		var options = {
 			url: url,
 			data: parameters,
-			contentType: (contentType == null) ? "application/json; charset=utf-8" : contentType,
 			type: (type) ? type : 'GET',
 			success: function (data, textStatus, jqXhr) {
 				var responseProcess = ecr.app.longProcessStart('Process data ' + url);
@@ -111,6 +110,10 @@ ecr.ApiWrapper = function () {
 			},
 			complete: function () {
 			}
-		});
+		};
+		if (contentType || (type == 'POST')) {
+			options.contentType = "application/json; charset=utf-8";
+		}
+		return jQuery.ajax(options);
 	};
 };
