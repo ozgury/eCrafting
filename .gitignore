@@ -14,6 +14,7 @@ media/*
 *.sock
 *.gz
 *.sass-cache
+*.jar
 .idea
 uploads/
 logs/
