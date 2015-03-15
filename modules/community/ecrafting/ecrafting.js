@@ -93,13 +93,13 @@ function addActivity(event, data, next) {
 
 		case 'POST_USER_CREATE':
 			activity.description = data.fullname + ' just registered.';
-			activity.link = '/user/profile/' + data.username;
+			activity.link = '/user/profile/' + data.id;
 			activity.image = data.image;
 			break;
 
 		case 'POST_USER_LOGIN':
 			activity.description = data.fullname + ' logged on to eCrafting.';
-			activity.link = '/user/profile/' + data.username;
+			activity.link = '/user/profile/' + data.id;
 			activity.image = data.image;
 			break;
 

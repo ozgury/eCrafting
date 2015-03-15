@@ -78,8 +78,9 @@ function init(module, app, next) {
       module.router.addRoute('GET /user/register', registerUserForm, {template:'user.edit',block:'content'}, this.parallel());
       module.router.addRoute('POST /user/register', registerUser, null, this.parallel());
       module.router.addRoute('GET /user', myProfile, {template:'profile', block:'content'}, this.parallel());
-      module.router.addRoute('GET /user/profile/:username', userProfile, {template:'profile', block:'content'}, this.parallel());
+//      module.router.addRoute('GET /user/profile/:username', userProfile, {template:'profile', block:'content'}, this.parallel());
       module.router.addRoute('POST /user/profile/:username', updateUserProfile, {block:'content'}, this.parallel());
+      module.router.addRoute('GET /user/profile/:userid', userProfile, {template:'profile', block:'content'}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/edit', updateUserForm, {template:'user.edit',block:'content'}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/lock', lockUser, {admin:true}, this.parallel());
       module.router.addRoute('GET /user/profile/:username/unlock', unlockUser, {admin:true}, this.parallel());
@@ -152,19 +153,19 @@ function setCookie(req, res, template, block, next) {
  * }
  * This needs to be a synchronous call so it can be used in templates.
  */
-function userDisplay(req, username, next) {
+function userDisplay(req, userid, next) {
 
   var isAdmin = (req.session.user && req.session.user.isAdmin);
   var isUser = (req.session.user);
   var User = calipso.db.model('User');
   var responseData = {name:'', email:''};
 
-  User.findOne({username:username}, function (err, u) {
+  User.findById(userid, function (err, u) {
 
     if (err || !u) {
 
       // Fail gracefully
-      responseData.name = username + " [" + req.t("No longer active") + "]";
+      responseData.name = userid + " [" + req.t("No longer active") + "]";
 
     } else {
 
@@ -710,7 +711,7 @@ function updateUserProfile(req, res, template, block, next) {
               }
 
               // Redirect to new page
-              res.redirect('/user/profile/' + u.username);
+              res.redirect('/user/profile/' + u.id);
               return;
 
             }
@@ -1114,29 +1115,34 @@ function myProfile(req, res, template, block, next) {
  */
 function userProfile(req, res, template, block, next) {
   var User = calipso.db.model('User');
-  var username = req.moduleParams.username;
+  // var username = req.moduleParams.username;
+  var userid = req.moduleParams.userid;
 
-  User.findOne({username:username}, function (err, u) {
+
+  // console.log("userid", userid);
+  // console.log("username", username);
+
+  User.findById(userid, function (err, u) {
 
     if (err || !u) {
-      req.flash('error', req.t('Could not locate user: {user}', {user:username}));
+      req.flash('error', req.t('Could not locate user: {user}', {user:userid}));
       res.redirect('/');
       return;
     }
 
     if (req.session.user && req.session.user.isAdmin) {
       res.menu.adminToolbar.addMenuItem(req, {name:'List', weight:2, path:'list', url:'/user/list', description:'List users ...', security:[]});
-      res.menu.adminToolbar.addMenuItem(req, {name:'Edit', weight:1, path:'edit', url:'/user/profile/' + username + '/edit', description:'Edit user details ...', security:[]});
-      res.menu.adminToolbar.addMenuItem(req, {name:'Delete', weight:3, path:'delete', url:'/user/profile/' + username + '/delete', description:'Delete account ...', security:[]});
+      res.menu.adminToolbar.addMenuItem(req, {name:'Edit', weight:1, path:'edit', url:'/user/profile/' + userid + '/edit', description:'Edit user details ...', security:[]});
+      res.menu.adminToolbar.addMenuItem(req, {name:'Delete', weight:3, path:'delete', url:'/user/profile/' + userid + '/delete', description:'Delete account ...', security:[]});
 
       if (u.locked) {
-        res.menu.adminToolbar.addMenuItem(req, {name:'Unlock', weight:4, path:'unlock', url:'/user/profile/' + username + '/unlock', description:'Unlock account ...', security:[]});
+        res.menu.adminToolbar.addMenuItem(req, {name:'Unlock', weight:4, path:'unlock', url:'/user/profile/' + userid + '/unlock', description:'Unlock account ...', security:[]});
       } else {
-        res.menu.adminToolbar.addMenuItem(req, {name:'Lock', weight:5, path:'lock', url:'/user/profile/' + username + '/lock', description:'Lock account ...', security:[]});
+        res.menu.adminToolbar.addMenuItem(req, {name:'Lock', weight:5, path:'lock', url:'/user/profile/' + userid + '/lock', description:'Lock account ...', security:[]});
       }
     }
 
-    userDisplay(req, username, function (err, display) {
+    userDisplay(req, userid, function (err, display) {
       calipso.theme.renderItem(req, res, template, block, {item:u, display:display}, next);
     });
 
