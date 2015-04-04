@@ -1243,7 +1243,7 @@ function activateUser(req, res, template, block, next) {
  * Helper function for link to user
  */
 function userLink(req, user) {
-  return calipso.link.render({id:user._id, title:req.t('View {user}', {user:user.username}), label:user.username, url:'/user/profile/' + user.username});
+  return calipso.link.render({id:user._id, title:req.t('View {user}', {user:user.username}), label:user.username, url:'/user/profile/' + user.id});
 }
 
 function roleLink(req, role) {
