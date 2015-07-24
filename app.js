@@ -240,7 +240,7 @@ function bootApplication(cluster, next) {
     var appId = app.config.get('server:authentication:facebookAppId');
     var appSecret = app.config.get('server:authentication:facebookAppSecret');
     if (appId && appSecret) {
-      calipso.auth.facebook = true;
+      calipso.auth.facebook = false;
       everyauth
         .facebook
         .myHostname(app.config.get('server:url'))
