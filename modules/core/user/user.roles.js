@@ -96,7 +96,7 @@ function storeRoles(event, data, next) {
     // Create a role array and object cache
     roles.forEach(function (role) {
       calipso.data.roleArray.push(role.name);
-      calipso.data.roles[role.name] = {description:role.description, isAdmin:role.isAdmin};
+      calipso.data.roles[role.name] = {description:role.description, isAdmin:role.isAdmin, isDefault:role.isDefault};
     });
 
     next();

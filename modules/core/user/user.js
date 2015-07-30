@@ -311,6 +311,7 @@ function registerUserForm(req, res, template, block, next) {
         label:'Your Details',
         fields:[
           {label:'Email', name:'user[email]', type:'text', placeholder: "email address", description:'Enter your email address, you can control the privacy settings of this.', cls: "input-xlarge"},
+          {label:'Username', name:'user[username]', type:'text', placeholder: "username", description:'Enter your username to use for login'},
           {label:'Image', name:'user[image]', type:'hidden'},
           {label:'Full Name', name:'user[fullname]', type:'text', description:'Enter your actual name, you can control the privacy settings of this.'},
           //{label:'Language', name:'user[language]', type:'select', options:req.languages, description:'Select your default language.'},
@@ -1007,7 +1008,8 @@ function registerUser(req, res, template, block, next) {
       }
       var u = new User(form.user);
 
-      u.username = u.email;
+      u.username = form.user.username;
+      u.email = form.user.email;
 
       // Override admin
       if (req.session.user && req.session.user.isAdmin) {
@@ -1015,7 +1017,7 @@ function registerUser(req, res, template, block, next) {
         var newRoles = [];
         u.isAdmin = false; // TO-DO Replace
         for (var role in form.user.roles) {
-          if (form.user.roles[role] === 'on') {
+          if (form.user.roles[role] === true) {
             newRoles.push(role);
             if (calipso.data.roles[role].isAdmin) {
               u.isAdmin = true;
@@ -1025,7 +1027,18 @@ function registerUser(req, res, template, block, next) {
         u.roles = newRoles;
 
       } else {
-        u.roles = ['Guest']; // Todo - need to make sure guest role can't be deleted?
+        var Roles = [];
+        for (var role in calipso.data.roles) {
+          if (calipso.data.roles[role].isDefault) {
+            Roles.push(role)
+          }
+        }
+        if (Roles.length == 0){
+          u.roles = ['Guest']; // Todo - need to make sure guest role can't be deleted?
+        }else{
+          u.roles = Roles;
+        }
+
       }
 
       // Check to see if new passwords match
