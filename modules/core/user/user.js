@@ -1304,6 +1304,7 @@ function listUsers(req, res, template, block, next) {
             {name:'_id', sort:'username', label:'User', fn:userLink},
             {name:'fullname', label:'Full Name'},
             {name:'roles', label:'Roles', sortable:false},
+            {name:'locked', label:'Locked'},
             {name:'email', label:'Email', fn:function (req, row) {
               return calipso.link.render({label:row.email, url:'mailto:' + row.email});
             }}

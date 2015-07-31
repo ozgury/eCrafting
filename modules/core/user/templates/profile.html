@@ -14,9 +14,20 @@
     <p><%= item.about %></p>
     <p>Name: <%= item.fullname %></p>
 
-    <p>
         <% if(user.isAdmin || user.username === item.username) { %>
-        <small><a href="/user/profile/<%= item.username %>/edit"><%= t('Edit Your Profile') %></a></small>
+            <div class="row-fluid">
+                <div class="span9 well">
+                <small><a href="/user/profile/<%= item.username %>/edit" class="btn" style="width: 20%;"><i class="iconic-document"></i><strong>Edit User</strong></a></small>
+                    <% if(user.isAdmin) { %>
+                        <small><a href="/user/profile/<%= item.username %>/delete" class="btn" style="width: 20%;"><i class="iconic-trash"></i><strong>Delete User</strong></a></small>
+                        <% if(item.locked) { %>
+                            <small><a href="/user/profile/<%= item.username %>/unlock" class="btn" style="width: 20%;"><i class="iconic-unlock"></i><strong>Unlock User</strong></a></small>
+                        <% } else {%>
+                            <small><a href="/user/profile/<%= item.username %>/lock" class="btn" style="width: 20%;"><i class="iconic-lock"></i><strong>Lock User</strong></a></small>
+                        <% } %>
+                        <small><a href="/user/list" class="btn" style="width: 20%;"><i class="iconic-list"></i><strong>User List</strong></a></small>
+                    <% } %>
+                </div>
+            </div>
         <% } %>
-    </p>
 </div>
