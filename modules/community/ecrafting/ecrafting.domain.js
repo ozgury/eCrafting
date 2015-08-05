@@ -42,18 +42,24 @@ function init(module, app, next) {
 
 		var Project = new calipso.lib.mongoose.Schema({
 			owner: {
-				type: calipso.lib.mongoose.SchemaTypes.Email,
+				type: String,
 				required: true
 			},
 			name: {
 				type: String,
 				required: true
 			},
+			youtube: {
+				type: String
+			},
 			description: {
-				type: String,
+				type: String
 			},
 			approved: {
 				type:Boolean
+			},
+			location: {
+				type: String
 			},
 			materials: [String],
 			media: [{
@@ -66,7 +72,7 @@ function init(module, app, next) {
 
 		var Call = new calipso.lib.mongoose.Schema({
 			owner: {
-				type: calipso.lib.mongoose.SchemaTypes.Email,
+				type: String,
 				required: true
 			},
 			image: {
@@ -101,7 +107,7 @@ function init(module, app, next) {
 
 		var Circle = new calipso.lib.mongoose.Schema({
 			owner: {
-				type: calipso.lib.mongoose.SchemaTypes.Email,
+				type: String,
 				required: true
 			},
 			image: {

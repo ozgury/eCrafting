@@ -59,11 +59,27 @@
 		</tr>
 		<tr>
 			<th><%- t('Materials') %></th>
-			<td><%- project.materials %></td>
+			<td><%- project._doc.materials %></td>
 		</tr>
 		<tr>
 			<th><%- t('Location') %></th>
-			<td><%- project.location %></td>
+			<td><%- project._doc.location %></td>
+		</tr>
+		<tr>
+			<th><%- t('Youtube Video') %></th>
+			<td>
+				<%
+				var link = project._doc.youtube
+				if(link !== undefined && link !== ""){
+					if(link.indexOf("www.youtube.com") > -1){
+					var youtubeLink = link.replace("/watch?v=", "/embed/");
+					%>
+					<iframe width="420" height="315"
+							src='<%- youtubeLink %>'>
+					</iframe>
+					<% }
+				} %>
+			</td>
 		</tr>
 		<tr>
 			<th><%- t('Media') %></th>

@@ -49,7 +49,6 @@
 				<p class="help-block">Enter an image for project.</p>
 			</div>
 		</div>
-
 		<ul class="thumbnails">
 			<%
 			if (project.media) {
@@ -68,7 +67,13 @@
 			}
 				%>
 			</ul>
-
+			<div class="control-group field-type-text" id="project_youtube-wrapper">
+				<label class="control-label" for="youtube">Youtube Link:</label>
+				<div class="controls">
+					<textarea class="textarea" rows="1" name="youtube" id="youtube" data-object="project"><%- project.youtube %></textarea>
+					<p class="help-block">Enter youtube link to detail.</p>
+				</div>
+			</div>
 			<div class="control-group field-type-textarea" id="project_description-wrapper">
 				<label class="control-label" for="description">Description:</label>
 				<div class="controls">
@@ -109,7 +114,7 @@
 
 			<div class="form-actions">
 				<input type="submit" class="submit btn btn-primary" name="submit" id="submit" value="Save Project" /> <input type="button" class="button btn" name="cancel"
-				onclick='window.location="/circle"' id="cancel" value="Cancel" />
+				onclick='window.location="/projects/show/<%- project._id %>/"' id="cancel" value="Cancel" />
 			</div>
 		</fieldset>
 	</form>
