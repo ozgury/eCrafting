@@ -106,6 +106,9 @@ function readCallFromBody(req, body, existingCall) {
 	if ((body.image != null) && (body.image == '')) {
 		body.image = null;
 	}
+	if ((body.attachment != null) && (body.attachment == '')) {
+		body.attachment = null;
+	}
 	if (!existingCall) {
 		var Call = calipso.db.model('Call');
 
@@ -394,14 +397,14 @@ function updateCircleCall(req, res, template, block, next) {
 					if (!utilities.isAdminOrDataOwner(req, call)) {
 						return responseError(res, 401);
 					}
-					calipso.e.pre_emit('CALL_UPDATE', call);
+					calipso.e.pre_emit('CALL_UPDATE', { call: call, user: req.session.user});
 					call = readCallFromBody(req, req.body, call);
 					call.save(function (err) {
 						if (err) {
 							calipso.error("Error updating call", err);
 							return responseError(res, 400, err);
 						}
-						calipso.e.post_emit('CALL_UPDATE', call);
+						calipso.e.post_emit('CALL_UPDATE', { call: call, user: req.session.user});
 						return responseOk(res, call);
 					});
 				}

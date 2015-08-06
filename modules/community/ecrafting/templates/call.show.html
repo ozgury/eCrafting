@@ -26,7 +26,8 @@
 </script> 
 
 <div class='circle'>
-	<legend><%- call.name %> in <%- circle.name %> 
+	<a href='/circles/show/<%- circle._id %>'><%- circle.name %></a> >> <%- call.name %>
+	<legend><%- call.name %>
 		<div class="pull-right">
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
 			<a href='/circles/show/<%- circle._id %>/' class="btn"><i class="icon-eye-open"></i> <strong>Go to Circle</strong></a>

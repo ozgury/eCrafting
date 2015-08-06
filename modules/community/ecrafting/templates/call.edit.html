@@ -70,8 +70,8 @@
 				</div>
 			</div>
 
-			<div class="control-group field-type-textarea" id="circle_description-wrapper">
-				<label class="control-label" for="description">Attachments:</label>
+			<div class="control-group field-type-file" id="call_attachment-wrapper">
+				<label class="control-label" for="fileupload">Attachments:</label>
 				<div class="controls" id="attachmentUpload">
 				<input type="hidden" id="attachment" name="attachment" class="id" value="<%- call.attachment %>" data-object="call" />
 
@@ -88,7 +88,7 @@
 							<span class="btn btn-file">
 								<span class="fileupload-new">Select file</span>
 								<span class="fileupload-exists">Change</span>
-								<input type="file" />
+								<input type="file"  accept="image/*"/>
 							</span>
 							<a href="javascript:void()" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
 						</div>

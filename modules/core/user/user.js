@@ -1078,7 +1078,7 @@ function registerUser(req, res, template, block, next) {
           calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
           if (!res.noRedirect) {
             req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
-            res.redirect('/user/profile/' + u.username);
+            res.redirect('/');
             return next(err);
           }
         }
