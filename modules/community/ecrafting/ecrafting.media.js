@@ -16,14 +16,11 @@
 	};
 
 function createThumbnail(file, next) {
-	var im = require('imagemagick');
 
 	im.identify(file, function(err, ident_metadata){
 		im.readMetadata(file, function(err, exif_metadata) {
 			var metadata = calipso.lib._.extend(ident_metadata, exif_metadata);
 		//	var metadata = media.get('metadata');
-
-			var isPortrait = (metadata.width < metadata.height);
 			
 			var thumbSharpen = '0.2'
 			var thumbQuality = '90';
@@ -50,7 +47,12 @@ function copyAndCreateThumbnails(from, to, type, next) {
 			var is = fs.createReadStream(from);
 			var os = fs.createWriteStream(to);
 
-			util.pump(is, os, function(err) {
+			is.pipe(os);
+
+			is.on("end", function(err) {
+				if (err) {
+					console.log(err)
+				}
 				console.log("type: ", type);
 				fs.unlinkSync(from);
 				if (type.indexOf("image/") == 0) {

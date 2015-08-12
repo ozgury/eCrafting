@@ -46,6 +46,9 @@ var routes = [
 		// Activities
 		{ path:'GET /api/activities', fn:listActivities },
 
+		//Search
+		{ path:'GET /api/search_member', fn:searchElement },
+
 		// Users
 		{ path:'GET /api/users', fn:listUsers, permit: calipso.permission.Helper.hasPermission("ecrafting:circle:update") }
 ]
@@ -803,6 +806,21 @@ function listActivities(req, res, template, block, next) {
 		}
 		return responseOk(res, activities);
 	});
+}
+
+/**
+ * Search
+ */
+function searchElement(req, res, template, block, next){
+		var Project = calipso.db.model('Project');
+		var regex = new RegExp(req.query["q"], 'i');
+
+		Project.find( { $or: [ {name: regex}, {owner: regex}, {materials: regex} ] }, function (err, users) {
+			if (err) {
+				return responseError(res, 404, err);
+			}
+			return responseOk(res, users);
+		});
 }
 
 /**
