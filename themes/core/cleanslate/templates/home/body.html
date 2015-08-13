@@ -41,29 +41,13 @@
 
 <!-- <div class="divider"></div> -->
 
-<div class"row">
-    <div class="span4 pagination-centered">
-      <div class="box">
-        <img class="img-circle" alt="" src="/images/home/03.jpg">
-        <h3 class="tile-title">Circles</h3>
-        <p>Create or join a new circle and be part of the eCrafting community.</p>
-        <a class="btn btn-browse btn-large btn-block " href="/circles/list">See the Circles</a>
+<div class="row">
+<div class="span4 pagination-centered">
+    <div class="box">
+        <img class="img-circle" alt="" src="/api/media/<%- current.get('image') %>">
+        <h3 class="tile-title">Current Call</h3>
+        <p><%- current.teaser %></p>
+        <a class="btn btn-browse btn-large btn-block " href="<%- current.get('link') %>">Join This Call</a>
     </div>
-    </div>
-    <div class="span4 pagination-centered">
-      <div class="box">
-        <img class="img-circle" alt="" src="/images/home/02.jpg">
-        <h3 class="tile-title">Calls</h3>
-        <p>Browse recent activities and workshops or start one on your own.</p>
-        <a class="btn btn-browse btn-large btn-block " href="/calls/list">See the Calls</a>
-    </div>
-    </div>
-    <div class="span4 pagination-centered">
-      <div class="box">
-        <img class="img-circle" alt="" src="/images/home/01.jpg">
-        <h3 class="tile-title">Projects</h3>
-        <p>Post designs, curriculum, and pictures from your latest workshops.</p>
-        <a class="btn btn-browse btn-large btn-block " href="/projects/list">See the Projects</a>
-    </div>
-    </div>
-</div>    
+</div>
+</div>
