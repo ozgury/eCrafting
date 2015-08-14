@@ -47,7 +47,7 @@ var routes = [
 		{ path:'GET /api/activities', fn:listActivities },
 
 		//Search
-		{ path:'GET /api/search_member', fn:searchElement },
+		{ path:'GET /api/search/list', fn:searchElement },
 
 		// Users
 		{ path:'GET /api/users', fn:listUsers, permit: calipso.permission.Helper.hasPermission("ecrafting:circle:update") }
@@ -812,7 +812,23 @@ function listActivities(req, res, template, block, next) {
  * Search
  */
 function searchElement(req, res, template, block, next){
-		var Project = calipso.db.model('Project');
+	var Project = calipso.db.model('Project');
+
+	var order = req.moduleParams.order;
+	var skip = parseInt(req.moduleParams.skip);
+	var take = parseInt(req.moduleParams.take);
+	var options = {
+		skip: (skip === NaN) ? 0 : skip, // Starting Row
+		limit: (take === NaN) ? 50 : take, // Ending Row
+		sort: {
+			created: -1 //Sort by Date Added DESC
+		}
+	};
+
+	if (order) {
+		options.sort = {};
+		options.sort[order] = 1;
+	}
 		var regex = new RegExp(req.query["q"], 'i');
 
 		Project.find( { $or: [ {name: regex}, {owner: regex}, {materials: regex} ] }, function (err, users) {

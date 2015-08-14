@@ -16,7 +16,16 @@ $(document).ready(function () {
 		}
 	}
 	ecr.app.loadSideBar();
+	$('#search_query_element').live("keypress", function(e) {
+		if (e.keyCode == 13) {
+			search_query_member();
+		}
+	});
 });
+
+function search_query_member(){
+	location.href = "/search/list/" + $("#search_query_element").val();
+}
 //]]>
 </script>
 

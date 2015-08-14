@@ -1,0 +1,18 @@
+<div class="row-fluid">
+    <legend><%- t('Search List') %>
+    </legend>
+    <ul id="projectsList" class="browse-list">
+    </ul>
+</div>
+
+<textarea id="projectsListItem" class="template">
+    <li class="span3 box browse-box pagination-centered">
+        <div class="browse-name"><a href='/projects/show/{{_id}}'>{{name}}</a></div>
+        <div class="browse-img img-circle">
+            <img src="{{image}}" class="img-circle" />
+        </div>
+        <div class="browse-text">{{description}}</div>
+    </li>
+</textarea>
+
+<script src="/js/ecr.page.search.list.js"></script>

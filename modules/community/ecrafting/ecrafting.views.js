@@ -114,6 +114,13 @@ block: 'content.circle.show'
 //	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
 template: 'project.list',
 block: 'content.project.list'
+}, {
+	path: 'GET /search/list/:query.:format?',
+	fn: listProject,
+	admin: false,
+//	permit: calipso.permission.Helper.hasPermission("admin:circle:view"),
+	template: 'search.list',
+	block: 'content.search.list'
 }]
 
 function allPages(req, res, template, block, next) {
@@ -529,7 +536,6 @@ function showProject(req, res, template, block, next) {
 function listProject(req, res, template, block, next) {
 	calipso.theme.renderItem(req, res, template, block, {}, next);
 }
-
 /**
 * Installation process - asynch
 */
