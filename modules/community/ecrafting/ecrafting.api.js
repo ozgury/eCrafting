@@ -824,7 +824,6 @@ function searchElement(req, res, template, block, next){
 			created: -1 //Sort by Date Added DESC
 		}
 	};
-
 	if (order) {
 		options.sort = {};
 		options.sort[order] = 1;
