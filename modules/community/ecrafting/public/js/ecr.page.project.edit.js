@@ -79,7 +79,10 @@ ecr.page.Page = function () {
 	}
 
 	this.doDeleteMedia = function (index, mId) {
-		var command = 'media/' + mId;
+		var url  = window.location.href;
+		var urlArray = url.split("/");
+		var projectID = urlArray[urlArray.length-2]
+		var command = 'projectMedia/' + mId + '/project/' + projectID;
 
 		apiWrapper.apiCall(command, null, 'DELETE', function (response, jqXhr) {
 			$('.thumbnails > li#media' + index).remove();

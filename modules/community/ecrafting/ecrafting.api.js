@@ -42,6 +42,7 @@ var routes = [
 		{ path: 'POST /api/media', fn: createMedia },
 		{ path: 'POST /api/media/:id', fn: updateMedia },
 		{ path: 'DELETE /api/media/:id', fn: deleteMedia },
+		{ path: 'DELETE /api/projectMedia/:id/project/:pid?', fn: deleteMedia },
 
 		// Activities
 		{ path:'GET /api/activities', fn:listActivities },
@@ -767,6 +768,7 @@ function updateMedia(req, res, template, block, next) {
 function deleteMedia(req, res, template, block, next) {
 	var Media = calipso.db.model('Media');
 	var id = req.moduleParams.id;
+	var pID = req.moduleParams.pid;
 
 	if (!id) {
 		return responseError(res, 404);
@@ -785,6 +787,26 @@ function deleteMedia(req, res, template, block, next) {
 					return responseError(res, 400, err);
 				}
 				calipso.e.post_emit('MEDIA_DELETE', m);
+				if(pID !== null && pID !== "" && pID !== undefined){
+					var Project = calipso.db.model('Project');
+					Project.findById(pID, function (err, project) {
+						if (err || project === null) {
+							return responseError(res, 404, err);
+						}
+						if (!utilities.isAdminOrDataOwner(req, project)) {
+							return responseError(res, 401);
+						}
+
+						project.media.remove(m);
+						project.save(function (err) {
+							if (err) {
+								return responseError(res, 400, err);
+							}
+							m.remove(function (err, c) {
+							});
+						});
+					});
+				}
 				return responseOk(res, m);
 			});
 		});
