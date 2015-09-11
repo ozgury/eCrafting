@@ -101,7 +101,7 @@ function init(module, app, next) {
         password:{type:String, required:false},
         hash:{type:String, required:true, "default":''},
 //        email:{type:calipso.lib.mongoose.SchemaTypes.Email, required:true, unique:true},
-        email:{type:String, required:true, unique:true},
+        email:{type:String, required:true},
         showName:{type:String, "default":'registered'},
         showEmail:{type:String, "default":'registered'},
         about:{type:String},
@@ -1055,36 +1055,63 @@ function registerUser(req, res, template, block, next) {
         return;
       }
 
-      var hash = crypto.createHash('md5').update(new_password + calipso.config.get('session:secret') + u.email).digest('hex');
-
-      console.log('++++++++Hash: ', hash); // 9b74c9897bac770ffc029102a200c5de
-      u.hash = hash;
-
-      calipso.e.pre_emit('USER_CREATE', u);
-      u.save(function (err) {
-
+      User.findOne({email:form.user.email}, function (err, result) {
         if (err) {
-          var msg = err.message;
-          if (err.code === 11000) {
-            msg = "a user has already registered with that email";
-          }
-          req.flash('error', req.t('Could not save user because {msg}.', {msg:msg}));
-          if (res.statusCode != 302 && !res.noRedirect) {
-            res.redirect('back');
-          }
+          req.flash('error', req.t('There was an error occured.'));
+          res.redirect('/');
           return;
-        } else {
-          calipso.e.post_emit('USER_CREATE', u);
-          calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
-          if (!res.noRedirect) {
-            req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
-            res.redirect('/');
-            return next(err);
-          }
         }
-        // If not already redirecting, then redirect
-        next(err);
+        if (result) {
+          if (!req.session.user || !req.session.user.isAdmin) {
+            req.flash('error', req.t('Could not save user because a user has already registered with that email.'));
+            res.redirect('back');
+            return;
+          }
+          saveUser();
+        }
+        else{
+          saveUser();
+        }
       });
+      function saveUser(){
+        var hash = crypto.createHash('md5').update(new_password + calipso.config.get('session:secret') + u.email).digest('hex');
+
+        console.log('++++++++Hash: ', hash);
+        u.hash = hash;
+
+        calipso.e.pre_emit('USER_CREATE', u);
+        u.save(function (err) {
+
+          if (err) {
+            var msg = err.message;
+            if (err.code === 11000) {
+              msg = "a user has already registered with that username";
+            }
+            req.flash('error', req.t('Could not save user because {msg}.', {msg:msg}));
+            if (res.statusCode != 302 && !res.noRedirect) {
+              res.redirect('back');
+            }
+            return;
+          } else {
+            calipso.e.post_emit('USER_CREATE', u);
+            calipso.e.post_emit('USER_ACTIVATIONMAIL', u);
+            if (!res.noRedirect) {
+              if (req.session.user && req.session.user.isAdmin) {
+                req.flash('info', req.t('We sent user an activation email.'));
+                res.redirect('back');
+                return next(err);
+              }else{
+                req.flash('info', req.t('We sent you an activation email. Please check your mail and click on the activation link.'));
+                res.redirect('/');
+                return next(err);
+              }
+            }
+          }
+          // If not already redirecting, then redirect
+          next(err);
+        });
+      }
+
 
 /*
       // Create the hash
