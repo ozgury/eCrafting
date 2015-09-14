@@ -30,6 +30,7 @@
         "formidable":"1.0.x",
         "connect":"2.3.x",
         "ejs":"0.6.x",
+        "excel":"0.1.4",
         "jade":"0.27.x",
         "stylus":"0.28.x",
         "underscore":"1.4.x",

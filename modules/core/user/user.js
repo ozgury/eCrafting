@@ -77,6 +77,8 @@ function init(module, app, next) {
       module.router.addRoute('GET /user/logout', logoutUser, null, this.parallel());
       module.router.addRoute('GET /user/register', registerUserForm, {template:'user.edit',block:'content'}, this.parallel());
       module.router.addRoute('POST /user/register', registerUser, null, this.parallel());
+      module.router.addRoute('GET /user/register_batch', batchAccountCreationForm, {template:'user.registerBatch',block:'content', permit:calipso.permission.Helper.hasPermission("admin:user:role:view")}, this.parallel());
+      module.router.addRoute('POST /user/register_batch', batchAccountCreation, null, this.parallel());
       module.router.addRoute('GET /user', myProfile, {template:'profile', block:'content'}, this.parallel());
 //      module.router.addRoute('GET /user/profile/:username', userProfile, {template:'profile', block:'content'}, this.parallel());
       module.router.addRoute('POST /user/profile/:username', updateUserProfile, {block:'content'}, this.parallel());
@@ -1137,6 +1139,115 @@ function registerUser(req, res, template, block, next) {
   });
 }
 
+function batchAccountCreationForm(req, res, template, block, next){
+  // TODO : Use secitons!
+  var userForm = {
+    id:'uploadForm', encript: "multipart/form-data", class:"dropzone", title:req.t('Batch Account Creation'), type:'form', method:'POST', action:'/user/register_batch',
+
+    buttons:[
+      {tag:'button', name:'submit', type:'submit', cls:"btn btn-primary", value:'Register All'},
+      {tag:'button', name:'submit', type:'button', cls:"btn", value:'Cancel'},
+    ]
+  };
+
+  calipso.form.render(userForm, null, req, function (form) {
+    calipso.theme.renderItem(req, res, template, block, { form: form}, next);
+  });
+
+}
+
+var readableFile = null;
+function batchAccountCreation(req, res, template, block, next) {
+  if (req.files.file) {
+    var fs = require('fs');
+    var tmp_path = req.files.file.path;
+    // set where the file should actually exists - in this case it is in the "images" directory
+    var target_path = './uploads/' + req.files.file.name;
+    readableFile = req.files.file.name;
+    // move the file from the temporary location to the intended location
+    fs.rename(tmp_path, target_path, function (err) {
+      if (err) throw err;
+      // delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files
+      fs.unlink(tmp_path, function () {
+        if (err) throw err;
+        res.send('File uploaded to: ' + target_path + ' - ' + req.files.file.size + ' bytes');
+      });
+    });
+  } else {
+
+    var parseXlsx = require('excel');
+
+    parseXlsx('./uploads/' + readableFile, function(err, data) {
+      if(err) throw err;
+      // data is an array of arrays
+      registerProcess(req, res, next, data);
+    });
+  }
+}
+
+function registerProcess(req, res, next, data){
+  var done_flag = 0;
+  var existedUNames = [];
+  var User = calipso.db.model('User');
+  data.forEach(function (new_user){
+    console.log("<--" + new_user[0] + " "+ new_user[1] + " "+ new_user[2] + " "+ new_user[3] + " "+ new_user[4] + " "+ new_user[5] + " "+ "-->");
+    var new_email = new_user[0];
+    var new_username = new_user[1];
+    var new_fullname = new_user[2];
+    var new_about = new_user[3];
+    var new_password = new_user[4];
+    var new_role = new_user[5];
+
+    User.findOne({username:new_username}, function (err, u) {
+      done_flag++;
+      if (err) {
+        return promise.fail(err);
+      }
+      if (u) {
+        //if username exists in DB
+        existedUNames.push(new_username);
+        infoRedirect();
+        return;
+      }
+
+      var hash = crypto.createHash('md5').update(new_password + calipso.config.get('session:secret') + new_email).digest('hex');
+      u = new User({
+        username:new_username,
+        fullname:new_fullname,
+        email:new_email,
+        about:new_about,
+        hash:hash,
+        active:true,
+      });
+      u.roles = [new_role];
+
+      calipso.e.pre_emit('USER_CREATE', u);
+
+      u.save(function (err) {
+        if (err) {
+          console.log(err);
+        }
+        calipso.e.post_emit('USER_CREATE', u);
+        // If not already redirecting, then redirect
+        return null;
+      });
+
+      infoRedirect();
+    });
+  });
+
+  function infoRedirect(){
+    if(done_flag == data.length) {
+      req.flash('info', req.t('Batch account registration is done. You registered ' + (data.length - existedUNames.length) + ' users.'));
+      if(existedUNames.length > 0){
+        req.flash('info', req.t(existedUNames.toString() + ' already exists. Username must be unique.'));
+      }
+      res.redirect('back');
+      return;
+    }
+  }
+}
+
 /**
  * My profile (shortcut to profile)
  */
@@ -1301,6 +1412,7 @@ function listUsers(req, res, template, block, next) {
   // Re-retrieve our object
   var User = calipso.db.model('User');
 
+  res.menu.adminToolbar.addMenuItem(req, {name:'BATCH', path:'batch', url:'/user/register_batch', description:'Batch Account Creation', security:[]});
   res.menu.adminToolbar.addMenuItem(req, {name:'Register New User', path:'new', url:'/user/register', description:'Register new user ...', security:[]});
 
   var format = req.moduleParams.format ? req.moduleParams.format : 'html';

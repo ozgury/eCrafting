@@ -1,0 +1,18 @@
+
+<script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
+
+<%- form %>
+<script src="/js/ecr.page.user.edit.js"></script>
+<script type="text/javascript">
+    //<![CDATA[
+
+    $(document).ready(function () {
+        $(".form-fields").prepend('<form action="/user/register_batch" class="dropzone"><div class="dz-message" style="font-size: 20px;" data-dz-message><i class="iconic-upload" style="height: 20px;"></i><span>Please upload your excel(.xlsx) file.</span></div></form>');
+        ecr.load();
+        ecr.page = new ecr.page.Page();
+        ecr.page.initialize();
+    });
+    //]]>
+</script>
+
