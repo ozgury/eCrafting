@@ -1398,8 +1398,9 @@ function listUsers(req, res, template, block, next) {
   // Re-retrieve our object
   var User = calipso.db.model('User');
 
-  res.menu.adminToolbar.addMenuItem(req, {name:'BATCH', path:'batch', url:'/user/register_batch', description:'Batch Account Creation', security:[]});
-  res.menu.adminToolbar.addMenuItem(req, {name:'Register New User', path:'new', url:'/user/register', description:'Register new user ...', security:[]});
+  res.menu.adminToolbar.addMenuItem(req, {name:'Register', path:'register', url:'', description:'', security:[]});
+  res.menu.adminToolbar.addMenuItem(req, {name:'Register New User', path:'register/new', url:'/user/register', description:'Register new user ...', security:[]});
+  res.menu.adminToolbar.addMenuItem(req, {name:'Batch Account Creation', path:'register/batch', url:'/user/register_batch', description:'Batch Account Creation', security:[]});
 
   var format = req.moduleParams.format ? req.moduleParams.format : 'html';
   var from = req.moduleParams.from ? parseInt(req.moduleParams.from) - 1 : 0;
