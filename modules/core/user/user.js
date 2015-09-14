@@ -1161,8 +1161,10 @@ function batchAccountCreation(req, res, template, block, next) {
   if (req.files.file) {
     var fs = require('fs');
     var tmp_path = req.files.file.path;
+    alert(req.files.file.path);
     // set where the file should actually exists - in this case it is in the "images" directory
     var target_path = '/app/uploads/' + req.files.file.name;
+    alert(target_path);
     readableFile = req.files.file.name;
     // move the file from the temporary location to the intended location
     fs.rename(tmp_path, target_path, function (err) {
