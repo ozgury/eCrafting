@@ -8,11 +8,22 @@
     //<![CDATA[
 
     $(document).ready(function () {
-        $(".form-fields").prepend('<form action="/user/register_batch" class="dropzone"><div class="dz-message" style="font-size: 20px;" data-dz-message><i class="iconic-upload" style="height: 20px;"></i><span>Please upload your excel(.xlsx) file.</span></div></form>');
+        $(".form-fields").prepend('<form id="myID" action="/user/register_batch" class="dropzone"><div class="dz-message" style="font-size: 20px;" data-dz-message><i class="iconic-upload" style="height: 20px;"></i><span>Please upload your excel(.xlsx) file.</span></div></form>');
         ecr.load();
         ecr.page = new ecr.page.Page();
         ecr.page.initialize();
     });
     //]]>
+</script>
+<script type="text/javascript">
+    Dropzone.options.myID = {
+        accept: function(file, done) {
+            console.log(file);
+            if (file.type != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                done("Error! Files of this type are not accepted");
+            }
+            else { done(); }
+        }
+    }
 </script>
 
