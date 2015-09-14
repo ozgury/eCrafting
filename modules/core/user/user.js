@@ -1162,7 +1162,7 @@ function batchAccountCreation(req, res, template, block, next) {
     var fs = require('fs');
     var tmp_path = req.files.file.path;
     // set where the file should actually exists - in this case it is in the "images" directory
-    var target_path = __dirname + '/uploads/' + req.files.file.name;
+    var target_path = '/app/uploads/' + req.files.file.name;
     readableFile = req.files.file.name;
     // move the file from the temporary location to the intended location
     fs.rename(tmp_path, target_path, function (err) {
@@ -1182,7 +1182,7 @@ function batchAccountCreation(req, res, template, block, next) {
 
     var parseXlsx = require('excel');
 
-    parseXlsx(__dirname + '/uploads/' + readableFile, function(err, data) {
+    parseXlsx('/app/uploads/' + readableFile, function(err, data) {
       if(err) throw err;
       // data is an array of arrays
       registerProcess(req, res, next, data);
