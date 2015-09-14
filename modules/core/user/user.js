@@ -1156,35 +1156,24 @@ function batchAccountCreationForm(req, res, template, block, next){
 
 }
 
-var readableFile = null;
+var filePath = null;
 function batchAccountCreation(req, res, template, block, next) {
   if (req.files.file) {
     var fs = require('fs');
     var tmp_path = req.files.file.path;
+    filePath = req.files.file.path;
+    //pathFile = req.files.file.path;
     console.log(req.files.file.path);
     // set where the file should actually exists - in this case it is in the "images" directory
     var target_path = './tests/' + req.files.file.name;
     console.log(target_path);
-    readableFile = req.files.file.name;
+    //readableFile = req.files.file.name;
     // move the file from the temporary location to the intended location
-    fs.rename(tmp_path, target_path, function (err) {
-      if (err){
-        console.error(err);
-        req.flash('info', req.t('An error occurred on file upload process.'));
-        res.redirect('back');
-        return;
-      };
-      // delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files
-      fs.unlink(tmp_path, function () {
-        if (err) throw err;
-        res.send('File uploaded to: ' + target_path + ' - ' + req.files.file.size + ' bytes');
-      });
-    });
+
+
   } else {
-
     var parseXlsx = require('excel');
-
-    parseXlsx('./tests/' + readableFile, function(err, data) {
+    parseXlsx(filePath, function(err, data) {
       if(err) throw err;
       // data is an array of arrays
       registerProcess(req, res, next, data);
