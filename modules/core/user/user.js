@@ -1168,7 +1168,7 @@ function batchAccountCreation(req, res, template, block, next) {
     fs.rename(tmp_path, target_path, function (err) {
       if (err){
         console.error(err);
-        req.flash('info', req.t('An error occured on file upload process.'));
+        req.flash('info', req.t('An error occurred on file upload process.'));
         res.redirect('back');
         return;
       };
@@ -1182,8 +1182,13 @@ function batchAccountCreation(req, res, template, block, next) {
 
     var parseXlsx = require('excel');
 
-    parseXlsx('./uploads/' + readableFile, function(err, data) {
-      if(err) throw err;
+    parseXlsx(__dirname + '/uploads/' + readableFile, function(err, data) {
+      if(err) {
+        console.error(err);
+        req.flash('info', req.t('An error occurred on registration process.'));
+        res.redirect('back');
+        return;
+      };
       // data is an array of arrays
       registerProcess(req, res, next, data);
     });
