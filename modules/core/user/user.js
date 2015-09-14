@@ -1182,7 +1182,7 @@ function batchAccountCreation(req, res, template, block, next) {
 
     var parseXlsx = require('excel');
 
-    parseXlsx('/app/uploads/' + readableFile, function(err, data) {
+    parseXlsx(__dirname + '/uploads/' + readableFile, function(err, data) {
       if(err) throw err;
       // data is an array of arrays
       registerProcess(req, res, next, data);
