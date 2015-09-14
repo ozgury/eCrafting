@@ -1182,13 +1182,8 @@ function batchAccountCreation(req, res, template, block, next) {
 
     var parseXlsx = require('excel');
 
-    parseXlsx(__dirname + '/uploads/' + readableFile, function(err, data) {
-      if(err) {
-        console.error(err);
-        req.flash('info', req.t('An error occurred on registration process.'));
-        res.redirect('back');
-        return;
-      };
+    parseXlsx('/app/uploads/' + readableFile, function(err, data) {
+      if(err) throw err;
       // data is an array of arrays
       registerProcess(req, res, next, data);
     });
