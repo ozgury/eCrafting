@@ -478,7 +478,7 @@ function listProjects(req, res, template, block, next) {
 		skip: (skip === NaN) ? 0 : skip, // Starting Row
 		limit: (take === NaN) ? 50 : take, // Ending Row
 		sort: {
-			created: -1 //Sort by Date Added DESC
+			date: -1 //Sort by Date Added DESC
 		}
 	};
 
@@ -486,11 +486,11 @@ function listProjects(req, res, template, block, next) {
 		options.sort = {};
 		options.sort[order] = 1;
 	}
-	Project.find({}, {}, options, function (err, calls) {
+	Project.find({}, {}, options, function (err, projects) {
 		if (err) {
 			return responseError(res, 404, err);
 		}
-		return responseOk(res, calls);
+		return responseOk(res, projects);
 	});
 }
 

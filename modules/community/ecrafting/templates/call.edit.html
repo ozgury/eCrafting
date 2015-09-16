@@ -166,5 +166,17 @@
 				</fieldset>
 			</form>
 
+	<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.common-material.min.css" />
+	<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.material.min.css" />
+	<script src="//kendo.cdn.telerik.com/2015.2.902/js/jquery.min.js"></script>
+	<script src="//kendo.cdn.telerik.com/2015.2.902/js/kendo.all.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			// create DateTimePicker from input HTML element
+			$("#date").kendoDateTimePicker({
+				value:new Date($("#date").val())
+			});
+		});
+	</script>
 	<script src="/js/ecr.page.call.edit.js"></script>
 	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>

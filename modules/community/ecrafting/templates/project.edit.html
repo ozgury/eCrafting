@@ -105,6 +105,14 @@
 				</div>
 			</div>
 
+			<div class="control-group field-type-text" id="project_date-wrapper">
+				<label class="control-label" for="date">Date:</label>
+				<div class="controls">
+					<input type="text" class="text" name="date" id="date" value="<%- (project && project.date) ? project.date : Date.now() %>" data-object="project" />
+					<p class="help-block">Enter the project date.</p>
+				</div>
+			</div>
+
 			<div class="control-group field-type-text" id="project_approved-wrapper">
 				<label class="checkbox" for="approved">
 					<input type="checkbox" name="approved" id="approved" <%- project.approved ? "checked" : "" %>  data-object="project" /> Approved?
@@ -119,5 +127,17 @@
 		</fieldset>
 	</form>
 
+	<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.common-material.min.css" />
+	<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.material.min.css" />
+	<script src="//kendo.cdn.telerik.com/2015.2.902/js/jquery.min.js"></script>
+	<script src="//kendo.cdn.telerik.com/2015.2.902/js/kendo.all.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			// create DateTimePicker from input HTML element
+			$("#date").kendoDateTimePicker({
+				value:new Date($("#date").val())
+			});
+		});
+	</script>
 	<script src="/js/ecr.page.project.edit.js"></script>
-	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+	<script type="text/javascript" src="//maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>

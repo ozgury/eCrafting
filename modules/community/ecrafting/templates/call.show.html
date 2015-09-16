@@ -106,7 +106,17 @@
 							%>
 							<tr>
 								<td><a href='/projects/show/<%- project._id %>'><%- project.name %></a></td>
+								<%
+								if (project.date) {
+								%>
+								<td><%- project.date %></td>
+								<%
+								}else{
+								%>
 								<td><%- call.date %></td>
+								<%
+								};
+								%>
 							</tr>
 									<%
 									});

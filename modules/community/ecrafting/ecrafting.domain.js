@@ -55,6 +55,9 @@ function init(module, app, next) {
 			description: {
 				type: String
 			},
+			date: {
+				type: Date
+			},
 			approved: {
 				type:Boolean
 			},
