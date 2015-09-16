@@ -2,7 +2,7 @@
   "version": "0.3.0",
   "installed": true,
   "database": {
-    "uri": "mongodb://ecrafting:eCra6t1ng@ds059831-a0.mongolab.com:59831/ecrafting"
+    "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
   },
   "authentication": {
     "password": true,
@@ -10,13 +10,13 @@
   },
   "server": {
     "name": "Calipso",
-    "url": "http://ecrafting.herokuapp.com",
+    "url": "http://ecraftingdev.herokuapp.com",
     "modulePath": "./modules",
     "themePath": "./themes",
     "cluster": {
-      "workers": 0,
+      "workers": "",
       "restartWorkers": true,
-      "maximumRestarts": 1
+      "maximumRestarts": "1"
     },
     "events": {
       "maxListeners": 500
@@ -42,12 +42,13 @@
   "performance": {
     "cache": {
       "enabled": false,
-      "ttl": 600
+      "ttl": "600"
     },
     "watchFiles": true
   },
   "session": {
-    "secret": "calipso"
+    "secret": "calipso",
+    "maxAge": ""
   },
   "theme": {
     "default": "cleanslate",
@@ -61,13 +62,13 @@
   "logging": {
     "console": {
       "enabled": true,
-      "level": "info",
+      "level": "debug",
       "timestamp": true,
       "colorize": true
     },
     "file": {
-      "enabled": false,
-      "level": "info",
+      "enabled": true,
+      "level": "debug",
       "filepath": "logs/calipso.log",
       "timestamp": true
     }
@@ -113,7 +114,7 @@
       "enabled": false
     },
     "aloha": {
-      "enabled": true
+      "enabled": false
     },
     "assets": {
       "enabled": false
@@ -145,7 +146,7 @@
       "enabled": true
     },
     "scheduler": {
-      "enabled": false
+      "enabled": true
     },
     "static": {
       "enabled": true
@@ -157,6 +158,9 @@
       "enabled": true
     },
     "user": {
+      "enabled": true
+    },
+    "Gezi": {
       "enabled": true
     }
   }
