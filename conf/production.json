@@ -2,7 +2,7 @@
   "version": "0.3.0",
   "installed": true,
   "database": {
-    "uri": "mongodb://ecraftingdev:ecraftingdev@ds033067.mongolab.com:33067/ecraftingdev"
+    "uri": "mongodb://ecrafting:eCra6t1ng@ds059831-a0.mongolab.com:59831/ecrafting"
   },
   "authentication": {
     "password": true,
