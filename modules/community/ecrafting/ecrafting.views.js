@@ -386,7 +386,6 @@ function editCircleCallForm(req, res, template, block, next) {
 					call: call,	
 					action: '/api/circles/' + c.id + '/calls/' + (cId ? cId : "")
 				}
-				console.log("call:", call);
 				calipso.theme.renderItem(req, res, template, block, values, next);
 			}).populate('projects').exec();
 		}).populate('calls').exec();

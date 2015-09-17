@@ -67,6 +67,10 @@
 			<td><%- project._doc.location %></td>
 		</tr>
 		<tr>
+			<th><%- t('Date') %></th>
+			<td><%- project.date %></td>
+		</tr>
+		<tr>
 			<th><%- t('Youtube Video') %></th>
 			<td>
 				<%
@@ -92,7 +96,7 @@
 					<ul class="thumbnails">
 						<li id="media<%- index %>" class="">
 							<a href="javascript:void(0)" class="thumbnail">
-								<img src="/api/media/<%- m %>" alt="">
+								<img src="/api/media/<%- m %>" alt="" style="width: 400px;">
 							</a>
 						</li>
 					</ul>
