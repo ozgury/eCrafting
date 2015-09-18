@@ -49,6 +49,10 @@ function init(module, app, next) {
 				type: String,
 				required: true
 			},
+			groupID: [{
+				type: calipso.lib.mongoose.Schema.ObjectId,
+				ref: 'Project'
+			}],
 			youtube: {
 				type: String
 			},

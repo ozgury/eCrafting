@@ -1,4 +1,11 @@
-<script type="text/javascript"> 
+<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.common-material.min.css" />
+<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.material.min.css" />
+<script src="//kendo.cdn.telerik.com/2015.2.902/js/kendo.all.min.js"></script>
+<style type="text/css">
+	.k-datetimepicker {
+		width: 38em !important;
+</style>
+<script type="text/javascript">
 
 	if (typeof (ecr.page) == 'undefined') {
 		ecr.page = {};
@@ -12,18 +19,37 @@
 			doDelete: function() {
 				bootbox.confirm("Are you sure you want to delete project '<%- project.name %>'?", function(confirmed) {
 					if (confirmed) {
-						apiWrapper.deleteCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/<%- project._id %>/', 
-							function (data, jqXhr) {
-								ecr.app.redirectWithSuccessMessage('/calls/show/<%- call._id %>/', "Project '<%- project.name %>' deleted.");
-							}
+						apiWrapper.deleteCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/<%- project._id %>/',
+								function (data, jqXhr) {
+									ecr.app.redirectWithSuccessMessage('/calls/show/<%- call._id %>/', "Project '<%- project.name %>' deleted.");
+								}
 						);
 					}
-				}); 
+				});
+			},
+			iterate: function(){
+
+				bootbox.confirm("<h3>Enter the project date</h3>\
+					<form id='infos' action=''>\
+					<input type='text' class='text' name='date' id='project_date' value='' /><br/>\
+					</form>", function(confirmed) {
+					if(confirmed){
+						var tmestmp = new Date($("#project_date").val()).getTime() / 1000;
+						apiWrapper.apiCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/<%- project._id %>/date/'+tmestmp+'/iterate', JSON.stringify({ dummy: 'data' }), 'POST',
+								function (data, jqXhr) {
+									ecr.app.userSuccess('Project iterated with new date.');
+								}
+						);
+					}
+				});
+				$("#project_date").kendoDateTimePicker({
+					value:new Date()
+				});
 			},
 		};
 	};
 
-</script> 
+</script>
 
 <div class='circle'>
 	<a href='/circles/show/<%- circle._id %>'><%- circle.name %></a> >> <a href='/calls/show/<%- call._id %>'><%- call.name %></a> >> <%- project.name %>
@@ -46,68 +72,108 @@
 	<div class="row-fluid">
 		<div class="span8">
 			<table class="table table-striped">
-		<tr>
-			<th><%- t('Name') %></th>
-			<td><%- project.name %></td>
-		</tr>
-		<tr>
-			<th><%- t('Owner') %></th>
-			<td><a href='/user/profile/<%- project.owner %>'><%- project.owner %></a></td>
-		</tr>
-		<tr>
-			<th><%- t('Description') %></th>
-			<td><%- project.description %></td>
-		</tr>
-		<tr>
-			<th><%- t('Materials') %></th>
-			<td><%- project._doc.materials %></td>
-		</tr>
-		<tr>
-			<th><%- t('Location') %></th>
-			<td><%- project._doc.location %></td>
-		</tr>
-		<tr>
-			<th><%- t('Date') %></th>
-			<td><%- project.date %></td>
-		</tr>
-		<tr>
-			<th><%- t('Youtube Video') %></th>
-			<td>
-				<%
-				var link = project._doc.youtube
-				if(link !== undefined && link !== ""){
-					if(link.indexOf("www.youtube.com") > -1){
-					var youtubeLink = link.replace("/watch?v=", "/embed/");
-					%>
-					<iframe width="420" height="315"
-							src='<%- youtubeLink %>'>
-					</iframe>
-					<% }
-				} %>
-			</td>
-		</tr>
-		<tr>
-			<th><%- t('Media') %></th>
-			<td>
+				<tr>
+					<th><%- t('Name') %></th>
+					<td><%- project.name %></td>
+				</tr>
+				<tr>
+					<th><%- t('Owner') %></th>
+					<td><a href='/user/profile/<%- project.owner %>'><%- project.owner %></a></td>
+				</tr>
+				<tr>
+					<th><%- t('Description') %></th>
+					<td><%- project.description %></td>
+				</tr>
+				<tr>
+					<th><%- t('Materials') %></th>
+					<td><%- project._doc.materials %></td>
+				</tr>
+				<tr>
+					<th><%- t('Location') %></th>
+					<td><%- project._doc.location %></td>
+				</tr>
+				<tr>
+					<th><%- t('Date') %></th>
+					<td><%- project.date %></td>
+				</tr>
+				<tr>
+					<th><%- t('Youtube Video') %></th>
+					<td>
+						<%
+						var link = project._doc.youtube
+						if(link !== undefined && link !== ""){
+						if(link.indexOf("www.youtube.com") > -1){
+						var youtubeLink = link.replace("/watch?v=", "/embed/");
+						%>
+						<iframe width="420" height="315"
+								src='<%- youtubeLink %>'>
+						</iframe>
+						<% }
+						} %>
+					</td>
+				</tr>
+				<tr>
+					<th><%- t('Media') %></th>
+					<td>
+						<%
+						if (project.media) {
+						project.media.forEach(function(m, index) {
+						%>
+						<ul class="thumbnails">
+							<li id="media<%- index %>" class="">
+								<a href="javascript:void(0)" class="thumbnail">
+									<img src="/api/media/<%- m %>" alt="" style="width: 400px;">
+								</a>
+							</li>
+						</ul>
+						<%
+						});
+						}
+						%>
+
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="span4 well">
+			<h4>Project Iterations</h4>
 			<%
-			if (project.media) {
-				project.media.forEach(function(m, index) {
+			if (canEdit) {
+			%>
+			<a href="#" onclick='ecr.page.iterate()' class="btn"><i class="icon-bullhorn"></i> <strong>Iterate Project With New Date</strong></a>
+			<%
+			}
+			%>
+			<%
+			if (group.length == 0) {
+			t('No iterated project.')
+			} else {
+			%>
+			<table class="table table-bordered table-hover">
+				<%
+				group.forEach(function(proj) {
 				%>
-					<ul class="thumbnails">
-						<li id="media<%- index %>" class="">
-							<a href="javascript:void(0)" class="thumbnail">
-								<img src="/api/media/<%- m %>" alt="" style="width: 400px;">
-							</a>
-						</li>
-					</ul>
+				<tr>
+					<td><a href='/projects/show/<%- proj._id %>'><%- proj.name %></a></td>
+					<%
+					if (proj.date) {
+					%>
+					<td><%- proj.date %></td>
+					<%
+					}else{
+					%>
+					<td><%- call.date %></td>
+					<%
+					};
+					%>
+				</tr>
 				<%
 				});
-			}
 				%>
-
-			</td>
-		</tr>
-	</table>
+			</table>
+			<%
+			}
+			%>
 		</div>
 	</div>
 </div>

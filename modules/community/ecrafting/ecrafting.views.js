@@ -506,23 +506,42 @@ function showProject(req, res, template, block, next) {
 						 // res.redirect
 						 next();
 						} else {
-						// Set the page layout to the circle
-						if (format === "html") {
-							var basePath = calipso.config.get('server:url');
+							console.log(project.id);
+							var ObjectID = require('mongodb').ObjectID;
+							var noGroupID = new ObjectID("000000000000000000000000"); // dummy objectId
+							var groupIds = (project.groupID.length != 0) ? project.groupID : noGroupID; //
+							Project.find({ groupID: groupIds }, function (err, group) {
+								if (err) {
+									console.log(err);
+									// item = {id:'ERROR',type:'content',meta:{title:"Not Found!",content:"Sorry, I couldn't find that circle!"}};
+									// res.redirect
+									next();
+								} else {
+									// Set the page layout to the circle
+									if (format === "html") {
+										var basePath = calipso.config.get('server:url');
 
-							calipso.theme.renderItem(req, res, template, block, {
-								circle: circle,
-								call: call,
-								project: project,
-								canEdit: utilities.isAdminOrDataOwner(req, project),
-								basePath: basePath
-							}, next);
-						}
-						if (format === "json") {
-							res.format = format;
-							res.send(project.toObject());
-							next();
-						}
+										for (var k = 0; k<group.length; k++){
+											if(group[k].id == project.id){
+												group.splice(k, 1);
+											}
+										}
+										calipso.theme.renderItem(req, res, template, block, {
+											circle: circle,
+											call: call,
+											project: project,
+											group: group,
+											canEdit: utilities.isAdminOrDataOwner(req, project),
+											basePath: basePath
+										}, next);
+									}
+									if (format === "json") {
+										res.format = format;
+										res.send(project.toObject());
+										next();
+									}
+								}
+							});
 					}
 				});
 

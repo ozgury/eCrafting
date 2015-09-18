@@ -36,6 +36,7 @@ var routes = [
 		{ path: 'GET /api/circles/:id/calls/:cid/projects/:pid?', fn: listCallProjects },
 		{ path: 'POST /api/circles/:id/calls/:cid/projects/:pid?', fn: updateCallProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:update") },
 		{ path: 'DELETE /api/circles/:id/calls/:cid/projects/:pid', fn: deleteCallProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:delete") },
+		{ path: 'POST /api/circles/:id/calls/:cid/projects/:pid/date/:dt/iterate', fn: iterateProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:update") },
 
 		// Media Calls
 		{ path: 'GET /api/media/:id?.:size?', fn: listMedia },
@@ -620,6 +621,92 @@ function deleteCallProject(req, res, template, block, next) {
 			}
 		}
 	});
+}
+
+function iterateProject(req, res, template, block, next){
+	var Circle = calipso.db.model('Circle');
+	var Call = calipso.db.model('Call');
+	var Project = calipso.db.model('Project');
+	var id = req.moduleParams.id;
+	var cId = req.moduleParams.cid;
+	var pId = req.moduleParams.pid;
+	var new_date = req.moduleParams.dt;
+
+	if(pId){
+
+		Circle.findOne({ '_id': id, 'calls': cId }, function (err, circle) {
+			if (!circle) {
+				return responseError(res, 404, err);
+			}
+
+			Project.findOne({ '_id': pId}, function (err, project) {
+				if (err) {
+					calipso.error("Error creating project", err);
+					return responseError(res, 400, err);
+				};
+
+				if (!project) {
+					return responseError(res, 404, err);
+				};
+				var theDate = new Date(parseInt(new_date) * 1000);
+				var newProject = new Project();
+				newProject.date = theDate;
+				newProject.owner = project.owner;
+				newProject.name = project.name;
+				newProject.youtube = project.youtube;
+				newProject.description = project.description;
+				newProject.approved = project.approved;
+				newProject.location = project.location;
+				newProject.materials = project.materials;
+				newProject.media = project.media;
+				newProject.lat = project.lat;
+				newProject.lng = project.lng;
+				if(project.groupID.length != 0){
+					newProject.groupID = project.groupID;
+				}else{
+					newProject.groupID = project._id;
+				};
+
+				calipso.e.pre_emit('PROJECT_CREATE', { project: newProject, user: req.session.user});
+
+				newProject.save(function (err) {
+					if (err) {
+						calipso.error("Error creating project", err);
+						return responseError(res, 400, err);
+					}
+					circle.calls.forEach(function (call) {
+						if (call.id == cId) {
+
+							call.projects.push(newProject.id);
+							call.save(function (err) {
+								if (err) {
+									calipso.error("Error creating project", err);
+									return responseError(res, 400, err);
+								}
+								if(project.groupID.length == 0){
+									project.groupID = project._id;
+
+									project.save(function (err) {
+										if (err) {
+											calipso.error("Error creating project", err);
+											return responseError(res, 400, err);
+										}
+
+										calipso.e.post_emit('PROJECT_CREATE', { project: newProject, user: req.session.user});
+										return responseOk(res, newProject);
+									});
+								}else {
+									calipso.e.post_emit('PROJECT_CREATE', { project: newProject, user: req.session.user});
+									return responseOk(res, newProject);
+								};
+
+							});
+						}
+					});
+				});
+			});
+		}).populate('calls').exec();
+	}
 }
 
 /**
