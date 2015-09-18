@@ -506,7 +506,6 @@ function showProject(req, res, template, block, next) {
 						 // res.redirect
 						 next();
 						} else {
-							console.log(project.id);
 							var ObjectID = require('mongodb').ObjectID;
 							var noGroupID = new ObjectID("000000000000000000000000"); // dummy objectId
 							var groupIds = (project.groupID.length != 0) ? project.groupID : noGroupID; //
