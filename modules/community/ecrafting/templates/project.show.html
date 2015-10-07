@@ -80,7 +80,7 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-							Main Project>> <%- project.date %>
+							<strong>Main Project>></strong> <%- project.date %>
 						</a>
 					</div>
 					<div id="collapseOne" class="accordion-body collapse in">
@@ -148,8 +148,8 @@
 									</td>
 								</tr>
 							</table>
-							<a onclick="loadDisqus(jQuery(this), 'p' + '<%- project._id %>', '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/');">
-								Show Comments
+							<a class="btn" style="width: 96%;" onclick="loadDisqus(jQuery(this), 'p' + '<%- project._id %>', '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/');">
+								<i class="icon-comment"></i> Show Comments
 							</a>
 						</div>
 						<%
@@ -240,8 +240,8 @@
 									</td>
 								</tr>
 							</table>
-							<a onclick="loadDisqus(jQuery(this), 'p' + '<%- proj._id %>', '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- proj._id %>/');">
-								Show Comments
+							<a class="btn" style="width: 96%;" onclick="loadDisqus(jQuery(this), 'p' + '<%- proj._id %>', '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- proj._id %>/');">
+								<i class="icon-comment"></i> Show Comments
 							</a>
 						</div>
 						<%
