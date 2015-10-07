@@ -34,7 +34,7 @@
         "jade":"0.27.x",
         "stylus":"0.28.x",
         "underscore":"1.4.x",
-        "mongoose":"2.5.x",
+        "mongoose":"4.1.x",
         "mongoose-types": "1.0.x",
         "mongoose-validate": "0.0.x",
         "connect-mongodb":"1.1.x",

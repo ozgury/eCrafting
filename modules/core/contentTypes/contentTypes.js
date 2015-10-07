@@ -489,7 +489,7 @@ function storeContentTypes(event, contentType, next) {
   delete calipso.data.contentTypes;
   calipso.data.contentTypes = [];
 
-  ContentType.find({}).sort('contentType', 1).find(function (err, types) {
+  ContentType.find({}).sort('contentType').find(function (err, types) {
     if (err || !types) {
 
       // Don't throw error, just pass back failure.
