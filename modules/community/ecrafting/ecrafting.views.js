@@ -327,7 +327,7 @@ Circle.count(query, function (err, count) {
 	var total = count;
 
 	Circle.find(query)
-	.sort('circle')
+	.sort('circle', 1)
 	.find(function (err, circles) {
 			// Render the item into the response
 			if (format === 'html') {
