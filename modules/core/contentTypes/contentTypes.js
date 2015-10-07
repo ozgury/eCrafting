@@ -390,7 +390,7 @@ function listContentType(req, res, template, block, next) {
     var total = count;
 
     ContentType.find(query)
-      .sort('contentType', 1)
+      .sort('contentType')
       .find(function (err, contents) {
 
         // Render the item into the response
