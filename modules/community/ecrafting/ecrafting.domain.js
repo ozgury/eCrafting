@@ -239,6 +239,8 @@ function init(module, app, next) {
 		calipso.e.addEvent('PROJECT_CREATE');
 		calipso.e.addEvent('PROJECT_UPDATE');
 		calipso.e.addEvent('PROJECT_DELETE');
+		calipso.e.addEvent('PROJECT_ITERATE');
+
 
 		calipso.permission.Helper.addPermission("admin:circles", "Circles", true);
 		calipso.permission.Helper.addPermission("admin:calls", "Calls", true);
