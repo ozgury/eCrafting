@@ -322,7 +322,7 @@ function listCalls(req, res, template, block, next) {
 		skip: (skip === NaN) ? 0 : skip, // Starting Row
 		limit: (take === NaN) ? 50 : take, // Ending Row
 		sort: {
-			created: -1 //Sort by Date Added DESC
+			date: -1 //Sort by Date Added DESC
 		}
 	};
 
