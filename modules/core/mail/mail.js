@@ -120,7 +120,7 @@ function init(module, app, next) {
 function bindEvents() {
   calipso.debug("Binding events for mail handler ...");
   var MailTemplate = calipso.db.model('MailTemplate');
-  MailTemplate.find().run(function (err, mailTemplates) {
+  MailTemplate.find({}, function (err, mailTemplates) {
     if (err || !mailTemplates) {
       calipso.debug('A problem occurred while retrieving your templates.');
       return;

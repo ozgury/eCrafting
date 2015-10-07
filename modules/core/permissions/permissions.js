@@ -75,7 +75,7 @@ function loadPermissionRoles(next) {
   perm.clearPermissionRoles();
 
   // Load the permissions
-  PermissionRole.find({}).sort('permission', 1).sort('role', 1).find(function (err, prs) {
+  PermissionRole.find({}).sort('permission role').find(function (err, prs) {
 
     prs.forEach(function (pr) {
       perm.addPermissionRole(pr.permission, pr.role);
