@@ -127,7 +127,7 @@
 				<label class="control-label" for="date">Date:</label>
 
 				<div class="controls">
-					<input type="text" class="text" name="date" id="date" value="<%- (call && call.date) ? call.date : new Date(Date.now()) %>" data-object="call" />
+					<input type="text" class="text" name="date" id="date" onkeydown="return false;" value="<%- (call && call.date) ? call.date : new Date(Date.now()) %>" data-object="call" />
 
 					<p class="help-block">Enter the call date.</p>
 				</div>

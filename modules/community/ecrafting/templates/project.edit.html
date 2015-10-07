@@ -108,7 +108,7 @@
 			<div class="control-group field-type-text" id="project_date-wrapper">
 				<label class="control-label" for="date">Date:</label>
 				<div class="controls">
-					<input type="text" class="text" name="date" id="date" value="<%- (project && project.date) ? project.date : new Date(Date.now()) %>" data-object="project" />
+					<input type="text" class="text" name="date" id="date" onkeydown="return false;" value="<%- (project && project.date) ? project.date : new Date(Date.now()) %>" data-object="project" />
 					<p class="help-block">Enter the project date.</p>
 				</div>
 			</div>
