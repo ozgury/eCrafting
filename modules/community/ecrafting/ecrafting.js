@@ -93,7 +93,7 @@ function addActivity(event, data, next) {
 			break;
 
 		case 'POST_PROJECT_ITERATE':
-			activity.description = data.user.fullname + ' just revised the project \'' + data.project.name + '\' to \''+ data.projectDate +'\'';
+			activity.description = data.user.fullname + ' just revised the project \'' + data.project.name +'\'';
 			activity.link = '/projects/show/' + data.project.id;
 			activity.image = (data.project.media && data.project.media[0]) ? data.project.media[0] : null;
 			break;

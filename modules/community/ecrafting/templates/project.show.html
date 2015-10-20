@@ -34,9 +34,26 @@
 			},
 			iterate: function(){
 
-				bootbox.confirm("<h3>Enter the project date</h3>\
+				bootbox.confirm("<h3>Enter an image for project.</h3>\
                     <form id='infos' action=''>\
-                    <input type='text' class='text' name='date' id='project_date' onkeydown='return false;' value='' /><br/>\
+                    <div class='control-group field-type-file' id='project_image-wrapper'>\
+				<label class='control-label' for='fileupload'>Image:</label>\
+				<div class='controls'>\
+						<div class='fileupload fileupload-new' data-provides='fileupload'>\
+						<div class='input-append'>\
+						<div class='uneditable-input span3'><i class='icon-file fileupload-exists'></i>Select or Drop Files Here<span class='fileupload-preview'></span></div>\
+				<span class='btn btn-file'>\
+						<span class='fileupload-new'>Select</span>\
+						<input id='fileupload' type='file' name='files[]' multiple='true' accept='image/*' />\
+						</span>\
+						<a href='javascript:void(0)' id='remove' class='removebutton btn fileupload-exists' data-dismiss='fileupload'>Remove</a>\
+						</div>\
+						</div>\
+						<div id='progress' class='progress progress-striped active hidden'>\
+						<div class='bar' style='width: 0;'></div>\
+						</div>\
+					    </div>\
+					    </div>\
                     </form>", function(confirmed) {
 					if(confirmed){
 						var tmestmp = new Date($("#project_date").val()).getTime() / 1000;
@@ -67,6 +84,8 @@
 			%>
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
 			<a href="#" onclick='ecr.page.iterate()' class="btn"><i class="icon-bullhorn"></i> <strong>Revise</strong></a>
+			<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+			<a href="#" onclick='ecr.page.doDelete("<%- project._id %>","<%- project.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 			<%
 			}
@@ -76,6 +95,46 @@
 
 	<div class="row-fluid">
 		<div class="span12">
+			<table class="table table-striped">
+				<tr>
+					<th><%- t('Name') %></th>
+					<td><%- project.name %></td>
+				</tr>
+				<tr>
+					<th><%- t('Owner') %></th>
+					<td><a href='/user/profile/<%- project.owner %>'><%- project.owner %></a></td>
+				</tr>
+				<tr>
+					<th><%- t('Description') %></th>
+					<td><%- project.description %></td>
+				</tr>
+				<tr>
+					<th><%- t('Materials') %></th>
+					<td><%- project._doc.materials %></td>
+				</tr>
+				<tr>
+					<th><%- t('Location') %></th>
+					<td><%- project._doc.location %></td>
+				</tr>
+				<tr>
+					<th><%- t('Youtube Video') %></th>
+					<td>
+						<%
+						var link = project._doc.youtube
+						if(link !== undefined && link !== ""){
+						if(link.indexOf("www.youtube.com") > -1){
+						var youtubeLink = link.replace("/watch?v=", "/embed/");
+						%>
+						<iframe width="420" height="315"
+								src='<%- youtubeLink %>'>
+						</iframe>
+						<% }
+						} %>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="span12" style="margin-left: 0px; margin-top: 20px;">
 			<div class="accordion" id="accordion2">
 				<div class="accordion-group">
 					<div class="accordion-heading">
@@ -83,48 +142,23 @@
 							<strong>Main Project>></strong> <%- project.date %>
 						</a>
 					</div>
-					<div id="collapseOne" class="accordion-body collapse in">
+					<%
+					if(group.length>0){
+					%>
+						<div id="collapseOne" class="accordion-body collapse">
+					<%
+					}else{
+					%>
+						<div id="collapseOnee" class="accordion-body collapse in">
+					<%
+					}
+					%>
+
 						<div class="span9">
 							<table class="table table-striped">
 								<tr>
-									<th><%- t('Name') %></th>
-									<td><%- project.name %></td>
-								</tr>
-								<tr>
-									<th><%- t('Owner') %></th>
-									<td><a href='/user/profile/<%- project.owner %>'><%- project.owner %></a></td>
-								</tr>
-								<tr>
-									<th><%- t('Description') %></th>
-									<td><%- project.description %></td>
-								</tr>
-								<tr>
-									<th><%- t('Materials') %></th>
-									<td><%- project._doc.materials %></td>
-								</tr>
-								<tr>
-									<th><%- t('Location') %></th>
-									<td><%- project._doc.location %></td>
-								</tr>
-								<tr>
 									<th><%- t('Date') %></th>
 									<td><%- project.date %></td>
-								</tr>
-								<tr>
-									<th><%- t('Youtube Video') %></th>
-									<td>
-										<%
-										var link = project._doc.youtube
-										if(link !== undefined && link !== ""){
-										if(link.indexOf("www.youtube.com") > -1){
-										var youtubeLink = link.replace("/watch?v=", "/embed/");
-										%>
-										<iframe width="420" height="315"
-												src='<%- youtubeLink %>'>
-										</iframe>
-										<% }
-										} %>
-									</td>
 								</tr>
 								<tr>
 									<th><%- t('Media') %></th>
@@ -152,22 +186,12 @@
 								<i class="icon-comment"></i> Show Comments
 							</a>
 						</div>
-						<%
-						if (canEdit) {
-						%>
-						<div class="span3 well">
-							<center>
-								<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
-								<a href="#" onclick='ecr.page.doDelete("<%- project._id %>","<%- project.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
-							</center>
-						</div>
-						<%
-						}
-						%>
+
 					</div>
 				</div>
 				<%
 				group.forEach(function(proj) {
+					var i = group.indexOf(proj);
 				%>
 				<div class="accordion-group">
 					<div class="accordion-heading">
@@ -175,48 +199,23 @@
 							<%- proj.date %>
 						</a>
 					</div>
-					<div id="collapse<%- proj._id %>" class="accordion-body collapse">
+					<%
+					if(group.length-1 == i){
+					%>
+						<div id="collapse<%- proj._id %>" class="accordion-body collapse in">
+					<%
+					}else{
+					%>
+						<div id="collapse<%- proj._id %>" class="accordion-body collapse">
+					<%
+					}
+					%>
+
 						<div class="span9">
 							<table class="table table-striped">
 								<tr>
-									<th><%- t('Name') %></th>
-									<td><%- proj.name %></td>
-								</tr>
-								<tr>
-									<th><%- t('Owner') %></th>
-									<td><a href='/user/profile/<%- proj.owner %>'><%- proj.owner %></a></td>
-								</tr>
-								<tr>
-									<th><%- t('Description') %></th>
-									<td><%- proj.description %></td>
-								</tr>
-								<tr>
-									<th><%- t('Materials') %></th>
-									<td><%- proj._doc.materials %></td>
-								</tr>
-								<tr>
-									<th><%- t('Location') %></th>
-									<td><%- proj._doc.location %></td>
-								</tr>
-								<tr>
 									<th><%- t('Date') %></th>
 									<td><%- proj.date %></td>
-								</tr>
-								<tr>
-									<th><%- t('Youtube Video') %></th>
-									<td>
-										<%
-										var link = proj._doc.youtube
-										if(link !== undefined && link !== ""){
-										if(link.indexOf("www.youtube.com") > -1){
-										var youtubeLink = link.replace("/watch?v=", "/embed/");
-										%>
-										<iframe width="420" height="315"
-												src='<%- youtubeLink %>'>
-										</iframe>
-										<% }
-										} %>
-									</td>
 								</tr>
 								<tr>
 									<th><%- t('Media') %></th>
@@ -244,18 +243,6 @@
 								<i class="icon-comment"></i> Show Comments
 							</a>
 						</div>
-						<%
-						if (canEdit) {
-						%>
-						<div class="span3 well">
-							<center>
-								<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- proj._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
-								<a href="#" onclick='ecr.page.doDelete("<%- proj._id %>","<%- proj.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
-							</center>
-						</div>
-						<%
-						}
-						%>
 					</div>
 				</div>
 				<%
@@ -304,4 +291,3 @@
 		}
 	};
 </script>
-
