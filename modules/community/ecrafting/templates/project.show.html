@@ -36,13 +36,12 @@
 
 				bootbox.confirm("<h3>Enter an image for project.</h3>\
                     <form id='infos' action=''>\
-                    <div class='control-group field-type-file' id='project_image-wrapper'>\
-				<label class='control-label' for='fileupload'>Image:</label>\
+                    <div class='control-group field-type-file' id='revise_image-wrapper'>\
 				<div class='controls'>\
 						<div class='fileupload fileupload-new' data-provides='fileupload'>\
 						<div class='input-append'>\
 						<div class='uneditable-input span3'><i class='icon-file fileupload-exists'></i>Select or Drop Files Here<span class='fileupload-preview'></span></div>\
-				<span class='btn btn-file'>\
+						<span class='btn btn-file'>\
 						<span class='fileupload-new'>Select</span>\
 						<input id='fileupload' type='file' name='files[]' multiple='true' accept='image/*' />\
 						</span>\
@@ -56,18 +55,58 @@
 					    </div>\
                     </form>", function(confirmed) {
 					if(confirmed){
-						var tmestmp = new Date($("#project_date").val()).getTime() / 1000;
-						apiWrapper.apiCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/<%- project._id %>/date/'+tmestmp+'/iterate', JSON.stringify({ dummy: 'data' }), 'POST',
+						var tmestmp = Date.now();
+						apiWrapper.apiCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/<%- project._id %>/date/'+tmestmp+'/mediarray/'+mediaArray+'/iterate', JSON.stringify({ dummy: 'data' }), 'POST',
 								function (data, jqXhr) {
 									location.reload();
 									ecr.app.userSuccess('Project iterated with new date.');
 								}
 						);
+
 					}
 				});
 				$("#project_date").kendoDateTimePicker({
 					value:new Date()
 				});
+				setFileUpload();
+				var mediaArray = [];
+				this.deleteMedia = function (index, mId) {
+					$('#revise_image-wrapper > li#media' + index).remove();
+				};
+				function setFileUpload() {
+					$(':file').fileupload({
+						url: '/api/media/',
+						sequentialUploads: true,
+						singleFileUploads: false,
+						dataType: 'json',
+						progressall: function (e, data) {
+							var progress = parseInt(data.loaded / data.total * 100, 10);
+							$('#progress').removeClass('hidden');
+							$('#progress .bar').css(
+									'width',
+									progress + '%'
+							);
+						},
+					}).bind('fileuploadalways', function (e, data) {
+						if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
+							$('#progress').addClass('hidden');
+
+							var files = (JSON.parse(data.xhr().response));
+							var count = $('.thumbnails li.span4').length;
+
+							$.each(files, function(index, value) {
+								var html = '<li id="media' + (count + index) + '" class="span4">'+
+										'<a href="javascript:void(0)" class="thumbnail">'+
+										'<img src="/api/media/' + value._id + '" style="width: 300px; height: 200px" alt=""></a>'+
+										'<input type="hidden" id="media' + (count + index) + '" name="media' + (count + index) + '" value="' + value._id + '" data-object="project"/>'+
+										'<a href="javascript:void(0)" onclick="ecr.page.deleteMedia(' + (count + index) + ', \'' + value._id + '\')" class="thumbnail">Delete</a></li>'
+
+								$('#revise_image-wrapper').append(html);
+								mediaArray.push(value._id);
+							});
+						}
+					});
+				}
 			},
 		};
 	};
@@ -84,8 +123,8 @@
 			%>
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
 			<a href="#" onclick='ecr.page.iterate()' class="btn"><i class="icon-bullhorn"></i> <strong>Revise</strong></a>
-			<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
-			<a href="#" onclick='ecr.page.doDelete("<%- project._id %>","<%- project.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
+			<!--<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+			<a href="#" onclick='ecr.page.doDelete("<%- project._id %>","<%- project.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>-->
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 			<%
 			}
@@ -186,7 +225,18 @@
 								<i class="icon-comment"></i> Show Comments
 							</a>
 						</div>
-
+							<%
+							if (canEdit) {
+							%>
+							<div class="span3 well">
+								<center>
+									<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+									<a href="#" onclick='ecr.page.doDelete("<%- project._id %>","<%- project.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
+								</center>
+							</div>
+							<%
+							}
+							%>
 					</div>
 				</div>
 				<%
@@ -243,6 +293,18 @@
 								<i class="icon-comment"></i> Show Comments
 							</a>
 						</div>
+							<%
+							if (canEdit) {
+							%>
+							<div class="span3 well">
+								<center>
+									<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- proj._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+									<a href="#" onclick='ecr.page.doDelete("<%- proj._id %>","<%- proj.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
+								</center>
+							</div>
+							<%
+							}
+							%>
 					</div>
 				</div>
 				<%

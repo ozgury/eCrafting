@@ -36,7 +36,7 @@ var routes = [
 	{ path: 'GET /api/circles/:id/calls/:cid/projects/:pid?', fn: listCallProjects },
 	{ path: 'POST /api/circles/:id/calls/:cid/projects/:pid?', fn: updateCallProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:update") },
 	{ path: 'DELETE /api/circles/:id/calls/:cid/projects/:pid', fn: deleteCallProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:delete") },
-	{ path: 'POST /api/circles/:id/calls/:cid/projects/:pid/date/:dt/iterate', fn: iterateProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:update") },
+	{ path: 'POST /api/circles/:id/calls/:cid/projects/:pid/date/:dt/mediarray/:ary/iterate', fn: iterateProject, permit: calipso.permission.Helper.hasPermission("ecrafting:project:update") },
 
 	// Media Calls
 	{ path: 'GET /api/media/:id?.:size?', fn: listMedia },
@@ -663,6 +663,7 @@ function iterateProject(req, res, template, block, next){
 	var cId = req.moduleParams.cid;
 	var pId = req.moduleParams.pid;
 	var new_date = req.moduleParams.dt;
+	var mediaAry = req.moduleParams.ary;
 
 	if(pId){
 
@@ -680,7 +681,11 @@ function iterateProject(req, res, template, block, next){
 				if (!project) {
 					return responseError(res, 404, err);
 				};
-				var theDate = new Date(parseInt(new_date) * 1000);
+
+				/*var ObjectID = require('mongodb').ObjectID;
+				var mediaID = new ObjectID("000000000000000000000000");*/
+
+				var theDate = new Date(parseInt(new_date));
 				var newProject = new Project();
 				newProject.date = theDate;
 				newProject.owner = project.owner;
@@ -690,7 +695,13 @@ function iterateProject(req, res, template, block, next){
 				newProject.approved = project.approved;
 				newProject.location = project.location;
 				newProject.materials = project.materials;
-				newProject.media = project.media;
+
+				var array = mediaAry.split(',');
+				for(var a = 0; a<array.length; a++){
+					newProject.media.push(array[a]);
+				}
+
+				//newProject.media = project.media;
 				newProject.lat = project.lat;
 				newProject.lng = project.lng;
 				if(project.groupID.length != 0){
