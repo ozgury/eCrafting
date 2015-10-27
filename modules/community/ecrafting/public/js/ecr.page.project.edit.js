@@ -61,9 +61,13 @@ ecr.page.Page = function () {
 			});
 
 			formJson.project.media = media;
+			var eylem = formJson.project._id+"   "+ formJson.project.id;
 
 			apiWrapper.call($(this).attr('action') + '?apikey=webclient', JSON.stringify(formJson.project), 'POST', function (response, jqXHR) {
-				window.location.href = '/projects/show/' + response._id;
+				alert(jqXHR._id+"    "+jqXHR.id +"   "+eylem);
+				alert(formJson.project._id+"    "+formJson.project.id);
+				alert(response._id+"    "+response.id);
+				window.location.href = '/projects/show/' + jqXHR._id;
 			}, function (result, other, exception) {
 				if (result.status === 400) {
 					var modelState = eval($.parseJSON(result.responseText));
