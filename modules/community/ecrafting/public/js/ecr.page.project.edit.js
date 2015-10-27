@@ -50,7 +50,7 @@ ecr.page.Page = function () {
 		setFileUpload();
 		ecr.util.setLocationSearch();
 
-		$('#FORM').submit(function () {
+		/*$('#FORM').submit(function () {
 			$('html, body').animate({ scrollTop: 0 }, 'slow');
 
 			var formJson = apiWrapper.serializeObject($(this));
@@ -65,6 +65,37 @@ ecr.page.Page = function () {
 			apiWrapper.call($(this).attr('action') + '?apikey=webclient', JSON.stringify(formJson.project), 'POST', function (response, jqXHR) {
 				window.location.href = '/projects/show/' + response._id;
 			}, function (result, other, exception) {
+				if (result.status === 400) {
+					var modelState = eval($.parseJSON(result.responseText));
+
+					ecr.app.userError(modelState.errors.name.type);
+					$('#' + modelState.errors.name.path).focus();
+				} else if (result.status === 401) {
+					ecr.app.userError('Unauthorized.');
+				}
+			});
+			return false;
+		});*/
+
+		apiWrapper.ajaxifyProjectFormSubmissionAsJson($('#FORM'), 'project', function (response, jqXHR) {
+			window.location.href = '/projects/show/' + response._id;
+		});
+	}
+
+	this.ajaxifyProjectFormSubmissionAsJson = function ($form, rootObject, successFunction, errorFunction) {
+		$form.submit(function () {
+			$('html, body').animate({ scrollTop: 0 }, 'slow');
+
+			var formJson = that.serializeObject($(this));
+			var media = [];
+
+			$("input[id^='media']").each(function(index, input) {
+				media.push($(input).val());
+			});
+
+			formJson.project.media = media;
+
+			apiWrapper.call($(this).attr('action') + '?apikey=webclient', JSON.stringify((rootObject) ? formJson[rootObject] : formJson), 'POST', successFunction, (errorFunction != null) ? errorFunction : function (result, other, exception) {
 				if (result.status === 400) {
 					var modelState = eval($.parseJSON(result.responseText));
 
