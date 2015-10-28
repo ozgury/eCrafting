@@ -63,7 +63,7 @@ ecr.page.Page = function () {
 			formJson.project.media = media;
 
 			apiWrapper.call($(this).attr('action') + '?apikey=webclient', JSON.stringify(formJson.project), 'POST', function (response, jqXHR) {
-				window.location.href = '/projects/show/' + response._id;
+				window.location.href = '/projects/list';
 			}, function (result, other, exception) {
 				if (result.status === 400) {
 					var modelState = eval($.parseJSON(result.responseText));

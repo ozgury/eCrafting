@@ -26,7 +26,7 @@
 					if (confirmed) {
 						apiWrapper.deleteCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/'+ projectID +'/',
 								function (data, jqXhr) {
-									ecr.app.redirectWithSuccessMessage('/calls/show/<%- call._id %>/', "Project "+projectName+" deleted.");
+									ecr.app.redirectWithSuccessMessage('/calls/show/<%- call._id %>/', "Project deleted.");
 								}
 						);
 					}
