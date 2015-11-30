@@ -45,7 +45,6 @@ function registerEventListeners () {
 	calipso.e.post('PROJECT_CREATE', module.name, addActivity);
 	calipso.e.post('PROJECT_UPDATE', module.name, addActivity);
 	calipso.e.post('PROJECT_DELETE', module.name, addActivity);
-	calipso.e.post('PROJECT_ITERATE', module.name, addActivity);
 
 	calipso.e.post('USER_ACTIVATE', module.name, addActivity);
 	calipso.e.post('USER_LOGIN', module.name, addActivity);
@@ -92,12 +91,6 @@ function addActivity(event, data, next) {
 			activity.image = (data.project.media && data.project.media[0]) ? data.project.media[0] : null;
 			break;
 
-		case 'POST_PROJECT_ITERATE':
-			activity.description = data.user.fullname + ' just revised the project \'' + data.project.name +'\'';
-			activity.link = '/projects/show/' + data.project.id;
-			activity.image = (data.project.media && data.project.media[0]) ? data.project.media[0] : null;
-			break;
-
 		case 'POST_USER_CREATE':
 			activity.description = data.fullname + ' just registered.';
 			activity.link = '/user/profile/' + data.id;
@@ -140,7 +133,6 @@ function init(module, app, next) {
 	calipso.e.addEvent('PROJECT_CREATE');
 	calipso.e.addEvent('PROJECT_UPDATE');
 	calipso.e.addEvent('PROJECT_DELETE');
-	calipso.e.addEvent('PROJECT_ITERATE');
 
 	calipso.permission.Helper.addPermission("ecrafting:circle", "eCrafting", true);
 	calipso.permission.Helper.addPermission("ecrafting:call", "eCrafting", true);

@@ -103,7 +103,6 @@
 					<table class="table table-bordered table-hover">
 						<%
 						call.projects.forEach(function(project) {
-							if(project.groupID.length == 0 || project.groupID[0].toString() == project._id.toString()){
 							%>
 							<tr>
 								<td><a href='/projects/show/<%- project._id %>'><%- project.name %></a></td>
@@ -119,10 +118,9 @@
 								};
 								%>
 							</tr>
-						<%
-							};
-						});
-						%>
+									<%
+									});
+									%>
 					</table>
 					<%
 				}
