@@ -331,7 +331,7 @@ function listRole(req, res, template, block, next) {
     var total = count;
 
     Role.find(query)
-      .sort('role')
+      .sort('role', 1)
       .find(function (err, roles) {
 
         // Render the item into the response
