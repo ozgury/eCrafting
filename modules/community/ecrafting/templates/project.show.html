@@ -1,4 +1,12 @@
-<script type="text/javascript"> 
+<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.common-material.min.css" />
+<link rel="stylesheet" href="//kendo.cdn.telerik.com/2015.2.902/styles/kendo.material.min.css" />
+<script src="//kendo.cdn.telerik.com/2015.2.902/js/kendo.all.min.js"></script>
+<style type="text/css">
+	.k-datetimepicker {
+		width: 38em !important;
+	}
+</style>
+<script type="text/javascript">
 
 	if (typeof (ecr.page) == 'undefined') {
 		ecr.page = {};
@@ -9,21 +17,101 @@
 		var apiWrapper = new ecr.ApiWrapper();
 
 		return {
-			doDelete: function() {
-				bootbox.confirm("Are you sure you want to delete project '<%- project.name %>'?", function(confirmed) {
+			doDelete: function(projectID, projectName) {
+				var deleteMessage = "";
+				if(projectID == "<%- project._id %>"){
+					deleteMessage = "You are trying to delete main project. If you delete the main project, all revised projects will be gone. ";
+				}
+				bootbox.confirm(deleteMessage+"Are you sure you want to delete project "+projectName+"?", function(confirmed) {
 					if (confirmed) {
-						apiWrapper.deleteCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/<%- project._id %>/', 
-							function (data, jqXhr) {
-								ecr.app.redirectWithSuccessMessage('/calls/show/<%- call._id %>/', "Project '<%- project.name %>' deleted.");
-							}
+						apiWrapper.deleteCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/'+ projectID +'/',
+								function (data, jqXhr) {
+									ecr.app.redirectWithSuccessMessage('/calls/show/<%- call._id %>/', "Project deleted.");
+								}
 						);
 					}
-				}); 
+				});
+			},
+			iterate: function(){
+
+				bootbox.confirm("<h3>Enter an image for project.</h3>\
+                    <form id='infos' action=''>\
+                    <div class='control-group field-type-file' id='revise_image-wrapper'>\
+				<div class='controls'>\
+						<div class='fileupload fileupload-new' data-provides='fileupload'>\
+						<div class='input-append'>\
+						<div class='uneditable-input span3'><i class='icon-file fileupload-exists'></i>Select or Drop Files Here<span class='fileupload-preview'></span></div>\
+						<span class='btn btn-file'>\
+						<span class='fileupload-new'>Select</span>\
+						<input id='fileupload' type='file' name='files[]' multiple='true' accept='image/*' />\
+						</span>\
+						<a href='javascript:void(0)' id='remove' class='removebutton btn fileupload-exists' data-dismiss='fileupload'>Remove</a>\
+						</div>\
+						</div>\
+						<div id='progress' class='progress progress-striped active hidden'>\
+						<div class='bar' style='width: 0;'></div>\
+						</div>\
+					    </div>\
+					    </div>\
+                    </form>", function(confirmed) {
+					if(confirmed){
+						var tmestmp = Date.now();
+						apiWrapper.apiCall('circles/<%- circle._id %>/calls/<%- call._id %>/projects/<%- project._id %>/date/'+tmestmp+'/mediarray/'+mediaArray+'/iterate', JSON.stringify({ dummy: 'data' }), 'POST',
+								function (data, jqXhr) {
+									location.reload();
+									ecr.app.userSuccess('Project iterated with new date.');
+								}
+						);
+
+					}
+				});
+				$("#project_date").kendoDateTimePicker({
+					value:new Date()
+				});
+				setFileUpload();
+				var mediaArray = [];
+				this.deleteMedia = function (index, mId) {
+					$('#revise_image-wrapper > li#media' + index).remove();
+				};
+				function setFileUpload() {
+					$(':file').fileupload({
+						url: '/api/media/',
+						sequentialUploads: true,
+						singleFileUploads: false,
+						dataType: 'json',
+						progressall: function (e, data) {
+							var progress = parseInt(data.loaded / data.total * 100, 10);
+							$('#progress').removeClass('hidden');
+							$('#progress .bar').css(
+									'width',
+									progress + '%'
+							);
+						},
+					}).bind('fileuploadalways', function (e, data) {
+						if (data && data.xhr() && data.xhr().status === 200 && (JSON.parse(data.xhr().response))[0]) {
+							$('#progress').addClass('hidden');
+
+							var files = (JSON.parse(data.xhr().response));
+							var count = $('.thumbnails li.span4').length;
+
+							$.each(files, function(index, value) {
+								var html = '<li id="media' + (count + index) + '" class="span4">'+
+										'<a href="javascript:void(0)" class="thumbnail">'+
+										'<img src="/api/media/' + value._id + '" style="width: 300px; height: 200px" alt=""></a>'+
+										'<input type="hidden" id="media' + (count + index) + '" name="media' + (count + index) + '" value="' + value._id + '" data-object="project"/>'+
+										'<a href="javascript:void(0)" onclick="ecr.page.deleteMedia(' + (count + index) + ', \'' + value._id + '\')" class="thumbnail">Delete</a></li>'
+
+								$('#revise_image-wrapper').append(html);
+								mediaArray.push(value._id);
+							});
+						}
+					});
+				}
 			},
 		};
 	};
 
-</script> 
+</script>
 
 <div class='circle'>
 	<a href='/circles/show/<%- circle._id %>'><%- circle.name %></a> >> <a href='/calls/show/<%- call._id %>'><%- call.name %></a> >> <%- project.name %>
@@ -34,8 +122,9 @@
 			if (canEdit) {
 			%>
 			<!-- <a href="#" class="btn"><i class="icon-pencil"></i> <strong>Write</strong></a> -->
-			<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
-			<a href="#" onclick='ecr.page.doDelete()' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
+			<a href="#" onclick='ecr.page.iterate()' class="btn"><i class="icon-bullhorn"></i> <strong>Revise</strong></a>
+			<!--<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+			<a href="#" onclick='ecr.page.doDelete("<%- project._id %>","<%- project.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>-->
 			<!-- <a href="#" class="btn"><i class="icon-align-justify"></i> <strong>List</strong></a> -->
 			<%
 			}
@@ -44,75 +133,223 @@
 	</legend>
 
 	<div class="row-fluid">
-		<div class="span8">
+		<div class="span12">
 			<table class="table table-striped">
-		<tr>
-			<th><%- t('Name') %></th>
-			<td><%- project.name %></td>
-		</tr>
-		<tr>
-			<th><%- t('Owner') %></th>
-			<td><a href='/user/profile/<%- project.owner %>'><%- project.owner %></a></td>
-		</tr>
-		<tr>
-			<th><%- t('Description') %></th>
-			<td><%- project.description %></td>
-		</tr>
-		<tr>
-			<th><%- t('Materials') %></th>
-			<td><%- project._doc.materials %></td>
-		</tr>
-		<tr>
-			<th><%- t('Location') %></th>
-			<td><%- project._doc.location %></td>
-		</tr>
-		<tr>
-			<th><%- t('Date') %></th>
-			<td><%- project.date %></td>
-		</tr>
-		<tr>
-			<th><%- t('Youtube Video') %></th>
-			<td>
-				<%
-				var link = project._doc.youtube
-				if(link !== undefined && link !== ""){
-					if(link.indexOf("www.youtube.com") > -1){
-					var youtubeLink = link.replace("/watch?v=", "/embed/");
+				<tr>
+					<th><%- t('Name') %></th>
+					<td><%- project.name %></td>
+				</tr>
+				<tr>
+					<th><%- t('Owner') %></th>
+					<td><a href='/user/profile/<%- project.owner %>'><%- project.owner %></a></td>
+				</tr>
+				<tr>
+					<th><%- t('Description') %></th>
+					<td><%- project.description %></td>
+				</tr>
+				<tr>
+					<th><%- t('Materials') %></th>
+					<td><%- project._doc.materials %></td>
+				</tr>
+				<tr>
+					<th><%- t('Location') %></th>
+					<td><%- project._doc.location %></td>
+				</tr>
+				<tr>
+					<th><%- t('Youtube Video') %></th>
+					<td>
+						<%
+						var link = project._doc.youtube
+						if(link !== undefined && link !== ""){
+						if(link.indexOf("www.youtube.com") > -1){
+						var youtubeLink = link.replace("/watch?v=", "/embed/");
+						%>
+						<iframe width="420" height="315"
+								src='<%- youtubeLink %>'>
+						</iframe>
+						<% }
+						} %>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="span12" style="margin-left: 0px; margin-top: 20px;">
+			<div class="accordion" id="accordion2">
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+							<strong>Start Point>></strong> <%- project.name %>
+						</a>
+					</div>
+					<%
+					if(group.length>0){
 					%>
-					<iframe width="420" height="315"
-							src='<%- youtubeLink %>'>
-					</iframe>
-					<% }
-				} %>
-			</td>
-		</tr>
-		<tr>
-			<th><%- t('Media') %></th>
-			<td>
-			<%
-			if (project.media) {
-				project.media.forEach(function(m, index) {
-				%>
-					<ul class="thumbnails">
-						<li id="media<%- index %>" class="">
-							<a href="javascript:void(0)" class="thumbnail">
-								<img src="/api/media/<%- m %>" alt="" style="width: 400px;">
+						<div id="collapseOne" class="accordion-body collapse">
+					<%
+					}else{
+					%>
+						<div id="collapseOnee" class="accordion-body collapse in">
+					<%
+					}
+					%>
+
+						<div class="span9">
+							<table class="table table-striped">
+								<tr>
+									<th><%- t('Date') %></th>
+									<td><%- project.date %></td>
+								</tr>
+								<tr>
+									<th><%- t('Media') %></th>
+									<td>
+										<%
+										if (project.media) {
+										project.media.forEach(function(m, index) {
+										%>
+										<ul class="thumbnails">
+											<li id="media<%- index %>" class="">
+												<a href="javascript:void(0)" class="thumbnail">
+													<img src="/api/media/<%- m %>" alt="" style="width: 400px;">
+												</a>
+											</li>
+										</ul>
+										<%
+										});
+										}
+										%>
+
+									</td>
+								</tr>
+							</table>
+							<a class="btn" style="width: 96%;" onclick="loadDisqus(jQuery(this), 'p' + '<%- project._id %>', '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/');">
+								<i class="icon-comment"></i> Show Comments
 							</a>
-						</li>
-					</ul>
+						</div>
+							<%
+							if (canEdit) {
+							%>
+							<div class="span3 well">
+								<center>
+									<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+									<a href="#" onclick='ecr.page.doDelete("<%- project._id %>","<%- project.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
+								</center>
+							</div>
+							<%
+							}
+							%>
+					</div>
+				</div>
+				<%
+				group.forEach(function(proj) {
+					var i = group.indexOf(proj);
+				%>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse<%- proj._id %>">
+							<%- proj.name %> v<%- i+1 %>
+						</a>
+					</div>
+					<%
+					if(group.length-1 == i){
+					%>
+						<div id="collapse<%- proj._id %>" class="accordion-body collapse in">
+					<%
+					}else{
+					%>
+						<div id="collapse<%- proj._id %>" class="accordion-body collapse">
+					<%
+					}
+					%>
+
+						<div class="span9">
+							<table class="table table-striped">
+								<tr>
+									<th><%- t('Date') %></th>
+									<td><%- proj.date %></td>
+								</tr>
+								<tr>
+									<th><%- t('Media') %></th>
+									<td>
+										<%
+										if (proj.media) {
+										proj.media.forEach(function(m, index) {
+										%>
+										<ul class="thumbnails">
+											<li id="media<%- index %>" class="">
+												<a href="javascript:void(0)" class="thumbnail">
+													<img src="/api/media/<%- m %>" alt="" style="width: 400px;">
+												</a>
+											</li>
+										</ul>
+										<%
+										});
+										}
+										%>
+
+									</td>
+								</tr>
+							</table>
+							<a class="btn" style="width: 96%;" onclick="loadDisqus(jQuery(this), 'p' + '<%- proj._id %>', '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- proj._id %>/');">
+								<i class="icon-comment"></i> Show Comments
+							</a>
+						</div>
+							<%
+							if (canEdit) {
+							%>
+							<div class="span3 well">
+								<center>
+									<a href='/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- proj._id %>/' class="btn"><i class="icon-edit"></i> <strong>Edit</strong></a>
+									<a href="#" onclick='ecr.page.doDelete("<%- proj._id %>","<%- proj.name %>")' class="btn"><i class="icon-trash"></i><strong>Delete</strong></a>
+								</center>
+							</div>
+							<%
+							}
+							%>
+					</div>
+				</div>
 				<%
 				});
-			}
 				%>
 
-			</td>
-		</tr>
-	</table>
+			</div>
 		</div>
 	</div>
 </div>
-<div id="disqus_thread">
-</div>
+
 <script type="text/javascript">
-	initializeDisqus({ id: 'p' + '<%- project._id %>', title: '<%- project.name %>', url: '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' });
+	//initializeDisqus({ id: 'p' + '<%- project._id %>', title: '<%- project.name %>', url: '<%- basePath %>' + '/circles/<%- circle._id %>/calls/<%- call._id %>/projects/edit/<%- project._id %>/' });
+
+	var disqus_shortname = 'ecrafting';
+	var disqus_identifier; //made of post id and guid
+	var disqus_url; //post permalink
+
+	function loadDisqus(source, identifier, url) {
+
+		if (window.DISQUS) {
+
+			jQuery('#disqus_thread').insertAfter(source); //append the HTML after the link
+
+			//if Disqus exists, call it's reset method with new parameters
+			DISQUS.reset({
+				reload: true,
+				config: function () {
+					this.page.identifier = identifier;
+					this.page.url = url;
+				}
+			});
+
+		} else {
+
+			//insert a wrapper in HTML after the relevant "show comments" link
+			jQuery('<div id="disqus_thread"></div>').insertAfter(source);
+			disqus_identifier = identifier; //set the identifier argument
+			disqus_url = url; //set the permalink argument
+
+			//append the Disqus embed script to HTML
+			var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+			dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+			jQuery('head').append(dsq);
+
+		}
+	};
 </script>
