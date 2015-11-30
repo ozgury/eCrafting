@@ -494,7 +494,7 @@ function listProjects(req, res, template, block, next) {
 		var projects = [];
 		for(var i=0; i<projGroup.length; i++){
 
-			if(projGroup[i].groupID.length == 0 || projGroup[i].groupID[0].toString() == projGroup[i]._id.toString()){
+			if(projGroup[i].groupID.length === undefined || projGroup[i].groupID.length == 0 || projGroup[i].groupID[0].toString() == projGroup[i]._id.toString()){
 				projects.push(projGroup[i]);
 			};
 		};
