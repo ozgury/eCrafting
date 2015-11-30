@@ -816,6 +816,9 @@ function listMedia(req, res, template, block, next) {
 			if (err || !m) {
 				return responseError(res, 404, err);
 			}
+			if(m == null){
+				console.log("No data found");
+			}
 			res.contentType(m.mediaType);
 			if (size == 'mini') {
 				res.send(m.dataMini);
